@@ -38,13 +38,17 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
-    'rest_framework',
-    'corsheaders', # for cross origin resource sharing
+    'corsheaders',  # for CORS(cross-origin resource sharing)
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
     'allauth.socialaccount.providers.naver',
+    'allauth.socialaccount.providers.kakao',
+    'rest_framework',
+    'rest_framework.authtoken',
+    'rest_auth',
+    'rest_auth.registration',
     # custom apps
     'api',
 ]
@@ -54,10 +58,8 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
-SITE_ID = 1
-
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',  # should be at top if possible
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -67,9 +69,14 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-CORS_ORIGIN_WHITELIST = (
+LOGIN_REDIRECT_URL = '/close/'
+
+SITE_ID = 1
+
+CORS_ORIGIN_WHITELIST = [
     'http://localhost:3000',
-)
+]
+CORS_ALLOW_CREDENTIALS = True  # session won't work properly becuz of CORS
 
 ROOT_URLCONF = 'segfault.urls'
 
@@ -147,6 +154,6 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-# for images
 MEDIA_URL = '/media/'
+
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

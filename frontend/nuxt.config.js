@@ -1,7 +1,7 @@
 import colors from 'vuetify/es5/util/colors'
 
 export default {
-  mode: 'universal',
+  mode: 'spa',
   /*
   ** Headers of the page
   */
@@ -44,13 +44,21 @@ export default {
     '@nuxtjs/vuetify',
     // Doc: https://axios.nuxtjs.org/usage
     '@nuxtjs/axios',
+    '@nuxtjs/proxy'
   ],
   /*
   ** Axios module configuration
   ** See https://axios.nuxtjs.org/options
   */
   axios: {
-    baseURL: 'http://localhost:8000/api'
+    baseURL: 'http://localhost:8000/',
+
+    // need to send cookie over cross domain (localhost:3000 -> localhost:8000)
+    credentials: true,
+    init(axios) {
+      axios.defaults.withCredentials = true
+    }
+
   },
   /*
   ** vuetify module configuration

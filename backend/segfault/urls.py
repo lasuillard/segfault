@@ -17,11 +17,20 @@ from django.conf import settings
 from django.contrib import admin
 from django.urls import path, include
 from django.conf.urls.static import static
+from .views import NaverLoginView, KakaoLoginView, CloseView
 
 
 urlpatterns = [
+    # admin
     path('admin/', admin.site.urls),
+    # auth
     path('accounts/', include('allauth.urls')),
+    path('rest-auth/', include('rest_auth.urls')),
+    path('rest-auth/registration/', include('rest_auth.registration.urls')),
+    path('rest-auth/naver/', NaverLoginView.as_view(), name='naver_login'),
+    path('rest-auth/kakao/', KakaoLoginView.as_view(), name='kakao_login'),
+    path('close/', CloseView.as_view(), name='close'),  # a route to closes the social login popups
+    # apps
     path('api/', include('api.urls')),
 ]
 
