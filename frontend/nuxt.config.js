@@ -53,7 +53,7 @@ export default {
   axios: {
     baseURL: 'http://localhost:8000/',
 
-    // need to send cookie over cross domain (localhost:3000 -> localhost:8000)
+    // for cross-origin cookie
     credentials: true,
     init(axios) {
       axios.defaults.withCredentials = true

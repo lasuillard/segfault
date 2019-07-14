@@ -14,21 +14,26 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.conf import settings
+from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
-from django.conf.urls.static import static
-from .views import NaverLoginView, KakaoLoginView, CloseView
-
+from django.views.generic import TemplateView
+from .views import NaverLoginView, KakaoLoginView, StatusView, CloseView
 
 urlpatterns = [
     # admin
     path('admin/', admin.site.urls),
     # auth
-    path('accounts/', include('allauth.urls')),
+    path(r'password-reset/confirm/<uidb64>/<token>/',
+        TemplateView.as_view(template_name="password_reset_confirm.html"),
+        name='password_reset_confirm'),
+
+    path('account/', include('allauth.urls')),
     path('rest-auth/', include('rest_auth.urls')),
     path('rest-auth/registration/', include('rest_auth.registration.urls')),
     path('rest-auth/naver/', NaverLoginView.as_view(), name='naver_login'),
     path('rest-auth/kakao/', KakaoLoginView.as_view(), name='kakao_login'),
+    path('status/', StatusView.as_view(), name='status'),
     path('close/', CloseView.as_view(), name='close'),  # a route to closes the social login popups
     # apps
     path('api/', include('api.urls')),
