@@ -52,13 +52,6 @@ export default {
   */
   axios: {
     baseURL: 'http://localhost:8000/',
-
-    // for cross-origin cookie
-    credentials: true,
-    init(axios) {
-      axios.defaults.withCredentials = true
-    }
-
   },
   /*
   ** vuetify module configuration

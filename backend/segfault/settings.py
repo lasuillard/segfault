@@ -37,7 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django.contrib.sites',
+    'django.contrib.sites',  # for convenience
+    'django_extensions',
     'rest_framework',
     'rest_framework.authtoken',
     'corsheaders',  # for CORS(cross-origin resource sharing)
@@ -55,9 +56,9 @@ INSTALLED_APPS = [
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        # 'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.TokenAuthentication'
-    ]
+    ],
 }
 
 AUTHENTICATION_BACKENDS = [
