@@ -1,10 +1,13 @@
 import os
+import random
 from uuid import uuid4
 
 from django.db import models
 from django.dispatch import receiver
 from django.contrib import auth, admin
-from django.utils.html import format_html
+
+# TODO: classify it with new class inheriting ImageField and ImageFieldFile
+DEFAULT_PROFILE_IMAGES = ['avatar/default.png']
 
 
 def get_image_uuid4(instance, filename):
@@ -14,10 +17,9 @@ def get_image_uuid4(instance, filename):
 class Avatar(models.Model):
     user = models.OneToOneField(
         auth.get_user_model(),
-        related_name='avatar_of',
         on_delete=models.CASCADE,
     )
-    profile_image = models.ImageField(upload_to=get_image_uuid4, null=True)
+    profile_image = models.ImageField(upload_to=get_image_uuid4, default=random.choice(DEFAULT_PROFILE_IMAGES))
     display_name = models.CharField(max_length=32)
     introduce_message = models.TextField(null=True, blank=True)
     date_modified = models.DateTimeField(auto_now=True)
@@ -52,6 +54,9 @@ def auto_delete_profile_image_on_change(sender, instance, **kwargs):
     except sender.DoesNotExist:
         return False
 
+    if old_file.name in DEFAULT_PROFILE_IMAGES:
+        return False
+
     new_file = instance.profile_image
     if not old_file == new_file:
         if os.path.exists(old_file.path):
@@ -66,7 +71,7 @@ def auto_delete_profile_image_on_delete(sender, instance, **kwargs):
         delete image file from filesystem
     """
     file = instance.profile_image
-    if os.path.exists(file.path):
+    if os.path.exists(file.path) and file.name not in DEFAULT_PROFILE_IMAGES:
         file.delete(save=False)
 
 

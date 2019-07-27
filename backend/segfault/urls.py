@@ -25,9 +25,9 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     # auth
     path(r'password-reset/confirm/<uidb64>/<token>/',
-        TemplateView.as_view(template_name="password_reset_confirm.html"),
-        name='password_reset_confirm'),
-
+         TemplateView.as_view(template_name="password_reset_confirm.html"),
+         name='password_reset_confirm'
+         ),
     path('account/', include('allauth.urls')),
     path('rest-auth/', include('rest_auth.urls')),
     path('rest-auth/registration/', include('rest_auth.registration.urls')),

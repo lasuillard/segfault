@@ -12,14 +12,14 @@ from .viewsets import (
 )
 
 router = DefaultRouter()
-router.register(r'user', UserViewSet)
-router.register(r'avatar', AvatarViewSet)
-router.register(r'fragment', FragmentViewSet)
-router.register(r'answer', AnswerViewSet)
-router.register(r'comment', CommentViewSet)
-router.register(r'vote', VoteViewSet)
-router.register(r'chatroom', ChatRoomViewSet)
-router.register(r'chat', ChatViewSet)
+router.register(r'user', UserViewSet, basename='user')
+router.register(r'avatar', AvatarViewSet, basename='avatar')
+router.register(r'fragment', FragmentViewSet, basename='fragment')
+router.register(r'answer', AnswerViewSet, basename='answer')
+router.register(r'comment', CommentViewSet, basename='comment')
+router.register(r'vote', VoteViewSet, basename='vote')
+router.register(r'chatroom', ChatRoomViewSet, basename='chatroom')
+router.register(r'chat', ChatViewSet, basename='chat')
 
 urlpatterns = [
     path('', include(router.urls))

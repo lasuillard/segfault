@@ -59,6 +59,7 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.TokenAuthentication'
     ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination'
 }
 
 AUTHENTICATION_BACKENDS = [
@@ -94,7 +95,7 @@ SITE_ID = 1
 CORS_ORIGIN_WHITELIST = [
     'http://localhost:3000',
 ]
-CORS_ALLOW_CREDENTIALS = True  # session won't work properly becuz of CORS
+CORS_ALLOW_CREDENTIALS = True
 
 ROOT_URLCONF = 'segfault.urls'
 
@@ -130,6 +131,13 @@ DATABASES = {
         'PASSWORD': '9306',
         'HOST': '127.0.0.1',
         'PORT': '5432',
+    }
+}
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.dummy.DummyCache'
+        # 'LOCATION':
     }
 }
 
