@@ -25,6 +25,9 @@
       <button @click.prevent="socialLogin('kakao')">
         Log in with Kakao
       </button><br/>
+      <button @click.prevent="socialLogin('google')">
+        Log in with Google
+      </button>
       <button>
         Forgot password? Reset <strong>here</strong>
       </button><br/>
@@ -55,6 +58,16 @@
 </template>
 
 <script>
+
+function build_query(host, query_obj) {
+  let queries = []
+  for (let key in query_obj) {
+    let val = query_obj[key] ? query_obj[key] : ''
+    queries.push(key + '=' + val)
+  }
+  return host + '?' + queries.join('&')
+}
+
 export default {
   head() {
     return {
@@ -146,21 +159,37 @@ export default {
       })
     },
     socialLogin(provider) {
-      let host = 'http://localhost:8000/'
       let href
+      const redirect_uri = 'http://localhost:3000/auth/o/'
       switch(provider) {
         case 'naver':
-          href = 'accounts/naver/login'
+          href = build_query('https://nid.naver.com/oauth2.0/authorize', {
+            response_type: 'code',
+            client_id: 'IexPnEMA8XZADrLQY3Bo',
+            redirect_uri: redirect_uri
+          })
           break
         case 'kakao':
-          href = 'accounts/kakao/login'
+          href = build_query('https://kauth.kakao.com/oauth/authorize', {
+            response_type: 'code',
+            client_id: 'bc3a3274a103eb12f50fd6c8b43141d2',
+            redirect_uri: redirect_uri
+          })
+          break
+        case 'google':
+          href = build_query('https://accounts.google.com/o/oauth2/v2/auth', {
+            response_type: 'code',
+            client_id: '451025895792-ov19vhj1irvaea4h40f7rm493hir95s2.apps.googleusercontent.com',
+            redirect_uri: redirect_uri,
+            scope: 'profile email'
+          })
           break
         default:
           console.error(`Provider ${provider} is not supported.`)
           return null
       }
-      return this._popup(host + href)
-    },
+      return this._popup(href)
+    }, 
     _popup(href) {
       let child    = window.open(href, '', '', false)
       let timeout  = 10000 // in milliseconds

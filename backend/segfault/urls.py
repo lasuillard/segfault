@@ -18,7 +18,7 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import TemplateView
-from .views import NaverLoginView, KakaoLoginView, StatusView, CloseView
+from .views import NaverLoginView, KakaoLoginView, GoogleLoginView
 
 urlpatterns = [
     # admin
@@ -33,8 +33,7 @@ urlpatterns = [
     path('rest-auth/registration/', include('rest_auth.registration.urls')),
     path('rest-auth/naver/', NaverLoginView.as_view(), name='naver_login'),
     path('rest-auth/kakao/', KakaoLoginView.as_view(), name='kakao_login'),
-    path('status/', StatusView.as_view(), name='status'),
-    path('close/', CloseView.as_view(), name='close'),  # a route to closes the social login popups
+    path('rest-auth/google/', GoogleLoginView.as_view(), name='google_login'),
     # apps
     path('api/', include('api.urls')),
 ]

@@ -2,19 +2,15 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b3e2105c-d006-4677-a374-c4819749fcec" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/models/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/models/__init__.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/api/models/avatar.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/models/avatar.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/models/chat.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/models/chat.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/models/comment.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/models/comment.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/models/vote.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/models/vote.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/serializers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/tests/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/tests/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/tests/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/tests/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/viewsets.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/viewsets.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/segfault/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/segfault/settings.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/segfault/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/segfault/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/segfault/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/segfault/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/layouts/default.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/layouts/default.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/yarn.lock" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/yarn.lock" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -97,7 +93,9 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
           </value>
         </entry>
       </map>

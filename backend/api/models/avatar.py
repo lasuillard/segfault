@@ -6,7 +6,6 @@ from django.db import models
 from django.dispatch import receiver
 from django.contrib import auth, admin
 
-# TODO: classify it with new class inheriting ImageField and ImageFieldFile
 DEFAULT_PROFILE_IMAGES = ['avatar/default.png']
 
 

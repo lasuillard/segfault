@@ -45,9 +45,9 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
-    'allauth.socialaccount.providers.google',
     'allauth.socialaccount.providers.naver',
     'allauth.socialaccount.providers.kakao',
+    'allauth.socialaccount.providers.google',
     'rest_auth',
     'rest_auth.registration',
     # custom apps
@@ -67,16 +67,20 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
-# allauth config
+# django-allauth config
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_USERNAME_REQUIRED = False
 
-# rest-auth config
+SOCIALACCOUNT_EMAIL_VERIFICATION = 'none'
+SOCIALACCOUNT_EMAIL_REQUIRED = False
+
+# django-rest-auth config
 OLD_PASSWORD_FIELD_ENABLED = True
 
+# django
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',  # should be at top if possible
     'django.middleware.security.SecurityMiddleware',
