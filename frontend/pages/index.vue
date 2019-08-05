@@ -2,8 +2,7 @@
   <header style="padding: 10px;">
     <h1>SegFault</h1>
     <p>Authentication Test page</p>
-    <p>Token: {{ token }}</p>
-    <p @click="refreshLoginStatus">Check Status: {{ loggedIn }}</p>
+    <p>Login Status: {{ $store.getters['user/isLoggedIn'] }}</p>
     <p class="line" />
     <div>
       <h2 style="margin-bottom: 10px;">Registration Form</h2>
@@ -19,13 +18,13 @@
       <p>password: <input v-model="pw" /></p>
       <button @click="localLogin">Login!</button>
       <button @click="logout">Logout</button><br/>
-      <button @click.prevent="socialLogin('naver')">
+      <button @click="socialLogin('naver')">
         Log in with Naver
       </button><br/>
-      <button @click.prevent="socialLogin('kakao')">
+      <button @click="socialLogin('kakao')">
         Log in with Kakao
       </button><br/>
-      <button @click.prevent="socialLogin('google')">
+      <button @click="socialLogin('google')">
         Log in with Google
       </button>
       <button>
@@ -58,15 +57,6 @@
 </template>
 
 <script>
-
-function build_query(host, query_obj) {
-  let queries = []
-  for (let key in query_obj) {
-    let val = query_obj[key] ? query_obj[key] : ''
-    queries.push(key + '=' + val)
-  }
-  return host + '?' + queries.join('&')
-}
 
 export default {
   head() {
@@ -105,31 +95,10 @@ export default {
       })
     },
     localLogin() {
-      console.log(this.$data)
-      this.$axios.$post('/rest-auth/login/', {
-        username: this.id,
-        password: this.pw
-      })
-      .then(res => {
-        this.$axios.defaults.headers.common['Authorization'] = `Token ${res.key}`
-        console.log(res)
-        this.token = res.key
-      })
-      .catch(err => console.error(err))
+      this.$store.dispatch('user/loginByLocal', { account: this.id, password: this.pw })
     },
     logout() {
-      this.$axios.$post('/rest-auth/logout/')
-      .then(response => {
-        this.server_response = response
-        console.log(res)
-      })
-      .catch(err => console.error(err))
-      .finally(() => {
-        delete this.$axios.defaults.headers.common['Authorization']
-      })
-    },
-    async refreshLoginStatus() {
-      this.loggedIn = await this.$axios.$get('/status/')
+      this.$store.dispatch('user/logout')
     },
     activate_account() {
       this.$axios.$post('/rest-auth/registration/verify-email/', {
@@ -159,52 +128,8 @@ export default {
       })
     },
     socialLogin(provider) {
-      let href
-      const redirect_uri = 'http://localhost:3000/auth/o/'
-      switch(provider) {
-        case 'naver':
-          href = build_query('https://nid.naver.com/oauth2.0/authorize', {
-            response_type: 'code',
-            client_id: 'IexPnEMA8XZADrLQY3Bo',
-            redirect_uri: redirect_uri
-          })
-          break
-        case 'kakao':
-          href = build_query('https://kauth.kakao.com/oauth/authorize', {
-            response_type: 'code',
-            client_id: 'bc3a3274a103eb12f50fd6c8b43141d2',
-            redirect_uri: redirect_uri
-          })
-          break
-        case 'google':
-          href = build_query('https://accounts.google.com/o/oauth2/v2/auth', {
-            response_type: 'code',
-            client_id: '451025895792-ov19vhj1irvaea4h40f7rm493hir95s2.apps.googleusercontent.com',
-            redirect_uri: redirect_uri,
-            scope: 'profile email'
-          })
-          break
-        default:
-          console.error(`Provider ${provider} is not supported.`)
-          return null
-      }
-      return this._popup(href)
+      this.$store.dispatch('user/trySocialLogin', provider)
     }, 
-    _popup(href) {
-      let child    = window.open(href, '', '', false)
-      let timeout  = 10000 // in milliseconds
-      let interval = 100   // in milliseconds, checking frequency
-      let timer    = setInterval(() => {
-        timeout -= interval
-        if (child.closed) {
-          clearInterval(timer)
-          console.log('Login process is done')
-        }
-        else if (timeout < 0) {
-          clearInterval(timer)
-        }
-      }, interval)
-    }
   }
 }
 </script>

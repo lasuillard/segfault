@@ -31,11 +31,13 @@ export default {
   ** Global CSS
   */
   css: [
+
   ],
   /*
   ** Plugins to load before mounting the App
   */
   plugins: [
+    
   ],
   /*
   ** Nuxt.js modules
