@@ -1,7 +1,9 @@
+const self = require('./auth')
+
 export const REDIRECT_URI = 'http://localhost:3000/auth/o/'
 export const SUPPORTED_OAUTH_PROVIDERS = ['naver', 'kakao', 'google']
 
-export function buildQuery(url, query) {
+export function buildQuery (url, query) {
   let queries = []
   for (let key in query) {
     queries.push(`${key}=${Boolean(query[key]) ? query[key] : ''}`)
@@ -10,9 +12,9 @@ export function buildQuery(url, query) {
   return queries.length > 0 ? (url + '?' + queries.join('&')) : (url)
 }
 
-export function getLoginPage(provider) {
+export function getLoginPage (provider) {
   if (SUPPORTED_OAUTH_PROVIDERS.includes(provider)) {
-    return exports[`${provider.toUpperCase()}_LOGIN_HREF`]
+    return self[`${provider.toUpperCase()}_LOGIN_HREF`]
   } else {
     return undefined
   }

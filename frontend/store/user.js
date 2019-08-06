@@ -1,21 +1,10 @@
 import $axios from 'axios'
 import { getLoginPage } from '~/src/auth'
-import { LOAD_TOKEN, SET_TOKEN } from './mutation-types'
+import { LOAD_TOKEN, SET_TOKEN, DELETE_TOKEN } from './mutation-types'
 
-const REDIRECT_URI = 'http://localhost:3000/auth/o/'
-
-// used to build querystring
-function buildQuery(url, query) {
-  let queries = []
-  for (let key in query) {
-    queries.push(`${key}=${Boolean(query[key]) ? query[key] : ''}`)
-  }
-  return url + '?' + queries.join('&')
-}
 
 export const state = () => ({ 
   token: null,
-  provider: null, 
 })
 
 export const getters = {
@@ -31,17 +20,24 @@ export const mutations = {
     */
     if (Boolean(localStorage['token'])) {
       state.token = localStorage['token']
+      $axios.defaults.headers.common['Authorization'] = `Token ${token}`
     }
   },
-  [SET_TOKEN]: (state, { provider, token }) => {
+  [SET_TOKEN]: (state, token) => {
     /*
       set authtoken for api requests
     */
-    state.provider = provider
     state.token = token
     $axios.defaults.headers.common['Authorization'] = `Token ${token}`
     localStorage['token'] = token
   },
+  [DELETE_TOKEN]: (state) => {
+    /*
+      delete token from browser local storage
+    */
+    state.token = null
+    delete localStorage['token']
+  }
 }
 
 export const actions = {
@@ -56,10 +52,7 @@ export const actions = {
       password: credentials.password
     })
     .then(response => {
-      context.commit(SET_TOKEN, { 
-        provider: 'local', 
-        ...response
-      })
+      context.commit(SET_TOKEN, response.token)
     })
     .catch(err => {
       console.error(err)
@@ -74,7 +67,7 @@ export const actions = {
       @provider: social login providers, such as naver, kakao, google, ...
       @return: nothing
     */
-    href = getLoginPage(provider)
+    let href = getLoginPage(provider)
     if (Boolean(href)) {
       window.location.href = href
     } else {
@@ -90,10 +83,7 @@ export const actions = {
 
     this.$axios.$post(`/rest-auth/${provider}/`, { ...rsResponse })
     .then(response => {
-      context.commit(SET_TOKEN, {
-        provider: provider,
-        ...response
-      })
+      context.commit(SET_TOKEN, rsResponse.token)
       this.$router.replace({ name: 'index' })
     })
     .catch(err => {
@@ -109,7 +99,7 @@ export const actions = {
       console.error(err)
     })
     .finally(() => {
-      context.commit(SET_TOKEN, '')
+      context.commit(DELETE_TOKEN)
     })
   },
 }
