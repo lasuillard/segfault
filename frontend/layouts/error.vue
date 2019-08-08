@@ -1,14 +1,22 @@
 <template>
-  <v-app dark>
-    <h1 v-if="error.statusCode === 404">
-      {{ pageNotFound }}
-    </h1>
-    <h1 v-else>
-      {{ otherError }}
-    </h1>
-    <nuxt-link :to="{ path: '/' }">
-      Home page
-    </nuxt-link>
+  <v-app>
+    <v-layout align-center justify-center>
+      <v-card width="600px">
+        <v-card-title>
+          <h1 class="display-3">{{ error.statusCode }} Error</h1>
+        </v-card-title>
+        <v-card-text>
+          <h2 class="subtitle-1">{{ error.message }}</h2>
+        </v-card-text>
+        <v-card-actions>
+          <v-layout fill-height align-end justify-end>
+          <v-btn :to="{ name: 'index' }" exact replace large text>
+            Return to homepage
+          </v-btn>
+          </v-layout>
+        </v-card-actions>
+      </v-card>
+    </v-layout>
   </v-app>
 </template>
 
@@ -20,25 +28,6 @@ export default {
       type: Object,
       default: null
     }
-  },
-  head() {
-    const title =
-      this.error.statusCode === 404 ? this.pageNotFound : this.otherError
-    return {
-      title
-    }
-  },
-  data() {
-    return {
-      pageNotFound: '404 Not Found',
-      otherError: 'An error occurred'
-    }
   }
 }
 </script>
-
-<style scoped>
-h1 {
-  font-size: 20px;
-}
-</style>

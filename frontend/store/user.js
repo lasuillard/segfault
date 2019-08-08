@@ -1,51 +1,64 @@
 import $axios from 'axios'
 import { getLoginPage } from '~/src/auth'
-import { LOAD_TOKEN, SET_TOKEN, DELETE_TOKEN } from './mutation-types'
+import { SET_TOKEN, DELETE_TOKEN } from './mutation-types'
 
 
-export const state = () => ({ 
-  token: null,
+export const state = () => ({
+  avatar: null,
+  username: null,
+  email: null,
+  token: null
 })
 
 export const getters = {
+  getUserProfile: (state) => {
+    return {
+      avatar: state.avatar || '',
+      username: state.username || 'Guest',
+      email: state.email || 'No email has been set.'
+    }
+  },
   isLoggedIn: (state) => {
     return Boolean(state.token)
   }
 }
 
 export const mutations = {
-  [LOAD_TOKEN]: (state) => {
-    /*
-      load token from browser local storage, if exists
-    */
-    if (Boolean(localStorage['token'])) {
-      state.token = localStorage['token']
-      $axios.defaults.headers.common['Authorization'] = `Token ${token}`
-    }
-  },
   [SET_TOKEN]: (state, token) => {
     /*
       set authtoken for api requests
     */
     state.token = token
     $axios.defaults.headers.common['Authorization'] = `Token ${token}`
-    localStorage['token'] = token
+    localStorage.setItem('token', token)
   },
   [DELETE_TOKEN]: (state) => {
     /*
       delete token from browser local storage
     */
     state.token = null
-    delete localStorage['token']
+    localStorage.removeItem('token')
   }
 }
 
 export const actions = {
+  loadToken (context) {
+    /*
+      load token from browser local storage, if exists
+
+      @return: nothing
+    */
+    let storedToken = localStorage.getItem('token')
+    if (Boolean(storedToken)) {
+      context.commit(SET_TOKEN, storedToken)
+    }
+  },
   loginByLocal (context, credentials) {
     /*
       process local login
 
       @credentials: account and password
+      @return: nothing
     */
     this.$axios.$post('/rest-auth/login/', {
       username: credentials.account,
@@ -53,6 +66,7 @@ export const actions = {
     })
     .then(response => {
       context.commit(SET_TOKEN, response.token)
+      this.$router.push({ name: 'user' })
     })
     .catch(err => {
       console.error(err)
@@ -61,7 +75,7 @@ export const actions = {
   trySocialLogin (context, provider) { 
     /*
       process login ajax with server
-      * in social login, the code is redirected to certain page(/auth/o/^) as query parameter
+      * in social login, the code is redirected to certain page(/auth/o/) as query parameter
       * so the client should send this code and obtain token from server
 
       @provider: social login providers, such as naver, kakao, google, ...
@@ -77,20 +91,29 @@ export const actions = {
   finishSocialLogin (context, rsResponse) {
     /*
       obtain token from server with response of resource server(OAuth service provider)
+
+      @rsResponse: the response of resource server(google, ...)
+      @return: nothing
     */
     let { provider } = rsResponse
-    delete rsResponse.provider
+    delete rsResponse.provider // no need to send server, just for routing
 
     this.$axios.$post(`/rest-auth/${provider}/`, { ...rsResponse })
     .then(response => {
-      context.commit(SET_TOKEN, rsResponse.token)
+      context.commit(SET_TOKEN, response.token)
       this.$router.replace({ name: 'index' })
     })
     .catch(err => {
+      // TODO: replace route to error page
       console.error(err)
     })
   },
   logout (context) {
+    /*
+      notify server user is logging out
+
+      @return nothing
+    */
     this.$axios.$post('/rest-auth/logout/')
     .then(response => {
       console.log(response)

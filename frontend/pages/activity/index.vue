@@ -1,3 +1,3 @@
 <template>
-  <h2>Fragment</h2>
+  <h2>Activity</h2>
 </template>

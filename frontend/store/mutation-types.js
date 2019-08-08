@@ -1,8 +1,8 @@
 // for store 'index'
-export const CHANGE_THEME = 'CHANGE_THEME'
+export const LOAD_CONFIG = 'LOAD_CONFIG'
+export const CHANGE_CONFIG = 'CHANGE_CONFIG'
 
 // for store 'user'
-export const LOAD_TOKEN = 'LOAD_TOKEN'
 export const SET_TOKEN  = 'SET_TOKEN'
 export const DELETE_TOKEN = 'DELETE_TOKEN'
 
