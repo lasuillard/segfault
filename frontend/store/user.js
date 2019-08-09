@@ -69,7 +69,7 @@ export const actions = {
       this.$router.push({ name: 'user' })
     })
     .catch(err => {
-      console.error(err)
+      console.log(err.response.data)
     })
   },
   trySocialLogin (context, provider) { 
@@ -105,7 +105,7 @@ export const actions = {
     })
     .catch(err => {
       // TODO: replace route to error page
-      console.error(err)
+      console.log(err.response.data)
     })
   },
   logout (context) {

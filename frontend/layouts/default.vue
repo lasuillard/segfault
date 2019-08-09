@@ -130,7 +130,7 @@ export default {
     })
   },
   watch: {
-    '$route': function () {
+    '$route': function (_) {
       /*
         when changing route, close dialog
       */

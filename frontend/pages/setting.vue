@@ -19,6 +19,9 @@
           </v-radio-group>
         </v-list-item-content>
       </v-list-item>
+      
+      <v-divider />
+      
     </v-list>
     <v-card-actions>
       <v-spacer />
@@ -33,6 +36,9 @@ import { mapState, mapMutations, mapActions } from 'vuex'
 import { CHANGE_CONFIG } from '~/store/mutation-types'
 
 export default {
+  data: () => ({
+    isSaved: false
+  }),
   computed: {
     ...mapState({
       '_theme': 'theme'
@@ -58,6 +64,7 @@ export default {
       'changeConfig': CHANGE_CONFIG
     }),
     ...mapActions({
+      'loadConfig': 'loadConfig',
       'saveConfig': 'saveConfig',
       'resetConfig': 'resetConfig'
     })

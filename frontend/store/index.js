@@ -56,6 +56,6 @@ export const actions = {
     }))
   },
   resetConfig(context) {
-    context.commit(CHANGE_CONFIG, { key: 'theme', value: 'light '})
+    context.commit(CHANGE_CONFIG, { key: 'theme', value: 'light' })
   }
 }

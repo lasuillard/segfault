@@ -37,7 +37,7 @@ export default {
   ** Plugins to load before mounting the App
   */
   plugins: [
-    { ssr: false, src: '~plugins/initializer.js' }
+    
   ],
   /*
   ** Nuxt.js modules

@@ -29,7 +29,7 @@ from .serializers import (
     ChatSerializer,
 )
 from .permissions import (
-    ReadOnly,
+    IsOwner,
     IsOwnerOrReadOnly,
 )
 
@@ -39,7 +39,7 @@ User = get_user_model()
 class UserViewSet(ModelViewSet):
     serializer_class = UserSerializer
     authentication_classes = [SessionAuthentication, TokenAuthentication]
-    permission_classes = [ReadOnly]
+    permission_classes = [IsOwner]
 
     def get_queryset(self):
         queryset = User.objects.all()

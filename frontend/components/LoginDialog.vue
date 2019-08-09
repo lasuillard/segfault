@@ -10,7 +10,7 @@
             <v-text-field
               v-model="credentials.account"
               @keyup.enter="bindLocalLogin"
-              label="Account"
+              label="E-mail or Username"
               required
             />
           </v-flex>
@@ -36,12 +36,14 @@
             </v-layout>
           </v-flex>
           <v-flex xs12 class="mt-3">
-            You have no account yet? join us <nuxt-link :to="{ name: 'sign' }">here</nuxt-link>
-            <br />
-            Or you can try...
-            <v-btn @click="isExpanded = !isExpanded" x-small icon>
-              <v-icon>{{ isExpanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}</v-icon>
-            </v-btn>
+            <div>
+              Forgot your password? <nuxt-link :to="{ name: 'auth-reset-password' }">reset here</nuxt-link><br />
+              You have no account yet? <nuxt-link :to="{ name: 'sign' }">join us</nuxt-link><br/>
+              Or you can try...
+              <v-btn @click="isExpanded = !isExpanded" x-small icon>
+                <v-icon>{{ isExpanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}</v-icon>
+              </v-btn>
+            </div>
           </v-flex>
           <v-expand-transition>
             <div v-show="isExpanded" class="mt-3">

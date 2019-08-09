@@ -1,5 +1,9 @@
 const self = require('./auth')
 
+/*
+  source to handle oauth
+*/
+
 export const REDIRECT_URI = 'http://localhost:3000/auth/o/'
 export const SUPPORTED_OAUTH_PROVIDERS = ['naver', 'kakao', 'google']
 
