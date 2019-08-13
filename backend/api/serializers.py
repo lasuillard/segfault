@@ -11,17 +11,27 @@ from .models import (
 )
 
 
-class UserSerializer(serializers.HyperlinkedModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['pk', 'url', 'username', 'email']
+        fields = ['pk', 'username', 'email', 'avatar']
         read_only_fields = ['pk', 'username', 'email']
+
+
+class UserDetailsSerializer(serializers.ModelSerializer):
+    """
+    User model w/o password
+    """
+    class Meta:
+        model = User
+        fields = ('pk', 'username', 'email', 'avatar')
+        read_only_fields = ('email', )
 
 
 class AvatarSerializer(serializers.ModelSerializer):
     class Meta:
         model = Avatar
-        fields = ['pk', 'user', 'profile_image', 'display_name', 'introduce_message', 'date_modified']
+        fields = ['pk', 'user', 'profile_image', 'display_name', 'introduce_message', 'user_data', 'date_modified']
         read_only_fields = ['pk', 'user', 'date_modified']
 
 

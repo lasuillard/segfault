@@ -6,41 +6,66 @@
         <div class="title font-weight-thin">Questions make world better.</div>
         <v-form class="ma-6">
           <v-text-field 
+            v-model="credentials.email"
+            v-validate="'required|email'"
+            data-vv-name="credentials.email"
+            data-vv-as="email"
             class="mb-6"
             type="email"
             prepend-icon="mdi-email"
             label="E-mail"
             persistent-hint 
-            hint="Lorem ipsum"
+            :error-messages="veeErrors.collect('credentials.email')"
           />
           <v-text-field
+            v-model="credentials.username"
+            v-validate="{ 
+              required: true,
+              min: ssv.POST.username.min_length,
+              max: ssv.POST.username.max_length
+            }"
+            data-vv-name="credentials.username"
+            data-vv-as="username"
             class="mb-6"
             prepend-icon="mdi-account"
             label="Username" 
             persistent-hint 
-            hint="Lorem ipsum"
+            :counter="ssv.POST.username.max_length"
+            :error-messages="veeErrors.collect('credentials.username')"
           />
           <v-text-field
+            v-model="credentials.password1"
+            v-validate="'required'"
+            data-vv-name="credentials.password1"
+            data-vv-as="password"
             class="mb-6"
             type="password"
             prepend-icon="mdi-key"
             label="Password"
             persistent-hint
-            hint="Lorem ipsum"
+            :error-messages="veeErrors.collect('credentials.password1')"
           />
           <v-text-field
+            v-model="credentials.password2"
+            v-validate="{
+              required: true,
+              confirmed: credentials.password1
+            }"
+            data-vv-name="credentials.password2"
+            data-vv-as="password"
             class="mb-6"
             type="password"
             prepend-icon="mdi-key"
             label="Repeat Password"
             persistent-hint
-            hint="Lorem ipsum"
+            :error-messages="veeErrors.collect('credentials.password2')"
           />
           <v-layout justify-end>
           <v-btn
             @click="signUp"
             color="success"
             text
+            :disabled="veeErrors.any() || !isFormFilled"
           >
             Create an account
           </v-btn>
@@ -59,6 +84,9 @@ const URL_REGISTRATION = '/rest-auth/registration/'
 
 export default {
   asyncData (context) {
+    /*
+      load serverside validation info by OPTIONS request
+    */
     return context.$axios.$options(URL_REGISTRATION)
     .then(response => {
       return { ssv: response.actions }
@@ -74,13 +102,18 @@ export default {
       password2: null
     }
   }),
+  computed: {
+    isFormFilled () {
+      return Object.values(this.credentials).every(field => Boolean(field))
+    }
+  },
   methods: {
     signUp () {
       this.$axios.$post(URL_REGISTRATION, {
         ...this.credentials
       })
       .then(response => {
-
+        
       })
       .catch(err => {
 

@@ -11,6 +11,6 @@
 <script>
 export default {
   layout: 'empty',
-  created() { this.$store.dispatch('user/finishSocialLogin', this.$route.query) }
+  created () { this.$store.dispatch('user/finishSocialLogin', this.$route.query) }
 }
 </script>

@@ -80,21 +80,18 @@ class ToolTestCase(TestCase):
 class AvatarTestCase(TestCase):
 
     @staticmethod
-    def generate_random_avatar(user=None, profile_image=None):
+    def generate_random_avatar(user=None, random_profile_image=False):
         if user is None:
             user = create_tester()
 
-        if profile_image is None:
-            return Avatar.objects.create(user=user)
-
-        elif profile_image is 'random':  # create random image
-            profile_image = create_simple_file(
+        if random_profile_image:
+            user.avatar.profile_image = create_simple_file(
                 name=generate_random_string(length=16) + '.jpg',
                 content_type='image/jpeg',
                 size=65536,
             )
 
-        return Avatar.objects.create(user=user, profile_image=profile_image)
+        return user.avatar
 
     def test_avatar_instance_creation(self):
         avatar = self.generate_random_avatar()
@@ -146,7 +143,7 @@ class AvatarTestCase(TestCase):
         """
             case: delete instance using user custom image
         """
-        avatar = self.generate_random_avatar(profile_image='random')
+        avatar = self.generate_random_avatar(random_profile_image=True)
         path = avatar.profile_image.path
         avatar.delete()
         # custom image should be deleted

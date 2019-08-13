@@ -83,6 +83,10 @@ SOCIALACCOUNT_EMAIL_REQUIRED = False
 # django-rest-auth config
 OLD_PASSWORD_FIELD_ENABLED = True
 
+REST_AUTH_SERIALIZERS = {
+    'USER_DETAILS_SERIALIZER': 'api.serializers.UserDetailsSerializer'
+}
+
 # django
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',  # should be at top if possible

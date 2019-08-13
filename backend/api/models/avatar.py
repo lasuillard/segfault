@@ -5,7 +5,9 @@ from uuid import uuid4
 from django.db import models
 from django.dispatch import receiver
 from django.contrib import auth, admin
+from django.contrib.postgres.fields import JSONField
 
+User = auth.get_user_model()
 DEFAULT_PROFILE_IMAGES = ['avatar/default.png']
 
 
@@ -15,12 +17,13 @@ def get_image_uuid4(instance, filename):
 
 class Avatar(models.Model):
     user = models.OneToOneField(
-        auth.get_user_model(),
+        User,
         on_delete=models.CASCADE,
     )
     profile_image = models.ImageField(upload_to=get_image_uuid4, default=random.choice(DEFAULT_PROFILE_IMAGES))
     display_name = models.CharField(max_length=32)
     introduce_message = models.TextField(null=True, blank=True)
+    user_data = JSONField(null=True, blank=True)
     date_modified = models.DateTimeField(auto_now=True)
 
     class Meta:
@@ -37,6 +40,18 @@ class Avatar(models.Model):
             self.display_name = self.user.username
 
         super(Avatar, self).save(*args, **kwargs)
+
+
+@receiver(models.signals.post_save, sender=User)
+def auto_create_avatar_on_user_created(sender, instance, created, **kwargs):
+    """
+        create avatar instance along with creation of user instance
+    """
+    if not instance.pk:
+        return False
+
+    if created:
+        Avatar.objects.create(user=instance, display_name=instance.username)
 
 
 @receiver(models.signals.pre_save, sender=Avatar)

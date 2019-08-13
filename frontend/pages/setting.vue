@@ -7,7 +7,7 @@
           <v-list-item-title>Theme</v-list-item-title>
           <v-radio-group 
             class="px-2"
-            v-model="themeSelected"
+            v-model="localChanges.theme"
             row
           >
             <v-radio
@@ -26,48 +26,45 @@
     <v-card-actions>
       <v-spacer />
       <v-btn color="secondary" @click="resetConfig">Reset</v-btn>
-      <v-btn color="primary" @click="saveConfig">Save</v-btn>
+      <v-btn color="primary" @click="saveConfig({ ...localChanges })">Save</v-btn>
     </v-card-actions>
   </v-card>
 </template>
 
 <script>
-import { mapState, mapMutations, mapActions } from 'vuex'
-import { CHANGE_CONFIG } from '~/store/mutation-types'
+import { mapGetters, mapMutations, mapActions } from 'vuex'
+import { SET_DATA_FIELD } from '~/store/mutation-types'
+
+const DEFAULT_SETTING = {
+  theme: 'light'
+}
 
 export default {
   data: () => ({
-    isSaved: false
+    localChanges: {
+      ...DEFAULT_SETTING
+    }
   }),
   computed: {
-    ...mapState({
-      '_theme': 'theme'
+    ...mapGetters({
+      isLoggedIn: 'user/isLoggedIn',
+      config: 'user/getConfig'
     }),
     themesSupported () {
       return Object.keys(this.$vuetify.theme.themes).map(str => ({
-          display: str[0].toUpperCase() + str.slice(1),
-          value: str
-        })
-      )
-    },
-    themeSelected: {
-      get: function () {
-        return this._theme
-      },
-      set: function (newTheme) {
-        this.changeConfig({ key: 'theme', value: newTheme })
-      }
+        display: str[0].toUpperCase() + str.slice(1),
+        value: str
+      }))
     }
   },
   methods: {
-    ...mapMutations({
-      'changeConfig': CHANGE_CONFIG
-    }),
     ...mapActions({
-      'loadConfig': 'loadConfig',
-      'saveConfig': 'saveConfig',
-      'resetConfig': 'resetConfig'
-    })
+      saveConfig: 'user/saveConfig'
+    }),
+    resetConfig () {
+      for (var key in DEFAULT_SETTING)
+        this.localChanges[key] = DEFAULT_SETTING[key]
+    }
   }
 }
 </script>

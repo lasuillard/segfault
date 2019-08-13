@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <!-- Top navigation bar -->
-    <v-app-bar app v-bind="theme">
+    <v-app-bar app v-bind="getThemeObj">
       <v-app-bar-nav-icon @click="isDrawerOpen = !isDrawerOpen" />
       <v-toolbar-title>SegFault</v-toolbar-title>
 
@@ -28,12 +28,12 @@
     <v-navigation-drawer
       app
       v-model="isDrawerOpen"
-      v-bind="theme"
+      v-bind="getThemeObj"
     >
       <v-list>
         <v-list-item>
           <v-list-item-avatar>
-            <v-img src="" />
+            <v-img :src="profile.profile_image" />
           </v-list-item-avatar>
         </v-list-item>
         <v-list-item>
@@ -68,7 +68,7 @@
     </v-navigation-drawer>
 
     <!-- Content -->
-    <v-content v-bind="theme">
+    <v-content v-bind="getThemeObj">
       <v-container fluid>
         <nuxt />
       </v-container>
@@ -121,8 +121,13 @@ export default {
     ...mapGetters({
       isLoggedIn: 'user/isLoggedIn',
       profile: 'user/getUserProfile',
-      theme: 'getThemeObj'
-    })
+      config: 'user/getConfig'
+    }),
+    getThemeObj () {
+      return {
+        [this.config.theme]: true
+      }
+    }
   },
   methods: {
     ...mapActions({

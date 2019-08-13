@@ -3,9 +3,20 @@
   <component name="ChangeListManager">
     <list default="true" id="b3e2105c-d006-4677-a374-c4819749fcec" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/permissions.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/permissions.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/viewsets.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/viewsets.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/models/avatar.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/models/avatar.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/serializers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/tests/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/tests/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/viewsets.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/segfault/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/segfault/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/layouts/default.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/layouts/default.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/nuxt.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/nuxt.config.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/pages/setting.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/pages/setting.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/pages/sign.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/pages/sign.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/store/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/store/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/store/mutation-types.js" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/store/mutation-types.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/store/user.js" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/store/user.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/yarn.lock" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/yarn.lock" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -34,19 +45,20 @@
   <component name="PropertiesComponent">
     <property name="DefaultHtmlFileTemplate" value="HTML File" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/templates" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/api/viewsets" />
     <property name="settings.editor.selected.configurable" value="reference.settingsdialog.IDE.editor.colors.VCS" />
   </component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\dldbc\Git\SegFault\backend\api\viewsets" />
+      <recent name="C:\Users\dldbc\Git\SegFault\backend\templates" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\dldbc\Git\SegFault\backend\media\avatar" />
       <recent name="C:\Users\dldbc\Git\SegFault\backend\segfault" />
       <recent name="C:\Users\dldbc\Git\SegFault\backend\api\serializers" />
       <recent name="C:\Users\dldbc\Git\SegFault\backend\api\tests" />
       <recent name="C:\Users\dldbc\Git\SegFault\backend\api" />
-    </key>
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\Users\dldbc\Git\SegFault\backend\templates" />
     </key>
   </component>
   <component name="RunDashboard">

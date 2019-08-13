@@ -37,7 +37,8 @@ export default {
   ** Plugins to load before mounting the App
   */
   plugins: [
-    
+    { src: '~/plugins/axios.js', ssr: false },
+    { src: '~/plugins/vee-validate.js', ssr: false }
   ],
   /*
   ** Nuxt.js modules
@@ -53,7 +54,7 @@ export default {
   ** See https://axios.nuxtjs.org/options
   */
   axios: {
-    baseURL: 'http://localhost:8000/',
+    baseURL: 'http://localhost:8000/'
   },
   /*
   ** vuetify module configuration
