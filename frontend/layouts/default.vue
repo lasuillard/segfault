@@ -39,7 +39,7 @@
         <v-list-item>
           <v-list-item-content>
             <v-list-item-title class="title">
-              {{ profile.username }}
+              {{ profile.display_name }}
             </v-list-item-title>
             <v-list-item-subtitle>
               {{ profile.email }}
@@ -124,6 +124,7 @@ export default {
       config: 'user/getConfig'
     }),
     getThemeObj () {
+      // convert theme configuration into vuetify theme object
       return {
         [this.config.theme]: true
       }
@@ -135,10 +136,8 @@ export default {
     })
   },
   watch: {
-    '$route': function (_) {
-      /*
-        when changing route, close dialog
-      */
+    '$route': function (route, oldRoute) {
+      // when changing route, close dialog
       this.isSignInOpen = false
     }
   }

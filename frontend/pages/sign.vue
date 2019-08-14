@@ -18,22 +18,6 @@
             :error-messages="veeErrors.collect('credentials.email')"
           />
           <v-text-field
-            v-model="credentials.username"
-            v-validate="{ 
-              required: true,
-              min: ssv.POST.username.min_length,
-              max: ssv.POST.username.max_length
-            }"
-            data-vv-name="credentials.username"
-            data-vv-as="username"
-            class="mb-6"
-            prepend-icon="mdi-account"
-            label="Username" 
-            persistent-hint 
-            :counter="ssv.POST.username.max_length"
-            :error-messages="veeErrors.collect('credentials.username')"
-          />
-          <v-text-field
             v-model="credentials.password1"
             v-validate="'required'"
             data-vv-name="credentials.password1"
@@ -61,14 +45,14 @@
             :error-messages="veeErrors.collect('credentials.password2')"
           />
           <v-layout justify-end>
-          <v-btn
-            @click="signUp"
-            color="success"
-            text
-            :disabled="veeErrors.any() || !isFormFilled"
-          >
-            Create an account
-          </v-btn>
+            <v-btn
+              @click="signUp"
+              color="success"
+              text
+              :disabled="veeErrors.any() || !isFormFilled"
+            >
+              Create an account
+            </v-btn>
           </v-layout>
         </v-form>
       </v-flex>
@@ -97,7 +81,6 @@ export default {
     ssv: {},
     credentials: {
       email: null,
-      username: null,
       password1: null,
       password2: null
     }

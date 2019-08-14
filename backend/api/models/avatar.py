@@ -22,7 +22,7 @@ class Avatar(models.Model):
     )
     profile_image = models.ImageField(upload_to=get_image_uuid4, default=random.choice(DEFAULT_PROFILE_IMAGES))
     display_name = models.CharField(max_length=32)
-    introduce_message = models.TextField(null=True, blank=True)
+    introduce_message = models.CharField(null=True, blank=True, max_length=128)
     user_data = JSONField(null=True, blank=True)
     date_modified = models.DateTimeField(auto_now=True)
 

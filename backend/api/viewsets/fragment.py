@@ -1,12 +1,6 @@
 from django.contrib.auth import get_user_model
-from django.db.models import Q
-from rest_framework import status
-from rest_framework.decorators import action
-from rest_framework.response import Response
-from rest_framework.viewsets import ModelViewSet
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
-from rest_framework.permissions import IsAdminUser, IsAuthenticated, IsAuthenticatedOrReadOnly
-
+from rest_framework.viewsets import ModelViewSet
 from ..models import Fragment
 from ..serializers import FragmentSerializer
 from ..permissions import IsOwnerOrReadOnly

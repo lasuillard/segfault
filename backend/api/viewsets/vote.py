@@ -1,7 +1,6 @@
 from django.contrib.auth import get_user_model
-from rest_framework.viewsets import ModelViewSet
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
-
+from rest_framework.viewsets import ModelViewSet
 from ..models import Vote
 from ..serializers import VoteSerializer
 from ..permissions import IsOwnerOrReadOnly

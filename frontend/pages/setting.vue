@@ -43,7 +43,8 @@ export default {
   data: () => ({
     localChanges: {
       ...DEFAULT_SETTING
-    }
+    },
+    changeDetected: false
   }),
   computed: {
     ...mapGetters({
@@ -64,6 +65,21 @@ export default {
     resetConfig () {
       for (var key in DEFAULT_SETTING)
         this.localChanges[key] = DEFAULT_SETTING[key]
+    }
+  },
+  created () {
+    if (this.config) {
+      for (var key in this.localChanges) {
+        this.localChanges[key] = this.config[key] || DEFAULT_SETTING[key]
+      }
+    }
+  },
+  watch: {
+    localChanges: {
+      deep: true,
+      handler: function (val, oldVal) {
+        this.changeDetected = true
+      }
     }
   }
 }
