@@ -264,6 +264,8 @@ class CommentTestCase(TestCase):
         for commentable in self.generate_commentables():
             self.assertEqual(commentable, commentable.get_child_object())
 
+    def test_commentable_get_comment_count(self):
+        pass
 
 # includes test for votable
 class VoteTestCase(TestCase):
@@ -320,6 +322,9 @@ class VoteTestCase(TestCase):
                 votes.append(vote.rating)
 
             self.assertAlmostEqual(statistics.mean(votes), votable.get_average_rating(), delta=0.01)
+
+    def test_votable_get_vote_count(self):
+        pass
 
 
 class ChatRoomTestCase(TestCase):

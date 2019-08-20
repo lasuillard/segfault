@@ -26,8 +26,11 @@ class Votable(models.Model):
         return None
     get_child_object.short_description = 'Related child'
 
+    def get_vote_count(self):
+        return self.vote_set.count()
+
     def get_average_rating(self):
-        return float(self.vote_set.aggregate(models.Avg('rating'))['rating__avg'])
+        return float(self.vote_set.aggregate(models.Avg('rating'))['rating__avg'] or 0.0)
     get_average_rating.short_description = 'Rating'
 
 

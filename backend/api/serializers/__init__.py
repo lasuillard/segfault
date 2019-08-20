@@ -5,7 +5,7 @@ from .user import UserSerializer, UserDetailSerializer
 from .avatar import AvatarSerializer
 
 #
-from .fragment import FragmentSerializer
+from .fragment import FragmentSerializer, FragmentDetailSerializer
 
 #
 from .answer import AnswerSerializer

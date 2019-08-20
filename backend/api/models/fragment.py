@@ -27,6 +27,9 @@ class Fragment(Commentable, Votable):
     def __str__(self):
         return f'Fragment { self.pk } (by { self.user })'
 
+    def get_answer_count(self):
+        return self.answer_set.count()
+
 
 class ArrayFieldListFilter(admin.SimpleListFilter):
     title = 'Tags'

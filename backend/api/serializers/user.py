@@ -10,8 +10,8 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['email', 'avatar']
-        read_only_fields = ['email', 'avatar']
+        fields = ['pk', 'email', 'avatar']
+        read_only_fields = ['pk', 'email', 'avatar']
 
 
 class UserDetailSerializer(serializers.ModelSerializer):
@@ -24,5 +24,5 @@ class UserDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['email', 'avatar']
-        read_only_fields = ['email', 'avatar']
+        fields = ['pk', 'email', 'avatar']
+        read_only_fields = ['pk', 'email', 'avatar']

@@ -18,6 +18,9 @@ class Commentable(models.Model):
         return None
     get_child_object.short_description = 'Related child'
 
+    def get_comment_count(self):
+        return self.comment_set.count()
+
 
 class Comment(models.Model):
     parent = models.ForeignKey(

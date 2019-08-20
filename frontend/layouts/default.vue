@@ -104,11 +104,6 @@ export default {
           icon: 'mdi-view-dashboard-variant',
           link: { name: 'fragment'}
         },
-        { 
-          title: 'About',
-          icon: 'mdi-help-box',
-          link: { name: 'about' }
-        },
         {
           title: 'Setting',
           icon: 'mdi-settings',

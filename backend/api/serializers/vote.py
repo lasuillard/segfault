@@ -6,4 +6,4 @@ class VoteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Vote
         fields = ['pk', 'user', 'target', 'rating']
-        read_only_fields = ['pk', 'user', 'target']
+        read_only_fields = ['pk']
