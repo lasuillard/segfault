@@ -5,13 +5,13 @@ from .avatar import AvatarSerializer
 User = get_user_model()
 
 
-class UserSerializer(serializers.ModelSerializer):
+class UserSerializer(serializers.HyperlinkedModelSerializer):
     avatar = AvatarSerializer()
 
     class Meta:
         model = User
-        fields = ['pk', 'email', 'avatar']
-        read_only_fields = ['pk', 'email', 'avatar']
+        fields = ['url', 'avatar']
+        read_only_fields = ['avatar']
 
 
 class UserDetailSerializer(serializers.ModelSerializer):
@@ -25,4 +25,4 @@ class UserDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['pk', 'email', 'avatar']
-        read_only_fields = ['pk', 'email', 'avatar']
+        read_only_fields = ['email', 'avatar']

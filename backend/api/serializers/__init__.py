@@ -2,7 +2,7 @@
 from .user import UserSerializer, UserDetailSerializer
 
 #
-from .avatar import AvatarSerializer
+from .avatar import AvatarSerializer, AvatarDetailSerializer
 
 #
 from .fragment import FragmentSerializer, FragmentDetailSerializer
