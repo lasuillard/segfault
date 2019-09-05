@@ -3,22 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="b3e2105c-d006-4677-a374-c4819749fcec" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/models/comment.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/models/comment.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/models/fragment.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/models/fragment.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/models/vote.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/models/vote.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/serializers/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/serializers/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/serializers/comment.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/serializers/comment.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/serializers/fragment.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/serializers/fragment.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/serializers/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/serializers/user.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/serializers/vote.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/serializers/vote.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/tests/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/tests/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/viewsets/comment.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/viewsets/comment.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/viewsets/fragment.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/viewsets/fragment.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/viewsets/vote.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/viewsets/vote.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/layouts/default.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/layouts/default.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/pages/about.vue" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/pages/fragment/index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/pages/fragment/index.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/store/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/store/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/segfault/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/segfault/settings.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
