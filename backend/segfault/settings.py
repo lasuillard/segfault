@@ -20,10 +20,10 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'o)gvz2d=s_%!5_5(9u1+_o7h7m47k@a$sad0lw*%%)d7js^yop'
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'o)gvz2d=s_%!5_5(9u1+_o7h7m47k@a$sad0lw*%%)d7js^yop')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = bool(os.environ.get('DJANGO_DEBUG', True))
 
 ALLOWED_HOSTS = []
 
@@ -157,11 +157,11 @@ CHANNEL_LAYERS = {
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'segfault',
-        'USER': 'dbuser',
-        'PASSWORD': '9306',
-        'HOST': '127.0.0.1',
-        'PORT': '5432',
+        'NAME': os.environ.get('DJANGO_DB_NAME', 'segfault'),
+        'USER': os.environ.get('DJANGO_DB_UESRNAME', 'dbuser'),
+        'PASSWORD': os.environ.get('DJANGO_DB_PASSWORD','9306'),
+        'HOST': os.environ.get('DJANGO_DB_HOST', 'localhost'),
+        'PORT': os.environ.get('DJANGO_DB_PORT', '5432'),
     }
 }
 
