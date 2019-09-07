@@ -145,7 +145,9 @@ CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            'hosts': [('127.0.0.1', 6379)]
+            'hosts': [
+                (os.environ.get('REDIS_HOST', 'localhost'), os.environ.get('REDIS_PORT', 6379))
+            ]
         }
     }
 }
@@ -158,8 +160,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.environ.get('DJANGO_DB_NAME', 'segfault'),
-        'USER': os.environ.get('DJANGO_DB_UESRNAME', 'dbuser'),
-        'PASSWORD': os.environ.get('DJANGO_DB_PASSWORD','9306'),
+        'USER': os.environ.get('DJANGO_DB_USERNAME', 'dbuser'),
+        'PASSWORD': os.environ.get('DJANGO_DB_PASSWORD', '9306'),
         'HOST': os.environ.get('DJANGO_DB_HOST', 'localhost'),
         'PORT': os.environ.get('DJANGO_DB_PORT', '5432'),
     }
