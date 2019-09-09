@@ -42,23 +42,25 @@ services:
 
   server:
     build:
-      context: ./backend
-      dockerfile: ../compose/backend/Dockerfile.dev
+      context: ./server
+      dockerfile: ../compose/server/Dockerfile.dev
     depends_on:
       - postgres
       - redis
     environment:
-      - DJANGO_DEBUG=True
+      - DJANGO_SETTINGS_MODULE=segfault.settings.dev
       - DJANGO_SECRET_KEY=dev_secret_key
-      - DJANGO_DB_HOST=postgres
-      - DJANGO_DB_PORT=5432
-      - DJANGO_DB_NAME=segfault
-      - DJANGO_DB_USERNAME=dbuser
-      - DJANGO_DB_PASSWORD=9306
+      # database
+      - DATABASE_HOST=postgres
+      - DATABASE_PORT=5432
+      - DATABASE_NAME=segfault
+      - DATABASE_USERNAME=dbuser
+      - DATABASE_PASSWORD=9306
+      # redis
       - REDIS_HOST=redis
       - REDIS_PORT=6380
     volumes:
-      - ./backend:/app
+      - ./server:/server
     networks:
       - backend
     ports:
