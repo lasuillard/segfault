@@ -80,14 +80,16 @@ services:
       <<: *django-settings
     volumes:
       - ./django:/django
+      - ./log:/var/log/daphne
     networks:
       - backend
     ports:
       - "8443:8443"
     command: >
-      sh -c "python manage.py migrate &&
-            /wait-for-it.sh postgres:5432 -t 10 &&
-            daphne -b 0.0.0.0 -p 8443 segfault.asgi:application"
+      sh -c "/wait-for-it.sh postgres:5432 -t 10 &&
+            python manage.py migrate &&
+            python manage.py loaddata db.json &&
+            daphne -b 0.0.0.0 -p 8443 segfault.asgi:application --access-log /var/log/daphne/daphne.log"
     restart: always
 
   uwsgi:
@@ -100,7 +102,7 @@ services:
       <<: *django-settings
     volumes:
       - ./django:/django
-      - ./uwsgi/log:/var/log/uwsgi
+      - ./log:/var/log/uwsgi
     networks:
       - backend
     ports:
@@ -110,7 +112,7 @@ services:
       sh -c "pip install uwsgi --default-timeout=100 &&
             python manage.py collectstatic --noinput &&
             mkdir -p /var/log/uwsgi &&
-            uwsgi --http :8000 -w segfault.wsgi --logto /var/log/uwsgi/segfault-uwsgi.log"
+            uwsgi --http :8000 -w segfault.wsgi --logto /var/log/uwsgi/uwsgi.log"
     restart: always
 
   # TODO: - add waits for uwsgi / daphne server to be ready
@@ -123,7 +125,7 @@ services:
     volumes:
       - ./django/collected_static:/var/www/segfault/static
       - ./nginx/service.template:/etc/nginx/conf.d/service.template
-      - ./nginx/log:/var/log/nginx
+      - ./log:/var/log/nginx
     networks:
       - backend
     ports:

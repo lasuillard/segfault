@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
 import os
+import json
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
@@ -19,7 +20,24 @@ DEBUG = False
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'o)gvz2d=s_%!5_5(9u1+_o7h7m47k@a$sad0lw*%%)d7js^yop')
+try:
+    with open('secret.json') as f:
+        secrets = json.load(f)
+
+except FileNotFoundError:
+    pass
+
+
+def load_secret_key():
+    try:
+        secret_key = secrets['DJANGO_SECRET_KEY']
+    except KeyError:
+        secret_key = os.environ.get('DJANGO_SECRET_KEY')
+
+    return secret_key
+
+
+SECRET_KEY = load_secret_key()
 
 ALLOWED_HOSTS = []
 
