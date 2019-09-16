@@ -11,6 +11,8 @@ from .viewsets import (
     ChatViewSet,
 )
 
+app_name = 'v1'
+
 router = DefaultRouter()
 router.register(r'user', UserViewSet, basename='user')
 router.register(r'avatar', AvatarViewSet, basename='avatar')

@@ -17,24 +17,14 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
-from django.views.generic import TemplateView
-from .views import NaverLoginView, KakaoLoginView, GoogleLoginView
 
 urlpatterns = [
-    # admin
+    # admin urls
     path('admin/', admin.site.urls),
-    # auth
-    path(r'password-reset/confirm/<uidb64>/<token>/',
-         TemplateView.as_view(template_name="password_reset_confirm.html"),
-         name='password_reset_confirm'
-         ),
-    path('account/', include('allauth.urls')),
-    path('rest-auth/', include('rest_auth.urls')),
-    path('rest-auth/registration/', include('rest_auth.registration.urls')),
-    path('rest-auth/naver/', NaverLoginView.as_view(), name='naver_login'),
-    path('rest-auth/kakao/', KakaoLoginView.as_view(), name='kakao_login'),
-    path('rest-auth/google/', GoogleLoginView.as_view(), name='google_login'),
-    # apps
+    path('admin/doc/', include('django.contrib.admindocs.urls')),
+    # auth urls
+    path('auth/', include('auth.urls')),
+    # apps urls
     path('api/', include('api.urls')),
 ]
 
