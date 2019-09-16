@@ -41,12 +41,16 @@ for development, i recommend using just Nginx gateway.
 * Django Admin: /admin
 * Browsable API: /api
 
+### Secrets
+secret.json and db.json files are not included in repo.
+
 ### TODO
 Free note here. but just your parts.
 
 * Backend
-  * Handle secrets in separated file: secret.json, and automate it.
-  * Syncrhonize dev database via remotely or dumps.
+  * Recategorize and do others for django admin page
+  * Improve API resource related things(models, serializers, viewsets, ...) with unit tests
+  * (LATER) HTTPS/SSL for Nginx
 
 * Frontend
-  *
+  * NOTHING YET
