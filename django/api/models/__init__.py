@@ -1,7 +1,7 @@
 #
 from .avatar import (
     Avatar,
-    DEFAULT_PROFILE_IMAGES,
+    AVATAR_DEFAULT_IMAGE,
 )
 #
 from .fragment import Fragment

@@ -12,7 +12,8 @@ class FragmentSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Fragment
-        fields = ['url', 'user', 'title', 'tags', 'is_closed', 'answer_count', 'comment_count', 'vote_count', 'average_rating', 'date_created']
+        fields = ['url', 'user', 'title', 'tags', 'is_closed', 'answer_count',
+                  'comment_count', 'vote_count', 'average_rating', 'date_created']
         read_only_fields = ['user', 'answer_count', 'comment_count', 'vote_count', 'average_rating', 'date_created']
 
 

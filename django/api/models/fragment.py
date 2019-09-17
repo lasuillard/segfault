@@ -1,13 +1,17 @@
 from django.db import models
-from django.contrib import auth, admin
+from django.contrib.auth import get_user_model
+from django.contrib import admin
 from django.contrib.postgres.fields import ArrayField
 from .comment import Commentable
 from .vote import Votable
 
+User = get_user_model()
 
+
+# do with state model (model-utils)
 class Fragment(Commentable, Votable):
     user = models.ForeignKey(
-        auth.get_user_model(),
+        User,
         on_delete=models.CASCADE,
     )
     title = models.CharField(max_length=256)
