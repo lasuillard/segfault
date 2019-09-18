@@ -3,6 +3,7 @@ import os
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 from django.contrib.auth import get_user_model
+from segfault.utility import generate_random_string
 from api.models import (
     Avatar, AVATAR_DEFAULT_IMAGE,
     Fragment,
@@ -18,17 +19,11 @@ User = get_user_model()
 
 class AvatarTest(TestCase):
 
-    def setUp(self):
-        pass
-
-    def tearDown(self):
-        pass
-
     def test_avatar_created_with_default(self):
         """
             Test avatar instance is created with appropriate default
         """
-        tester = User.objects.create(username='tester')
+        tester = User.objects.create(username=generate_random_string(16))
         avatar = tester.avatar
         # when display_name is not given, then defaulted by username
         self.assertEqual(avatar.display_name, tester.username)
@@ -37,7 +32,7 @@ class AvatarTest(TestCase):
         tester.delete()
 
     def test_avatar_blank_display_name(self):
-        tester = User.objects.create(username='tester')
+        tester = User.objects.create(username=generate_random_string(16))
         avatar = tester.avatar
         # blank the display_name
         avatar.display_name = ''
@@ -48,7 +43,7 @@ class AvatarTest(TestCase):
         """
             Test new image for avatar and the image is stored at media storage
         """
-        tester = User.objects.create(username='tester')
+        tester = User.objects.create(username=generate_random_string(16))
         avatar = tester.avatar
         # set avatar image
         avatar.profile_image = SimpleUploadedFile(
@@ -67,14 +62,11 @@ class AvatarTest(TestCase):
         """
         pass
 
-    def test_avatar_(self):
-        pass
-
     def test_avatar_signal_auto_create_avatar_on_user_created(self):
         """
             Avatar instances are created along with user instance creation
         """
-        tester = User.objects.create(username='tester')
+        tester = User.objects.create(username=generate_random_string(16))
         avatar = tester.avatar
         # is avatar well created?
         self.assertIsInstance(avatar, Avatar)
@@ -84,7 +76,7 @@ class AvatarTest(TestCase):
         """
             Test new image for avatar. its behavior depends on signal (and test includes it in fact!)
         """
-        tester = User.objects.create(username='tester')
+        tester = User.objects.create(username=generate_random_string(16))
         avatar = tester.avatar
         # create sample images for change
         [sample_image_one, sample_image_two] = [
@@ -109,7 +101,7 @@ class AvatarTest(TestCase):
         """
             Delete user custom image when avatar instance deleted
         """
-        tester = User.objects.create(username='tester')
+        tester = User.objects.create(username=generate_random_string(16))
         avatar = tester.avatar
         # set image
         avatar.profile_image = SimpleUploadedFile(
@@ -126,7 +118,7 @@ class AvatarTest(TestCase):
         """
             __str__ should include object primary key for identification
         """
-        tester = User.objects.create(username='tester')
+        tester = User.objects.create(username=generate_random_string(16))
         avatar = tester.avatar
         # the instance should represent itself well
         self.assertIn(str(avatar.pk), avatar.__str__())
@@ -136,7 +128,10 @@ class AvatarTest(TestCase):
 class AnswerTest(TestCase):
 
     def test_answer_magic_method_str_includes_instance_id(self):
-        tester = User.objects.create(username='tester')
-        fragment = Fragment.objects.create(user=tester, title='test fragment', content='test string')
-        answer = Answer.objects.create(user=tester, target=fragment, content='test string')
+        tester = User.objects.create(username=generate_random_string(16))
+        fragment = Fragment.objects.create(
+            user=tester, title=generate_random_string(64), content=generate_random_string(1024)
+        )
+        answer = Answer.objects.create(user=tester, target=fragment, content=generate_random_string(1024))
         self.assertIn(str(answer.pk), answer.__str__())
+

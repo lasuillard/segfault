@@ -1,5 +1,4 @@
 from django.contrib.auth import get_user_model
-from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.viewsets import ModelViewSet
 from api.models import ChatRoom, Chat
 from ..serializers import ChatRoomSerializer, ChatSerializer
@@ -11,7 +10,6 @@ User = get_user_model()
 class ChatRoomViewSet(ModelViewSet):
     queryset = ChatRoom.objects.all()
     serializer_class = ChatRoomSerializer
-    authentication_classes = [SessionAuthentication, TokenAuthentication]
     permission_classes = [IsOwnerOrReadOnly]
 
     def perform_create(self, serializer):
@@ -21,7 +19,6 @@ class ChatRoomViewSet(ModelViewSet):
 class ChatViewSet(ModelViewSet):
     queryset = Chat.objects.all()
     serializer_class = ChatSerializer
-    authentication_classes = [SessionAuthentication, TokenAuthentication]
     permission_classes = [IsOwnerOrReadOnly]
 
     def get_queryset(self):

@@ -1,25 +1,35 @@
 from django.contrib.auth import get_user_model
 from rest_framework.viewsets import ModelViewSet
-from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from api.models import Answer
-from ..serializers import AnswerSerializer
 from api.permissions import IsOwnerOrReadOnly
+from ..serializers import AnswerSerializer, AnswerDetailSerializer
 
 User = get_user_model()
 
 
 class AnswerViewSet(ModelViewSet):
-    serializer_class = AnswerSerializer
-    authentication_classes = [SessionAuthentication, TokenAuthentication]
     permission_classes = [IsOwnerOrReadOnly]
+
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return AnswerSerializer
+
+        return AnswerDetailSerializer
 
     def get_queryset(self):
         queryset = Answer.objects.all()
         user = self.request.query_params.get('user', default=None)
+        target = self.request.query_params.get('target', default=None)
         if user is not None:
-            queryset = queryset.filter(user__pk=user)
+            queryset = queryset.filter(user__username=user)
+
+        if target is not None:
+            queryset = queryset.filter(target__pk=target)
 
         return queryset
 
     def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+    def perform_update(self, serializer):
         serializer.save(user=self.request.user)

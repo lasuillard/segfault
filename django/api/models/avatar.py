@@ -1,12 +1,11 @@
 import os
-from uuid import uuid1, uuid4
-
+from uuid import uuid4
 from django.db import models
 from django.dispatch import receiver
-from django.contrib import auth, admin
+from django.contrib.auth import get_user_model
 from django.contrib.postgres.fields import JSONField
 
-User = auth.get_user_model()
+User = get_user_model()
 
 AVATAR_DEFAULT_IMAGE = 'avatar_default_image.png'
 
@@ -30,7 +29,7 @@ class Avatar(models.Model):
         order_with_respect_to = 'user'
 
     def __str__(self):
-        return f'Avatar { self.pk } (for { self.user.username })'
+        return f'Avatar { self.pk } → User { self.user }'
 
     def save(self, *args, **kwargs):
         # give default display name as user's account name
@@ -85,10 +84,3 @@ def auto_delete_profile_image_on_delete(sender, instance, **kwargs):
     file = instance.profile_image
     if os.path.exists(file.path) and file.name != AVATAR_DEFAULT_IMAGE:
         file.delete(save=False)
-
-
-@admin.register(Avatar)
-class AvatarAdmin(admin.ModelAdmin):
-    list_display = ['pk', 'user', 'profile_image', 'display_name', 'date_modified']
-    list_display_links = ['pk']
-    search_fields = ['pk', 'user__username', 'display_name']

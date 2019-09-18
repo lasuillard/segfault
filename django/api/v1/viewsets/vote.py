@@ -1,5 +1,4 @@
 from django.contrib.auth import get_user_model
-from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.viewsets import ModelViewSet
 from api.models import Vote
 from ..serializers import VoteSerializer
@@ -10,7 +9,6 @@ User = get_user_model()
 
 class VoteViewSet(ModelViewSet):
     serializer_class = VoteSerializer
-    authentication_classes = [SessionAuthentication, TokenAuthentication]
     permission_classes = [IsOwnerOrReadOnly]
 
     def get_queryset(self):

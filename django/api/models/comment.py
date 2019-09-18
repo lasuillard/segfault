@@ -1,5 +1,7 @@
 from django.db import models
-from django.contrib import auth, admin
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 
 # interface class for resources that can be commented
@@ -32,7 +34,7 @@ class Comment(models.Model):
         on_delete=models.CASCADE,
     )
     user = models.ForeignKey(
-        auth.get_user_model(),
+        User,
         on_delete=models.CASCADE,
     )
     target = models.ForeignKey(
@@ -44,18 +46,4 @@ class Comment(models.Model):
     date_modified = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f'Comment { self.pk } ({ self.target })'
-
-
-@admin.register(Commentable)
-class CommentableAdmin(admin.ModelAdmin):
-    list_display = ['pk', 'get_child_object']
-
-
-@admin.register(Comment)
-class CommentAdmin(admin.ModelAdmin):
-    list_display = ['pk', 'parent', 'user', 'target', 'content_length', 'date_created', 'date_modified']
-
-    def content_length(self, obj):
-        return f'{ len(obj.content) } Chars'
-    content_length.short_description = 'Content'
+        return f'Comment { self.pk } → { self.target }'

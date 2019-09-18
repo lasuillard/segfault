@@ -1,13 +1,15 @@
 from django.db import models
-from django.contrib import auth, admin
+from django.contrib.auth import get_user_model
 from .comment import Commentable
 from .vote import Votable
 from .fragment import Fragment
 
+User = get_user_model()
+
 
 class Answer(Commentable, Votable):
     user = models.ForeignKey(
-        auth.get_user_model(),
+        User,
         on_delete=models.CASCADE,
     )
     target = models.ForeignKey(
@@ -15,21 +17,8 @@ class Answer(Commentable, Votable):
         on_delete=models.CASCADE,
     )
     content = models.TextField(blank=False)
-    is_selected = models.BooleanField(default=False)
-    date_created = models.DateTimeField(auto_now_add=True)
-    date_modified = models.DateTimeField(auto_now=True)
+    date_created = models.DateTimeField(auto_now_add=True, editable=False)
+    date_modified = models.DateTimeField(auto_now=True, editable=False)
 
     def __str__(self):
-        return f'Answer { self.pk } ({ self.target })'
-
-
-@admin.register(Answer)
-class AnswerAdmin(admin.ModelAdmin):
-    list_display = ['pk', 'user', 'target', 'content_length', 'is_selected', 'date_created', 'date_modified']
-    list_display_links = ['pk']
-    list_filter = ['is_selected']
-    search_fields = ['user__username']
-
-    def content_length(self, obj):
-        return f'{ len(obj.content) } Chars'
-    content_length.short_description = 'Content'
+        return f'Answer { self.pk } → { self.target }'

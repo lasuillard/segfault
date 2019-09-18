@@ -1,12 +1,11 @@
 from django.db import models
-from django.contrib import auth, admin
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 VOTE_CHOICES = (
-    (-2, 'Very impractical'),
-    (-1, 'Impractical'),
-    (0, 'Hmm'),
-    (1, 'Useful'),
-    (2, 'Very useful'),
+    (1, 'Good'),
+    (-1, 'Bad')
 )
 
 
@@ -36,7 +35,7 @@ class Votable(models.Model):
 
 class Vote(models.Model):
     user = models.ForeignKey(
-        auth.get_user_model(),
+        User,
         on_delete=models.CASCADE,
     )
     target = models.ForeignKey(
@@ -46,17 +45,4 @@ class Vote(models.Model):
     rating = models.DecimalField(max_digits=1, decimal_places=0, choices=VOTE_CHOICES)
 
     def __str__(self):
-        return f'Vote { self.pk } ({ self.target })'
-
-
-@admin.register(Votable)
-class VotableAdmin(admin.ModelAdmin):
-    list_display = ['pk', 'get_child_object']
-    list_display_links = ['pk']
-
-
-@admin.register(Vote)
-class VoteAdmin(admin.ModelAdmin):
-    list_display = ['pk', 'user', 'target', 'rating']
-    list_filter = ['rating']
-    search_fields = ['user__username', 'target__id']
+        return f'Vote { self.pk } → { self.target }'

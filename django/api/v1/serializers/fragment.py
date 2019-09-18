@@ -1,26 +1,32 @@
 from rest_framework import serializers
 from api.models import Fragment
-from .user import UserSerializer
+from .avatar import AvatarFieldMixin
+from .answer import AnswerFieldMixin
+from .comment import CommentFieldMixin
+from .vote import VoteFieldMixin
 
 
-class FragmentSerializer(serializers.HyperlinkedModelSerializer):
-    user = UserSerializer()
-    answer_count = serializers.IntegerField(source='get_answer_count', read_only=True)
-    comment_count = serializers.IntegerField(source='get_comment_count', read_only=True)
-    vote_count = serializers.IntegerField(source='get_vote_count', read_only=True)
+class FragmentSerializer(AvatarFieldMixin, serializers.ModelSerializer):
+    url = serializers.HyperlinkedIdentityField(view_name='api:v1:fragment-detail')
+    count_answer = serializers.IntegerField(source='get_answer_count', read_only=True)
+    count_comment = serializers.IntegerField(source='get_comment_count', read_only=True)
+    count_vote = serializers.IntegerField(source='get_vote_count', read_only=True)
     average_rating = serializers.FloatField(source='get_average_rating', read_only=True)
 
     class Meta:
         model = Fragment
-        fields = ['url', 'user', 'title', 'tags', 'is_closed', 'answer_count',
-                  'comment_count', 'vote_count', 'average_rating', 'date_created']
-        read_only_fields = ['user', 'answer_count', 'comment_count', 'vote_count', 'average_rating', 'date_created']
+        fields = ['url', 'avatar', 'title', 'tags', 'status',
+                  'count_answer', 'count_comment', 'count_vote', 'average_rating', 'date_created']
+        read_only_fields = []
 
 
-class FragmentDetailSerializer(serializers.ModelSerializer):
-    user = UserSerializer()
+class FragmentDetailSerializer(AvatarFieldMixin, AnswerFieldMixin, CommentFieldMixin, VoteFieldMixin,
+                               serializers.ModelSerializer):
 
     class Meta:
         model = Fragment
-        fields = ['pk', 'user', 'title', 'content', 'tags', 'is_closed', 'date_created', 'date_modified']
-        read_only_fields = ['user', 'date_created', 'date_modified']
+        fields = [
+            'pk', 'avatar', 'title', 'content', 'tags', 'status', 'date_created', 'date_modified', 'date_closed',
+            'answers', 'comments', 'votes'
+        ]
+        read_only_fields = []

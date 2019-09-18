@@ -1,7 +1,7 @@
 from django.db import models
-from django.contrib import auth, admin
+from django.contrib.auth import get_user_model
 
-User = auth.get_user_model()
+User = get_user_model()
 
 
 class ChatRoom(models.Model):
@@ -19,7 +19,7 @@ class ChatRoom(models.Model):
     date_modified = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f'Chat room { self.pk }'
+        return f'Chat Room { self.pk }'
 
     def get_all_attendants(self):
         # merge queryset and return it
@@ -42,27 +42,4 @@ class Chat(models.Model):
     date_modified = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f'Chat { self.pk } ({ self.room })'
-
-
-@admin.register(ChatRoom)
-class ChatRoomAdmin(admin.ModelAdmin):
-    list_display = ['pk', 'user', 'user_count', 'date_created', 'date_modified']
-    list_display_links = ['pk']
-    search_fields = ['user__username', 'name']
-
-    def user_count(self, obj):
-        return f'{ obj.users.all().count() } Users'
-    user_count.short_description = 'User'
-
-
-@admin.register(Chat)
-class ChatAdmin(admin.ModelAdmin):
-    list_display = ['pk', 'user', 'room', 'content_length', 'date_created', 'date_modified']
-    list_display_links = ['pk']
-    list_filter = ['user', 'room']
-    search_fields = ['user__username', 'room__name']
-
-    def content_length(self, obj):
-        return f'{ len(obj.content) } Chars'
-    content_length.short_description = 'Content'
+        return f'Chat { self.pk } → { self.room })'

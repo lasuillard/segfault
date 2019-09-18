@@ -18,3 +18,10 @@ class AvatarDetailSerializer(serializers.ModelSerializer):
         model = Avatar
         fields = ['pk', 'user', 'profile_image', 'display_name', 'introduce_message', 'extra_data', 'date_modified']
         read_only_fields = ['pk', 'user', 'date_modified']
+
+
+class AvatarFieldMixin(serializers.Serializer):
+    """
+        This mixins is for using avatar instance indirectly via user instance
+    """
+    avatar = AvatarSerializer(source='user.avatar', read_only=True)

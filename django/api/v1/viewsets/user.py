@@ -1,5 +1,4 @@
 from django.contrib.auth import get_user_model
-from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.permissions import IsAdminUser
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.mixins import RetrieveModelMixin, ListModelMixin
@@ -10,7 +9,6 @@ User = get_user_model()
 
 
 class UserViewSet(RetrieveModelMixin, ListModelMixin, GenericViewSet):
-    authentication_classes = [SessionAuthentication, TokenAuthentication]
 
     def get_serializer_class(self):
         if self.action == 'retrieve':
