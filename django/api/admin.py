@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Avatar, Fragment, Answer, Commentable, Comment, Votable, Vote, ChatRoom, Chat
+from .models import Avatar, Fragment, Answer, Commentable, Comment, Votable, Vote, Room, Chat
 from .filters import FragmentTagFilter
 
 
@@ -48,24 +48,13 @@ class AnswerAdmin(admin.ModelAdmin):
     content_repr.short_description = 'Content'
 
 
-@admin.register(Commentable)
-class CommentableAdmin(admin.ModelAdmin):
-    list_display = ['pk', 'get_child_object']
-
-
 @admin.register(Comment)
 class CommentAdmin(admin.ModelAdmin):
-    list_display = ['pk', 'parent', 'user', 'target', 'content_length', 'date_created', 'date_modified']
+    list_display = ['pk', 'user', 'target', 'parent', 'content_length', 'date_created', 'date_modified']
 
     def content_length(self, obj):
         return f'{ len(obj.content) } Chars'
     content_length.short_description = 'Content'
-
-
-@admin.register(Votable)
-class VotableAdmin(admin.ModelAdmin):
-    list_display = ['pk', 'get_child_object']
-    list_display_links = ['pk']
 
 
 @admin.register(Vote)
@@ -75,11 +64,11 @@ class VoteAdmin(admin.ModelAdmin):
     search_fields = ['user__username', 'target__id']
 
 
-@admin.register(ChatRoom)
-class ChatRoomAdmin(admin.ModelAdmin):
-    list_display = ['pk', 'user', 'user_count', 'date_created', 'date_modified']
+@admin.register(Room)
+class RoomAdmin(admin.ModelAdmin):
+    list_display = ['pk', 'host', 'user_count', 'date_created', 'date_modified']
     list_display_links = ['pk']
-    search_fields = ['user__username', 'name']
+    search_fields = ['host__username', 'name']
 
     def user_count(self, obj):
         return f'{ obj.users.all().count() } Users'

@@ -7,7 +7,7 @@ from .viewsets import (
     AnswerViewSet,
     CommentViewSet,
     VoteViewSet,
-    ChatRoomViewSet,
+    RoomViewSet,
     ChatViewSet,
 )
 
@@ -20,7 +20,7 @@ router.register(r'fragment', FragmentViewSet, basename='fragment')
 router.register(r'answer', AnswerViewSet, basename='answer')
 router.register(r'comment', CommentViewSet, basename='comment')
 router.register(r'vote', VoteViewSet, basename='vote')
-router.register(r'chatroom', ChatRoomViewSet, basename='chatroom')
+router.register(r'chatroom', RoomViewSet, basename='chatroom')
 router.register(r'chat', ChatViewSet, basename='chat')
 
 urlpatterns = [

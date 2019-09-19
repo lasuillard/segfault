@@ -4,4 +4,5 @@ from .fragment import FragmentViewSet
 from .answer import AnswerViewSet
 from .comment import CommentViewSet
 from .vote import VoteViewSet
-from .chat import ChatRoomViewSet, ChatViewSet
+from .room import RoomViewSet
+from .chat import ChatViewSet

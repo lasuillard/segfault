@@ -27,10 +27,10 @@ class Fragment(Commentable, Votable):
         default=list,
         blank=True
     )
-    status = StatusField(choices=STATUS, default='OPEN')
+    status = StatusField(choices=STATUS, default=STATUS.OPEN)
     date_created = models.DateTimeField(auto_now_add=True, editable=False)
     date_modified = models.DateTimeField(auto_now=True, editable=False)
-    date_closed = MonitorField(monitor='status', when=['CLOSED'], default=None, null=True, blank=True, editable=False)
+    date_closed = MonitorField(monitor='status', when=[STATUS.CLOSED], default=None, null=True, blank=True, editable=False)
 
     def __str__(self):
         return f'Fragment { self.pk }'

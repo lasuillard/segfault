@@ -1,17 +1,19 @@
 import os
-
-from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 from django.contrib.auth import get_user_model
-from segfault.utility import generate_random_string
-from api.models import (
-    Avatar, AVATAR_DEFAULT_IMAGE,
-    Fragment,
-    Answer,
-    Comment,
-    Vote, VOTE_CHOICES,
-    ChatRoom,
-    Chat,
+from segfault.settings.base import MEDIA_ROOT
+from segfault.utility import LabeledTestInput, generate_random_string, generate_simple_file
+from ..factories import (
+    AvatarFactory,
+    FragmentFactory,
+    AnswerFactory,
+    CommentFactory,
+    VoteFactory,
+    RoomFactory,
+    ChatFactory
+)
+from ..models import (
+    AVATAR_DEFAULT_IMAGE, Avatar, Fragment, Answer, Commentable, Comment, Votable, Vote, Room, Chat
 )
 
 User = get_user_model()
@@ -19,119 +21,152 @@ User = get_user_model()
 
 class AvatarTest(TestCase):
 
+    def tearDown(self):
+        """
+            Delete all avatar media dummy files
+        """
+        dir = os.path.join(MEDIA_ROOT, 'avatar')
+        for file in os.listdir(dir):
+            path = os.path.join(dir, file)
+            os.remove(path)
+
     def test_avatar_created_with_default(self):
         """
             Test avatar instance is created with appropriate default
         """
-        tester = User.objects.create(username=generate_random_string(16))
-        avatar = tester.avatar
+        avatar = AvatarFactory()
         # when display_name is not given, then defaulted by username
-        self.assertEqual(avatar.display_name, tester.username)
+        self.assertEqual(avatar.display_name, avatar.user.username)
         # the avatar is given default image when not specified
         self.assertEqual(avatar.profile_image.name, AVATAR_DEFAULT_IMAGE)
-        tester.delete()
 
     def test_avatar_blank_display_name(self):
-        tester = User.objects.create(username=generate_random_string(16))
-        avatar = tester.avatar
+        """
+            When display name is blank, it will be user's username by default
+        """
+        avatar = AvatarFactory()
         # blank the display_name
         avatar.display_name = ''
         avatar.save()
-        self.assertEqual(avatar.display_name, tester.username)
+        self.assertEqual(avatar.display_name, avatar.user.username)
 
     def test_avatar_set_profile_image(self):
         """
             Test new image for avatar and the image is stored at media storage
         """
-        tester = User.objects.create(username=generate_random_string(16))
-        avatar = tester.avatar
+        avatar = AvatarFactory()
         # set avatar image
-        avatar.profile_image = SimpleUploadedFile(
-            name='sample_image.jpg', content=b'\x00' * 1024, content_type='image/jpeg'
+        avatar.profile_image = generate_simple_file(
+            name='sample_image.jpg', size=8192, content_type='image/jpeg'
         )
         avatar.save()
         # image should be created properly in media folder
         self.assertEqual(os.path.basename(os.path.dirname(os.path.dirname(avatar.profile_image.path))), 'media')
         # and also the file should exist
         self.assertTrue(os.path.exists(avatar.profile_image.path))
-        tester.delete()
-
-    def test_avatar_profile_image_has_uuid4_format(self):
-        """
-            Custom user profile images has name of uuid4 format
-        """
-        pass
-
-    def test_avatar_signal_auto_create_avatar_on_user_created(self):
-        """
-            Avatar instances are created along with user instance creation
-        """
-        tester = User.objects.create(username=generate_random_string(16))
-        avatar = tester.avatar
-        # is avatar well created?
-        self.assertIsInstance(avatar, Avatar)
-        tester.delete()
-
-    def test_avatar_signal_auto_delete_profile_image_on_change(self):
-        """
-            Test new image for avatar. its behavior depends on signal (and test includes it in fact!)
-        """
-        tester = User.objects.create(username=generate_random_string(16))
-        avatar = tester.avatar
-        # create sample images for change
-        [sample_image_one, sample_image_two] = [
-            SimpleUploadedFile(name=f'sample_image_{i}.jpg', content=b'\x00' * 1024, content_type='image/jpeg')
-            for i in range(2)
-        ]
-        # set first image
-        avatar.profile_image = sample_image_one
-        avatar.save()
-        old_file_path = avatar.profile_image.path
-        # change to new image
-        avatar.profile_image = sample_image_two
-        avatar.save()
-        new_file_path = avatar.profile_image.path
-        # is old image file deleted?
-        self.assertFalse(os.path.exists(old_file_path))
-        # new file saved in storage?
-        self.assertTrue(os.path.exists(new_file_path))
-        tester.delete()
-
-    def test_avatar_signal_auto_delete_profile_image_on_delete(self):
-        """
-            Delete user custom image when avatar instance deleted
-        """
-        tester = User.objects.create(username=generate_random_string(16))
-        avatar = tester.avatar
-        # set image
-        avatar.profile_image = SimpleUploadedFile(
-            name='sample_image.jpg', content=b'\x00' * 1024, content_type='image/jpeg'
-        )
-        avatar.save()
-        old_file_path = avatar.profile_image.path
-        # is old image deleted from disk?
-        avatar.delete()
-        self.assertFalse(os.path.exists(old_file_path))
-        tester.delete()
 
     def test_avatar_magic_method_str_includes_instance_id(self):
         """
             __str__ should include object primary key for identification
         """
-        tester = User.objects.create(username=generate_random_string(16))
-        avatar = tester.avatar
+        avatar = AvatarFactory()
         # the instance should represent itself well
         self.assertIn(str(avatar.pk), avatar.__str__())
-        tester.delete()
+
+
+class FragmentTest(TestCase):
+
+    def test_fragment_get_answer_count(self):
+        """
+            Should return exactly same count it has
+        """
+        test_cases = [LabeledTestInput(3, 3), LabeledTestInput(0, 0)]
+        for case in test_cases:
+            fragment = FragmentFactory()
+            _answers = AnswerFactory.create_batch(target=fragment, size=case.value)
+            self.assertEqual(fragment.get_answer_count(), case.label)
 
 
 class AnswerTest(TestCase):
 
     def test_answer_magic_method_str_includes_instance_id(self):
-        tester = User.objects.create(username=generate_random_string(16))
-        fragment = Fragment.objects.create(
-            user=tester, title=generate_random_string(64), content=generate_random_string(1024)
-        )
-        answer = Answer.objects.create(user=tester, target=fragment, content=generate_random_string(1024))
+        """
+            __str__ should include object primary key for identification
+        """
+        answer = AnswerFactory(target=FragmentFactory())
         self.assertIn(str(answer.pk), answer.__str__())
 
+
+class CommentTest(TestCase):
+
+    def test_commentable_subclasses(self):
+        """
+            Some models are required to be 'Commentable'
+        """
+        # Fragment should be
+        self.assertIsInstance(FragmentFactory(), Commentable)
+        # Answer should be
+        self.assertIsInstance(AnswerFactory(target=FragmentFactory()), Commentable)
+
+    def test_commentable_get_child_object(self):
+        """
+            For 'Commentable' objects, get_child_object should return its real class extending its abstraction.
+        """
+        # Commentable is just for abstraction
+        self.assertIsNone(Commentable().get_child_object())
+        # Fragment is subclass
+        fragment = FragmentFactory()
+        self.assertEqual(fragment, super(Commentable, fragment).get_child_object())
+        # Answer is subclass
+        answer = AnswerFactory(target=FragmentFactory())
+        self.assertEqual(answer, super(Commentable, answer).get_child_object())
+
+    def test_commentable_get_comment_count(self):
+        """
+            Count should be equal to real comments related
+        """
+        test_cases = [LabeledTestInput(8, 8), LabeledTestInput(0, 0)]
+        for case in test_cases:
+            fragment = FragmentFactory()
+            _comments = CommentFactory.create_batch(target=fragment, parent=None, size=case.value)
+            self.assertEqual(fragment.get_comment_count(), case.label)
+
+    def test_commentable_magic_method_str_includes_child_instance_id(self):
+        """
+            __str__ should include object primary key for identification
+        """
+        fragment = FragmentFactory()
+        self.assertIn(str(fragment.pk), super(Commentable, fragment).get_child_object().__str__())
+
+    def test_comment_magic_method_str_includes_instance_id(self):
+        """
+            __str__ should include object primary key for identification
+        """
+        comment = CommentFactory(target=FragmentFactory(), parent=None)
+        self.assertIn(str(comment.pk), comment.__str__())
+
+
+class VoteTest(TestCase):
+
+    def test_votable_get_child_object(self):
+        pass
+
+    def test_votable_get_vote_count(self):
+        pass
+
+    def test_votable_get_average_rating(self):
+        pass
+
+    def test_votable_magic_method_str_includes_child_instance_id(self):
+        pass
+
+    def test_vote_magic_method_str_includes_instance_id(self):
+        pass
+
+
+class RoomTest(TestCase):
+    pass
+
+
+class ChatTest(TestCase):
+    pass

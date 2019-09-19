@@ -8,9 +8,6 @@ User = get_user_model()
 class Commentable(models.Model):
     commentable_id = models.AutoField(primary_key=True)
 
-    def __str__(self):
-        return f'{ self.get_child_object() }'
-
     def get_child_object(self):
         for cls in Commentable.__subclasses__():
             child = cls.__name__.lower()
@@ -23,22 +20,25 @@ class Commentable(models.Model):
     def get_comment_count(self):
         return self.comment_set.count()
 
+    def __str__(self):
+        return f'{ self.get_child_object() }'
+
 
 class Comment(models.Model):
-    parent = models.ForeignKey(
-        'self',
-        related_name='children',
-        null=True,
-        blank=True,
-        default=None,
-        on_delete=models.CASCADE,
-    )
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
     )
     target = models.ForeignKey(
         Commentable,
+        on_delete=models.CASCADE,
+    )
+    parent = models.ForeignKey(
+        'self',
+        related_name='children',
+        null=True,
+        blank=True,
+        default=None,
         on_delete=models.CASCADE,
     )
     content = models.TextField()

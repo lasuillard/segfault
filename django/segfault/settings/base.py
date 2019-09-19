@@ -65,8 +65,8 @@ INSTALLED_APPS = [
     'rest_auth',
     'rest_auth.registration',
     # custom apps
-    'api.apps.APIConfig',
-    'ws.apps.WebSocketConfig'
+    'api',
+    'ws'
 ]
 
 REST_FRAMEWORK = {

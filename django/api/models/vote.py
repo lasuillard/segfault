@@ -13,9 +13,6 @@ VOTE_CHOICES = (
 class Votable(models.Model):
     votable_id = models.AutoField(primary_key=True)
 
-    def __str__(self):
-        return f'{ self.get_child_object() }'
-
     def get_child_object(self):
         for cls in Votable.__subclasses__():
             child = cls.__name__.lower()
@@ -31,6 +28,9 @@ class Votable(models.Model):
     def get_average_rating(self):
         return float(self.vote_set.aggregate(models.Avg('rating'))['rating__avg'] or 0.0)
     get_average_rating.short_description = 'Rating'
+
+    def __str__(self):
+        return f'{ self.get_child_object() }'
 
 
 class Vote(models.Model):
