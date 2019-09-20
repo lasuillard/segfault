@@ -21,4 +21,4 @@ class Answer(Commentable, Votable):
     date_modified = models.DateTimeField(auto_now=True, editable=False)
 
     def __str__(self):
-        return f'Answer { self.pk } → { self.target }'
+        return f'Answer { self.pk } ... { self.target }'

@@ -1,29 +1,31 @@
 import os
+import random
+from django.core.files.uploadedfile import SimpleUploadedFile
+from django.contrib.auth import get_user_model
 from django.test import TestCase
-from segfault.utility import generate_simple_file
-from ..factories import AvatarFactory
+from segfault.utility import generate_random_string
+from ..factories import UserFactory, AvatarFactory
 from ..models import Avatar
+
+User = get_user_model()
 
 
 class SignalTest(TestCase):
 
     def test_auto_create_avatar_on_user_created(self):
-        """
-            Avatar instances are created along with user instance creation
-        """
-        avatar = AvatarFactory()
-        # is avatar well created?
-        self.assertIsInstance(avatar, Avatar)
+        user = User.objects.create()
+        self.assertIsInstance(user.avatar, Avatar)
+        user.delete()
 
     def test_delete_profile_image_on_change(self):
-        """
-            Test new image for avatar. its behavior depends on signal (and test includes it in fact!)
-        """
         avatar = AvatarFactory()
         # create sample images for change
         [sample_image_one, sample_image_two] = [
-            generate_simple_file(name=f'sample_image_{i}.jpg', size=8192, content_type='image/jpeg')
-            for i in range(2)
+            SimpleUploadedFile(
+                name=f'{ generate_random_string(length=16) }.jpg',
+                content=b'\x00' * random.randint(0, 65536),
+                content_type='image/jpeg'
+            ) for _ in range(2)
         ]
         # set first image
         avatar.profile_image = sample_image_one
@@ -39,13 +41,12 @@ class SignalTest(TestCase):
         self.assertTrue(os.path.exists(new_file_path))
 
     def test_auto_delete_profile_image_on_delete(self):
-        """
-            Delete user custom image when avatar instance deleted
-        """
         avatar = AvatarFactory()
         # set image
-        avatar.profile_image = generate_simple_file(
-            name='sample_image.jpg', size=8192, content_type='image/jpeg'
+        avatar.profile_image = SimpleUploadedFile(
+            name=f'{ generate_random_string(length=16) }.jpg',
+            content=b'\x00' * random.randint(0, 65536),
+            content_type='image/jpeg'
         )
         avatar.save()
         old_file_path = avatar.profile_image.path

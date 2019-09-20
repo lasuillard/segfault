@@ -2,7 +2,7 @@ import os
 from django.contrib.auth import get_user_model
 from django.db.models import signals
 from django.dispatch import receiver
-from .models import Avatar, AVATAR_DEFAULT_IMAGE
+from .models import Avatar
 
 User = get_user_model()
 
@@ -33,7 +33,7 @@ def auto_delete_profile_image_on_change(sender, instance, **kwargs):
     except sender.DoesNotExist:
         return False
 
-    if old_file.name == AVATAR_DEFAULT_IMAGE:
+    if old_file.name == Avatar.AVATAR_DEFAULT_IMAGE:
         return False
 
     new_file = instance.profile_image
@@ -50,5 +50,5 @@ def auto_delete_profile_image_on_delete(sender, instance, **kwargs):
         delete image file from filesystem
     """
     file = instance.profile_image
-    if os.path.exists(file.path) and file.name != AVATAR_DEFAULT_IMAGE:
+    if os.path.exists(file.path) and file.name != Avatar.AVATAR_DEFAULT_IMAGE:
         file.delete(save=False)

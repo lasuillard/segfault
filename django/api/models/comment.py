@@ -46,4 +46,4 @@ class Comment(models.Model):
     date_modified = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f'Comment { self.pk } → { self.target }'
+        return f'Comment { self.pk } ... { self.target }'

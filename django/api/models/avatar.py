@@ -1,13 +1,10 @@
 import os
 from uuid import uuid4
 from django.db import models
-from django.dispatch import receiver
 from django.contrib.auth import get_user_model
 from django.contrib.postgres.fields import JSONField
 
 User = get_user_model()
-
-AVATAR_DEFAULT_IMAGE = 'avatar_default_image.png'
 
 
 def get_image_uuid4(instance, filename):
@@ -15,10 +12,9 @@ def get_image_uuid4(instance, filename):
 
 
 class Avatar(models.Model):
-    user = models.OneToOneField(
-        User,
-        on_delete=models.CASCADE,
-    )
+    AVATAR_DEFAULT_IMAGE = 'avatar_default_image.png'
+
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     profile_image = models.ImageField(upload_to=get_image_uuid4, default=AVATAR_DEFAULT_IMAGE)
     display_name = models.CharField(max_length=32)
     introduce_message = models.CharField(null=True, blank=True, max_length=128)
@@ -29,7 +25,7 @@ class Avatar(models.Model):
         order_with_respect_to = 'user'
 
     def __str__(self):
-        return f'Avatar { self.pk } → User { self.user }'
+        return f'Avatar { self.pk } ... User { self.user }'
 
     def save(self, *args, **kwargs):
         # give default display name as user's account name

@@ -21,5 +21,5 @@ class Room(models.Model):
     def __str__(self):
         return f'Room { self.pk }'
 
-    def get_all_attendants(self):
+    def get_all_users(self):
         return [self.host, *self.users.all()]

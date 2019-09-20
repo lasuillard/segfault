@@ -3,11 +3,6 @@ from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
-VOTE_CHOICES = (
-    (1, 'Good'),
-    (-1, 'Bad')
-)
-
 
 # interface class for resources that can be voted
 class Votable(models.Model):
@@ -34,6 +29,11 @@ class Votable(models.Model):
 
 
 class Vote(models.Model):
+    VOTE_CHOICES = (
+        (1, 'Good'),
+        (-1, 'Bad')
+    )
+
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -45,4 +45,4 @@ class Vote(models.Model):
     rating = models.DecimalField(max_digits=1, decimal_places=0, choices=VOTE_CHOICES)
 
     def __str__(self):
-        return f'Vote { self.pk } → { self.target }'
+        return f'Vote { self.pk } ... { self.target }'
