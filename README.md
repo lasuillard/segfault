@@ -35,7 +35,8 @@ If you are successfully running containers, you can check the site by
 * daphne: localhost:8443
 * Nginx: localhost:80 (or just localhost)
 
-for development, i recommend using just Nginx gateway.
+for development, i recommend using just Nginx gateway.<br/>
+emails are sent to console for debugging. check it at log/uwsgi.txt
 
 ### URLs
 * Django Admin: /admin

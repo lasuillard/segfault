@@ -26,7 +26,7 @@ class FragmentDetailSerializer(AvatarFieldMixin, AnswerFieldMixin, CommentFieldM
     class Meta:
         model = Fragment
         fields = [
-            'pk', 'avatar', 'title', 'content', 'tags', 'status', 'date_created', 'date_modified', 'date_closed',
-            'answers', 'comments', 'votes'
+            'pk', 'avatar', 'title', 'content', 'tags', 'status', 'answers', 'comments', 'votes',
+            'date_created', 'date_modified', 'date_closed'
         ]
         read_only_fields = []

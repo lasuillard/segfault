@@ -39,7 +39,9 @@ def _load_secret_key():
 
 SECRET_KEY = _load_secret_key()
 
-ALLOWED_HOSTS = []
+URL_FRONT = ''
+
+ALLOWED_HOSTS = [""" NOTHING YET """]
 
 # Application definition
 INSTALLED_APPS = [
@@ -77,11 +79,12 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAdminUser'
     ],
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',
         'api.renderers.BrowsableAPIRendererWithoutForms'
-    ]
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'api.pagination.TinyLimitOffsetPagination',
+    'PAGE_SIZE': 10,
 }
 
 AUTHENTICATION_BACKENDS = [
@@ -90,6 +93,8 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 # django-allauth config
+ACCOUNT_ADAPTER = 'api.adapter.CustomAccountAdapter'
+
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 
@@ -113,6 +118,7 @@ REST_AUTH_SERIALIZERS = {
 
 # django
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -147,7 +153,6 @@ TEMPLATES = [
 WSGI_APPLICATION = 'segfault.wsgi.application'
 ASGI_APPLICATION = 'segfault.routing.application'
 
-
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
 
@@ -166,7 +171,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
 
@@ -179,7 +183,6 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
-
 
 # Static and Media Files
 STATIC_ROOT = os.path.normpath(os.path.join(BASE_DIR, 'collected_static'))

@@ -16,10 +16,12 @@ x-common-variables: &network-configs
   # nginx
   NGINX_HOST: localhost
   NGINX_PORT: 80
+  # nuxt
+  NUXT_HOST: localhost
+  NUXT_PORT: 3000
 
 x-common-variables: &django-settings
   DJANGO_SETTINGS_MODULE: segfault.settings.dev
-  # database
   ## TODO: handle secrets in other ways
   DATABASE_HOST: postgres
   DATABASE_PORT: 5432
@@ -112,11 +114,9 @@ services:
       sh -c "pip install uwsgi --default-timeout=100 &&
             python manage.py collectstatic --noinput &&
             mkdir -p /var/log/uwsgi &&
-            uwsgi --http :8000 -w segfault.wsgi --logto /var/log/uwsgi/uwsgi.log"
+            uwsgi --http :8000 -w segfault.wsgi --py-autoreload 2 --logto /var/log/uwsgi/uwsgi.log"
     restart: always
 
-  # TODO: - add waits for uwsgi / daphne server to be ready
-  #       - more detailed NGINX settings (far later)
   nginx:
     image: nginx
     depends_on:

@@ -1,18 +1,17 @@
 from .base import *
 
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS += '*'
+URL_FRONT = f"http://{ os.environ.get('NUXT_HOST', 'localhost') }:{ os.environ.get('NUXT_PORT', '3000') }"
+
+ALLOWED_HOSTS = '*'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-
-MIDDLEWARE.insert(0, 'corsheaders.middleware.CorsMiddleware')
 
 CORS_ALLOW_CREDENTIALS = True
 
 CORS_ORIGIN_WHITELIST = [
-    'http://localhost:3000',
+    URL_FRONT,
 ]
 
 # Database
@@ -27,7 +26,6 @@ DATABASES = {
     }
 }
 
-
 # Channel for Web Socket
 CHANNEL_LAYERS = {
     'default': {
@@ -39,7 +37,6 @@ CHANNEL_LAYERS = {
         }
     }
 }
-
 
 # Cache
 CACHES = {
