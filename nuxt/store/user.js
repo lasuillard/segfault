@@ -95,7 +95,7 @@ export const actions = {
   loginByLocal (context, credentials) {
     // process local login
     return new Promise((resolve, reject) => {
-      this.$axios.$post('/rest-auth/login/', {
+      this.$axios.$post('/auth/login/', {
         email: credentials.email,
         password: credentials.password
       })
@@ -139,7 +139,7 @@ export const actions = {
     return new Promise((resolve, reject) => {
       let { provider } = rsResponse
       delete rsResponse.provider // no need to send server, just for routing
-      this.$axios.$post(`/rest-auth/${provider}/`, { ...rsResponse })
+      this.$axios.$post(`/auth/o/${provider}/`, { ...rsResponse })
       .then(response => {
         return context.dispatch('afterLogin', {
           token: response.key,
@@ -159,13 +159,13 @@ export const actions = {
     // load user profile from server with authtoken
     return new Promise((resolve, reject) => {
       context.commit(SET_TOKEN, token)
-      this.$axios.$get(`/rest-auth/user/`)
+      this.$axios.$get(`/auth/user/`)
       .then(response => {
         context.commit(SET_USER, {
           email: response.email
         })
         context.commit(SET_AVATAR, response.avatar)
-        context.commit(SET_CONFIG, response.avatar.user_data.config)
+        context.commit(SET_CONFIG, response.avatar.extra_data.config)
         resolve()
       })
       .catch(err => {
@@ -177,7 +177,7 @@ export const actions = {
   logout (context) {
     // notify server user is logging out
     return new Promise((resolve, reject) => {
-      this.$axios.$post('/rest-auth/logout/')
+      this.$axios.$post('/auth/logout/')
       .then(response => {
         console.log(response)
         resolve()
@@ -198,7 +198,7 @@ export const actions = {
         return
   
       this.$axios.$patch(`/api/avatar/${context.state.avatar.pk}/`, {
-        user_data: {
+        extra_data: {
           config: context.state.config
         }
       })

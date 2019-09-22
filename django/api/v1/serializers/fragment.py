@@ -15,7 +15,7 @@ class FragmentSerializer(AvatarFieldMixin, serializers.ModelSerializer):
 
     class Meta:
         model = Fragment
-        fields = ['url', 'avatar', 'title', 'tags', 'status',
+        fields = ['pk', 'url', 'avatar', 'title', 'tags', 'status',
                   'count_answer', 'count_comment', 'count_vote', 'average_rating', 'date_created']
         read_only_fields = []
 

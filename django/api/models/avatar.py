@@ -12,7 +12,7 @@ def get_image_uuid4(instance, filename):
 
 
 class Avatar(models.Model):
-    AVATAR_DEFAULT_IMAGE = 'avatar_default_image.png'
+    AVATAR_DEFAULT_IMAGE = 'profile.png'
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     profile_image = models.ImageField(upload_to=get_image_uuid4, default=AVATAR_DEFAULT_IMAGE)
@@ -32,4 +32,23 @@ class Avatar(models.Model):
         if self.display_name is None or len(self.display_name) == 0:
             self.display_name = self.user.username
 
+        # delete old profile image when changed to new one
+        if self.pk:
+            try:
+                old_profile_image = Avatar.objects.get(pk=self.pk).profile_image  # no substitute?
+                new_profile_image = self.profile_image
+                if old_profile_image.name != Avatar.AVATAR_DEFAULT_IMAGE:
+                    if old_profile_image != new_profile_image and os.path.exists(old_profile_image.path):
+                        old_profile_image.delete(save=False)
+
+            except Avatar.DoesNotExist:
+                pass
+
         super(Avatar, self).save(*args, **kwargs)
+
+    def delete(self, using=None, keep_parents=False):
+        profile_image = self.profile_image
+        if profile_image.name != Avatar.AVATAR_DEFAULT_IMAGE and os.path.exists(profile_image.path):
+            profile_image.delete(save=False)
+
+        super(Avatar, self).delete(self, using, keep_parents)

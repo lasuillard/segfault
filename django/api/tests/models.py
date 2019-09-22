@@ -1,9 +1,10 @@
 import os
 import statistics
-from django.test import TestCase
+import random
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.contrib.auth import get_user_model
-from segfault.settings.base import MEDIA_ROOT
-from segfault.utility import LabeledTestInput
+from django.test import TestCase
+from segfault.utility import LabeledTestInput, generate_random_string
 from ..factories import (
     get_factories_for_model,
     UserFactory, AvatarFactory, FragmentFactory, AnswerFactory,
@@ -19,11 +20,8 @@ User = get_user_model()
 class AvatarTest(TestCase):
 
     def tearDown(self):
-        avatar_dir = os.path.join(MEDIA_ROOT, 'avatar')
-        for file_name in os.listdir(avatar_dir):
-            file_path = os.path.join(avatar_dir, file_name)
-            if os.path.isfile(file_path):
-                os.remove(file_path)
+        for avatar in Avatar.objects.all():
+            avatar.delete()
 
     def test_avatar_created_with_default(self):
         avatar = AvatarFactory(profile_image=None, display_name=None)
@@ -46,6 +44,46 @@ class AvatarTest(TestCase):
         self.assertEqual(os.path.basename(os.path.dirname(avatar.profile_image.path)), 'media')
         # and also the file should exist
         self.assertTrue(os.path.exists(avatar.profile_image.path))
+
+    def test_avatar_delete_profile_image_on_change(self):
+        avatar = AvatarFactory()
+        # create sample images for change
+        [sample_image_one, sample_image_two] = [
+            SimpleUploadedFile(
+                name=f'{ generate_random_string(length=16) }.jpg',
+                content=b'\x00' * random.randint(0, 65536),
+                content_type='image/jpeg'
+            ) for _ in range(2)
+        ]
+        # set first image
+        avatar.profile_image = sample_image_one
+        avatar.save()
+        old_file_path = avatar.profile_image.path
+        self.assertTrue(os.path.exists(old_file_path))
+        # change to new image
+        avatar.profile_image = sample_image_two
+        avatar.save()
+        new_file_path = avatar.profile_image.path
+        self.assertTrue(os.path.exists(new_file_path))
+        # is old image file deleted?
+        self.assertFalse(os.path.exists(old_file_path))
+        # new file saved in storage?
+        self.assertTrue(os.path.exists(new_file_path))
+
+    def test_avatar_delete_profile_image_on_delete(self):
+        avatar = AvatarFactory()
+        # set image
+        avatar.profile_image = SimpleUploadedFile(
+            name=f'{ generate_random_string(length=16) }.jpg',
+            content=b'\x00' * random.randint(0, 65536),
+            content_type='image/jpeg'
+        )
+        avatar.save()
+        old_file_path = avatar.profile_image.path
+        self.assertTrue(os.path.exists(old_file_path))
+        # is old image deleted from disk?
+        avatar.delete()
+        self.assertFalse(os.path.exists(old_file_path))
 
     def test_avatar_magic_method_str_includes_instance_id(self):
         avatar = AvatarFactory()

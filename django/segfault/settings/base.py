@@ -22,22 +22,22 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__fil
 # SECURITY WARNING: keep the secret key used in production secret!
 try:
     with open('secret.json') as f:
-        secrets = json.load(f)
+        _secrets = json.load(f)
 
 except FileNotFoundError:
     pass
 
 
-def load_secret_key():
+def _load_secret_key():
     try:
-        secret_key = secrets['DJANGO_SECRET_KEY']
+        _secret_key = _secrets['DJANGO_SECRET_KEY']
     except KeyError:
-        secret_key = os.environ.get('DJANGO_SECRET_KEY')
+        _secret_key = os.environ.get('DJANGO_SECRET_KEY')
 
-    return secret_key
+    return _secret_key
 
 
-SECRET_KEY = load_secret_key()
+SECRET_KEY = _load_secret_key()
 
 ALLOWED_HOSTS = []
 
@@ -101,6 +101,8 @@ ACCOUNT_USERNAME_REQUIRED = False
 
 SOCIALACCOUNT_EMAIL_VERIFICATION = 'none'
 SOCIALACCOUNT_EMAIL_REQUIRED = False
+
+ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = '/'
 
 # django-rest-auth config
 OLD_PASSWORD_FIELD_ENABLED = True

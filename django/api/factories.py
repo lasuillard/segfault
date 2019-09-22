@@ -19,7 +19,7 @@ def get_factories_for_model(model, abstract=False):
     factories = []
     for (k, v) in g:
         if isclass(v) and issubclass(v, factory.django.DjangoModelFactory):
-            model_for = v._meta.model
+            model_for = getattr(v, '_meta').model
             if model == model_for or (abstract and issubclass(model_for, model)):
                 factories.append(v)
 

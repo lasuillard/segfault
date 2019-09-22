@@ -64,7 +64,7 @@
 <script>
 import { mapActions } from 'vuex'
 
-const URL_REGISTRATION = '/rest-auth/registration/'
+const URL_REGISTRATION = '/auth/registration/'
 
 export default {
   asyncData (context) {

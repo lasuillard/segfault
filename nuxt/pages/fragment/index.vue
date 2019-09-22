@@ -30,7 +30,7 @@
               </v-row>
               <v-row no-gutters>
                 <v-col align-self="start">
-                  <div class="caption">{{ item.answer_count }} Answers, {{ item.vote_count }} Votes, {{ item.comment_count }} Comments</div>
+                  <div class="caption">{{ item.count_answer }} Answers, {{ item.count_vote }} Votes, {{ item.count_comment }} Comments</div>
                 </v-col>
               </v-row>
             </v-col>
@@ -76,23 +76,16 @@ export default {
 
   methods: {
     async loadContents () {
-      let response = await this.$axios.$get(`/api/fragment`, { 
+      let response = await this.$axios.$get(`/api/v1/fragment`, { 
         params: { 
           limit: this.limit,
           offset: this.offset
         }
       })
       let fragments = response.results
-      if (fragments.length == 0) {
-        this.endOfData = true
-        return
-      }
-      this.offset += fragments.length
-      fragments.forEach(async f => {
-        let response = await this.$axios.get('/api/avatar', { params: { user: f.user } })
-        f.avatar = response.data[0]
-        this.items.push(f)
-      })
+      this.items.push(...fragments)
+      this.offset += this.limit
+      this.endOfData = (fragments.length == 0)
     },
     getTimeDeltaStr(date) {
       var milliseconds = Date.now() - new Date(date)
