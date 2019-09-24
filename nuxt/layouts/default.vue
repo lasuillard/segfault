@@ -1,7 +1,7 @@
 <template>
-  <v-app>
+  <v-app :style="{ background: $vuetify.theme.themes.dark.warning }">
     <!-- Top navigation bar -->
-    <v-app-bar app v-bind="getThemeObj">
+    <v-app-bar app v-bind="theme">
       <v-app-bar-nav-icon @click="isDrawerOpen = !isDrawerOpen" />
       <v-toolbar-title>SegFault</v-toolbar-title>
 
@@ -18,7 +18,10 @@
           <template v-slot:activator="{ on }">
             <v-btn text outlined class="mr-3" v-on="on">Sign in</v-btn>
           </template>
+
+          <!-- Login modal component -->
           <login-dialog />
+
         </v-dialog>
         <v-btn :to="{ name: 'sign' }" text outlined>Sign up</v-btn>
       </template>
@@ -28,18 +31,18 @@
     <v-navigation-drawer
       app
       v-model="isDrawerOpen"
-      v-bind="getThemeObj"
+      v-bind="theme"
     >
       <v-list>
         <v-list-item>
           <v-list-item-avatar>
-            <v-img :src="profile.profile_image" />
+            <v-img :src="profile.avatar.profile_image" />
           </v-list-item-avatar>
         </v-list-item>
         <v-list-item>
           <v-list-item-content>
             <v-list-item-title class="title">
-              {{ profile.display_name }}
+              {{ profile.avatar.display_name }}
             </v-list-item-title>
             <v-list-item-subtitle>
               {{ profile.email }}
@@ -68,8 +71,8 @@
     </v-navigation-drawer>
 
     <!-- Content -->
-    <v-content v-bind="getThemeObj">
-      <v-container fluid>
+    <v-content v-bind="theme">
+      <v-container>
         <nuxt />
       </v-container>
     </v-content>
@@ -78,7 +81,7 @@
 
 <script>
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
-import LoginDialogVue from '../components/LoginDialog.vue';
+import LoginDialogVue from '../components/LoginDialog.vue'
 
 export default {
   components: {
@@ -115,15 +118,9 @@ export default {
   computed: {
     ...mapGetters({
       isLoggedIn: 'user/isLoggedIn',
-      profile: 'user/getUserProfile',
-      config: 'user/getConfig'
+      profile: 'user/getProfile',
+      theme: 'user/getThemeObj'
     }),
-    getThemeObj () {
-      // convert theme configuration into vuetify theme object
-      return {
-        [this.config.theme]: true
-      }
-    }
   },
   methods: {
     ...mapActions({

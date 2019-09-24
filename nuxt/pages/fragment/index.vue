@@ -38,19 +38,15 @@
         </v-sheet>
       </v-col>
       <v-col cols="12" md="3" order="1" order-md="2">
-        <fragment-hot-view />
+
       </v-col>
     </v-row>
   </v-container>
 </template>
 
 <script>
-import HotFragmentListVue from '@/components/HotFragmentList.vue'
 
 export default {
-  components: {
-    'fragment-hot-view': HotFragmentListVue
-  },
   created () {
     window.onscroll = () => {
       let bottomOfWindow = document.documentElement.scrollTop + window.innerHeight === document.documentElement.offsetHeight
@@ -61,7 +57,7 @@ export default {
     this.loadContents()
   },
   data: () => ({
-    limit: 5,
+    limit: 10,
     offset: 0,
     items: [],
     endOfData: false,

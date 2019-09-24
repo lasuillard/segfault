@@ -11,6 +11,11 @@
 <script>
 export default {
   layout: 'empty',
-  created () { this.$store.dispatch('user/finishSocialLogin', this.$route.query) }
+  created () { 
+    let result = this.$store.dispatch('user/finishSocialLogin', this.$route.query)
+    if (result)
+      this.$router.replace({ name: 'index' })
+      
+  }
 }
 </script>

@@ -1,41 +1,63 @@
-import Vue from 'vue'
 import { getLoginPage } from '~/src/auth'
-import { SET_TOKEN, SET_USER, SET_AVATAR, SET_CONFIG } from './mutation-types'
+
+// defaults
+export const DEFAULT_PROFILE = {
+  email: '',
+  avatar: {
+    display_name: 'Guest',
+    profile_image: '',
+  }
+}
+export const DEFAULT_CONFIG = {
+  theme: 'light'
+}
+
+// mutation-types
+export const SET_TOKEN   = 'SET_TOKEN'
+export const SET_PROFILE = 'SET_PROFILE'
+export const SET_CONFIG  = 'SET_CONFIG'
+
+// urls for api
+const URL_LOCAL_LOGIN  = '/auth/login/'
+const URL_SOCIAL_LOGIN = '/auth/o/'
+const URL_LOGOUT       = '/auth/logout/'
+const URL_USER_PROFILE = '/auth/user/'
 
 
 export const state = () => ({
-  token: null,
-  user: {
-    email: null
-  },
-  avatar: {
-    pk: null,
-    profile_image: null,
-    display_name: null,
-    introduce_message: '',
-  },
-  config: {
-    theme: 'light'
-  }
+  token : null,
+  profile: null,
+  config: null,
 })
 
 export const getters = {
   isLoggedIn: (state) => {
-    // return login status of user
     return Boolean(state.token)
   },
-  getUserProfile: (state) => {
-    // return user profile
-    let { user, avatar } = state
-    return {
-      display_name: avatar.display_name || 'Guest',
-      email: user.email || 'No e-mail',
-      profile_image: avatar.profile_image || ''
+  getProfile: (state, getters) => {
+    let profile = { ...DEFAULT_PROFILE }
+    if (getters.isLoggedIn && state.profile) {
+      profile = state.profile
     }
+    return profile
   },
   getConfig: (state) => {
-    // return user application setting
-    return state.config || {}
+    let config = { ...DEFAULT_CONFIG }
+    if (state.config) {
+      config = state.config
+    }
+    return config
+  },
+  getThemeObj: (state) => {
+    /*
+    returns object that will be used with v-bind
+    */
+    if (state.config && state.config.hasOwnProperty('theme')) {
+      let theme = state.config.theme
+      return {
+        [theme]: true
+      }
+    }
   },
 }
 
@@ -50,166 +72,160 @@ export const mutations = {
       localStorage.setItem('token', token)
     }
   },
-  [SET_USER]: (state, user) => {
-    // set user identification
-    let obj = state.user
-    obj.email = user.email
-  },
-  [SET_AVATAR]: (state, avatar) => {
-    // set additional user information
-    let obj = state.avatar
-    obj.pk = avatar.pk
-    obj.display_name = avatar.display_name
-    obj.profile_image = avatar.profile_image
-    obj.introduce_message = avatar.introduce_message
+  [SET_PROFILE]: (state, profile) => {
+    if (profile) {
+      state.profile = profile
+    }
   },
   [SET_CONFIG]: (state, config) => {
-    /*
-      set config locally (no request to server to store it)
-
-      anonymous users can change settings but is volatile
-    */
     state.config = config
   }
 }
 
 export const actions = {
   loadToken (context) {
-    /*
-      load token from certain storage
-
-      this is reserved as vuex actions to support storage requires asynchronous behaviors
-    */
     return new Promise((resolve, reject) => {
-      if (true) {
-        let storedToken = localStorage.getItem('token')
-        if (Boolean(storedToken)) {
-          context.commit(SET_TOKEN, storedToken)
+      /*
+      this action includes redundant statements
+      to support various type of storages for future
+      */
+      try {
+        if (true) {
+          let storedToken = localStorage.getItem('token')
+          if (storedToken) {
+            context.commit(SET_TOKEN, storedToken)
+          }
+          resolve(true)
         }
-      } else {
-        // just an placeholder
-        resolve()
+        else {
+          throw Error('Not implemented.')
+        }
+      }
+      catch (e) {
+        return reject(e)
+      }
+    })
+  },
+  saveConfig (context, config) {
+    return new Promise(async (resolve, reject) => {
+      context.commit(SET_CONFIG, config)
+      try {
+        let result = null
+        if (context.getters.isLoggedIn) {
+          let avatar = context.getters.getProfile.avatar
+          if (avatar.hasOwnProperty('url')) {
+            result = await this.$axios.$patch(avatar.url, {
+              extra_data: {
+                config: context.state.config
+              }
+            })
+          }
+          else {
+            throw Error('User logged in but avatar instance is invalid.')
+          }
+        }
+        return resolve(result)
+      }
+      catch (e) {
+        return reject(e)
       }
     })
   },
   loginByLocal (context, credentials) {
-    // process local login
-    return new Promise((resolve, reject) => {
-      this.$axios.$post('/auth/login/', {
-        email: credentials.email,
-        password: credentials.password
-      })
-      .then(response => {
-        return context.dispatch('afterLogin', {
-          token: response.key,
+    return new Promise(async (resolve, reject) => {
+      try {
+        let data = await this.$axios.$post(URL_LOCAL_LOGIN, {
+          email   : credentials.email,
+          password: credentials.password,
         })
-      })
-      .then(() => {
-        this.$router.replace({ name: 'user' })
-        resolve()
-      })
-      .catch(err => {
-        console.log(err.response.data)
-        reject()
-      })
+        let token = data.key
+
+        if (token) {
+          return context.dispatch('_afterLogin', { token: token, })
+        }
+        else {
+          throw new Error(`Login failed with invalid key: ${token}`)
+        }
+      }
+      catch (e) {
+        return reject(e)
+      }
     })
   },
   trySocialLogin (context, provider) { 
     /*
-      process login ajax with server
-      
-      in social login, the code is redirected to certain page(/auth/o/) as query parameter
-      so the client should send this code and obtain token from server
+    in social login, the code is redirected to certain page(/auth/o/) as query parameter
+    so the client should send this code and obtain token from server
     */
     let href = getLoginPage(provider)
-    if (Boolean(href)) {
+    if (href) {
       window.location.href = href
-    } else {
-      console.error(`${provider} is not supported.`)
+    }
+    else {
+      throw Error(`Provider ${provider} is not defined or not supported.`)
     }
   },
   finishSocialLogin (context, rsResponse) {
     /*
-      obtain authentication token from server
-
-      it should be used with trySocialLogin actions as pair
-      this action will pack querystring into body and send it to server to get token
-      @rsResponse: the response of resource server(google, ...)
+    this action will pack querystring into body and send it to server to get token
     */
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       let { provider } = rsResponse
       delete rsResponse.provider // no need to send server, just for routing
-      this.$axios.$post(`/auth/o/${provider}/`, { ...rsResponse })
-      .then(response => {
-        return context.dispatch('afterLogin', {
-          token: response.key,
-        })
-      })
-      .then(() => {
-        this.$router.replace({ name: 'user' })
-        resolve()
-      })
-      .catch(err => {
-        console.log(err)
-        reject()
-      })
+      try {
+        let data = await this.$axios.$post(`${URL_SOCIAL_LOGIN}${provider}/`, { ...rsResponse })
+        let token = data.key
+        if (token) {
+          return context.dispatch('_afterLogin', { token: token, })
+        }
+        else {
+          throw new Error(`Social login (${provider}) failed with invalid key: ${token}`)
+        }
+      }
+      catch (e) {
+        return reject(e)
+      }
     })
   },
-  afterLogin (context, { token }) {
-    // load user profile from server with authtoken
-    return new Promise((resolve, reject) => {
-      context.commit(SET_TOKEN, token)
-      this.$axios.$get(`/auth/user/`)
-      .then(response => {
-        context.commit(SET_USER, {
-          email: response.email
-        })
-        context.commit(SET_AVATAR, response.avatar)
-        context.commit(SET_CONFIG, response.avatar.extra_data.config)
-        resolve()
-      })
-      .catch(err => {
-        console.log(err)
-        reject()
-      })
+  _afterLogin (context, { token }) {
+    /*
+    load user informations (profile, config, ...)
+    */
+    return new Promise(async (resolve, reject) => {
+      try {
+        context.commit(SET_TOKEN, token)
+        
+        // when token is set, authorization headers will be set (see plguins/axios.js)
+        let profile = await this.$axios.$get(URL_USER_PROFILE)
+        context.commit(SET_PROFILE, profile)
+  
+        // load avatar config
+        let avatar = await this.$axios.$get(profile.avatar.url)
+        if (avatar.extra_data && avatar.extra_data.hasOwnProperty('config'))
+          context.commit(SET_CONFIG, avatar.extra_data.config)
+
+        return resolve(true)
+      }
+      catch (e) {
+        return reject(e)
+      }
     })
   },
   logout (context) {
-    // notify server user is logging out
+    /*
+    notify server user logging out
+    */
     return new Promise((resolve, reject) => {
-      this.$axios.$post('/auth/logout/')
-      .then(response => {
-        console.log(response)
-        resolve()
+      this.$axios.$post(URL_LOGOUT)
+      .then(_ => { // no interests in response
+        resolve(true)
       })
       .catch(err => {
-        console.error(err)
-        reject()
+        reject(err)
       })
       .finally(() => {
         context.commit(SET_TOKEN, null)
       })
     })
   },
-  saveConfig (context, config) {
-    return new Promise((resolve, reject) => {
-      context.commit(SET_CONFIG, config)
-      if (!context.getters.isLoggedIn)
-        return
-  
-      this.$axios.$patch(`/api/avatar/${context.state.avatar.pk}/`, {
-        extra_data: {
-          config: context.state.config
-        }
-      })
-      .then(response => {
-        console.log(response)
-        resolve()
-      })
-      .catch(err => {
-        console.log(err.response.data)
-        reject()
-      })
-    })
-  }
 }

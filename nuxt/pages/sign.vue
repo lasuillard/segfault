@@ -67,16 +67,6 @@ import { mapActions } from 'vuex'
 const URL_REGISTRATION = '/auth/registration/'
 
 export default {
-  asyncData (context) {
-    /*
-      load serverside validation info by OPTIONS request
-    */
-    return context.$axios.$options(URL_REGISTRATION)
-    .then(response => {
-      return { ssv: response.actions }
-    })
-    .catch(err => console.log(err.response))
-  },
   data: () => ({
     ssv: {},
     credentials: {
@@ -91,16 +81,20 @@ export default {
     }
   },
   methods: {
-    signUp () {
-      this.$axios.$post(URL_REGISTRATION, {
-        ...this.credentials
-      })
-      .then(response => {
-        
-      })
-      .catch(err => {
+    async signUp () {
+      try {
+        let result = await this.$axios.$post(URL_REGISTRATION, { ...this.credentials })
 
-      })
+        // TODO: I guess another fancy alert components could be made.
+        // it will return message "Verification e-mail sent." on success.
+        alert(result.detail)
+
+        // DISABLED_FOR_DEBUG: Replace route to homepage.
+        // this.$router.replace({ name: 'index' })
+      }
+      catch (e) {
+        alert(e)
+      }
     }
   }
 }
