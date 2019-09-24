@@ -16,14 +16,14 @@ Make sure that secret files won't be included in repository.
 ### Installation
 Run following commands on project root directory after extracting git repository.
 ```
-# create and run container
+// create and run container
 > docker-compose up -d --build
 
-# create superuser for django admin
+// create superuser for django admin
 > docker container ls 
 > docker exec -it <container> python manage.py createsuperuser
 
-# show all logs from django server
+// show all logs from django server
 > docker-compose logs -ft server
 ```
 
@@ -36,11 +36,35 @@ If you are successfully running containers, you can check the site by
 * Nginx: localhost:80 (or just localhost)
 
 for development, i recommend using just Nginx gateway.<br/>
-emails are sent to console for debugging. check it at log/uwsgi.txt
+emails will be sent to console for debugging. check it at log/uwsgi.log
 
 ### URLs
 * Django Admin: /admin
 * Browsable API: /api
+
+### Model Factories for Tests
+```
+// enter django container (daphne or uwsgi, using uwsgi here)
+> docker-compose exec uwsgi bash
+
+// run django shell
+# python manage.py shell
+
+// python console
+>>> from api.factories import *
+
+// to use factory, call {Model}Factory(). for example:
+>>> FragmentFactory()
+<Fragment: Fragment 391>
+
+/*
+and you can also assign value what you want.
+fields not specified will be random or default value.
+*/
+>>> fragment = FragmentFactory(title='Factory-boy')
+>>> print(fragment.title, fragment.content[:30], fragment.tags)
+Factory-boy e0kY6Mc3OcWBxdHXw5HkJQUTKsNymi ['qiuK5yAa']
+```
 
 ### Secrets
 secret.json and db.json files are not included in repo.
