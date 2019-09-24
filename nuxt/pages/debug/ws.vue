@@ -80,7 +80,7 @@ export default {
       }
     },
     sendChat(ws, text) {
-      ws.send(JSON.stringify({ message: text }))
+      ws.send(JSON.stringify({ content: text }))
     }
   },
 }

@@ -66,13 +66,9 @@ class VoteAdmin(admin.ModelAdmin):
 
 @admin.register(Room)
 class RoomAdmin(admin.ModelAdmin):
-    list_display = ['pk', 'host', 'user_count', 'date_created', 'date_modified']
+    list_display = ['pk', 'host', 'date_created', 'date_modified']
     list_display_links = ['pk']
     search_fields = ['host__username', 'name']
-
-    def user_count(self, obj):
-        return f'{ obj.users.all().count() } Users'
-    user_count.short_description = 'User'
 
 
 @admin.register(Chat)

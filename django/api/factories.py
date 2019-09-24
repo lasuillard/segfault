@@ -12,8 +12,8 @@ User = get_user_model()
 
 def get_factories_for_model(model, abstract=False):
     """
-        Return factories related with model.
-        when abstract is True, it returns factories of subclasses's
+    Return factories related with model.
+    when abstract is True, it returns factories of subclasses's
     """
     g = globals().items()
     factories = []
@@ -109,18 +109,6 @@ class RoomFactory(factory.django.DjangoModelFactory):
 
     name = factory.LazyFunction(lambda: generate_random_string(length=8))
     host = factory.SubFactory(UserFactory)
-
-    @factory.post_generation
-    def users(self, create, extracted, **kwargs):
-        if not create:
-            return
-
-        if isinstance(extracted, list):
-            for user in extracted:
-                self.users.add(user)
-        elif extracted is not None:
-            for _ in range(random.randint(0, 20)):
-                self.users.add(UserFactory())
 
 
 class ChatFactory(factory.django.DjangoModelFactory):
