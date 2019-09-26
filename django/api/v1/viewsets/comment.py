@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.viewsets import ModelViewSet
-from api.models import Comment
+from core.models import Comment
 from ..serializers import CommentSerializer
 from api.permissions import IsOwnerOrReadOnly
 

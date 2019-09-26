@@ -3,7 +3,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAdminUser
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.mixins import RetrieveModelMixin, UpdateModelMixin, ListModelMixin
-from api.models import Avatar
+from core.models import Avatar
 from api.permissions import IsOwnerOrReadOnly
 from ..serializers import AvatarSerializer, AvatarDetailSerializer
 

@@ -1,6 +1,6 @@
 from django.contrib.auth import get_user_model
 from rest_framework.viewsets import ModelViewSet
-from api.models import Vote
+from core.models import Vote
 from ..serializers import VoteSerializer
 from api.permissions import IsOwnerOrReadOnly
 

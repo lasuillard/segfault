@@ -6,3 +6,4 @@ from .comment import CommentSerializer, CommentDetailSerializer, CommentFieldMix
 from .vote import VoteSerializer, VoteDetailSerializer, VoteFieldMixin
 from .room import RoomSerializer, RoomDetailSerializer
 from .chat import ChatSerializer, ChatDetailSerializer
+from .notification import NotificationSerializer, NotificationDetailSerializer

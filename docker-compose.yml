@@ -21,7 +21,7 @@ x-common-variables: &network-configs
   NUXT_PORT: 3000
 
 x-common-variables: &django-settings
-  DJANGO_SETTINGS_MODULE: segfault.settings.dev
+  DJANGO_SETTINGS_MODULE: core.settings.dev
   ## TODO: handle secrets in other ways
   DATABASE_HOST: postgres
   DATABASE_PORT: 5432
@@ -90,8 +90,7 @@ services:
     command: >
       sh -c "/wait-for-it.sh postgres:5432 -t 10 &&
             python manage.py migrate &&
-            python manage.py loaddata db.json &&
-            daphne -b 0.0.0.0 -p 8443 segfault.asgi:application --access-log /var/log/daphne/daphne.log"
+            daphne -b 0.0.0.0 -p 8443 core.asgi:application --access-log /var/log/daphne/daphne.log"
     restart: always
 
   uwsgi:
@@ -114,7 +113,7 @@ services:
       sh -c "pip install uwsgi --default-timeout=100 &&
             python manage.py collectstatic --noinput &&
             mkdir -p /var/log/uwsgi &&
-            uwsgi --http :8000 -w segfault.wsgi --py-autoreload 2 --logto /var/log/uwsgi/uwsgi.log"
+            uwsgi --http :8000 -w core.wsgi --py-autoreload 2 --logto /var/log/uwsgi/uwsgi.log"
     restart: always
 
   nginx:

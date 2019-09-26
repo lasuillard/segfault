@@ -1,6 +1,6 @@
 from django.contrib.auth import get_user_model
 from rest_framework.viewsets import ModelViewSet
-from api.models import Room
+from core.models import Room
 from ..serializers import RoomSerializer
 from api.permissions import IsOwnerOrReadOnly
 

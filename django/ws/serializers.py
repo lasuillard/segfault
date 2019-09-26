@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from api.models import Avatar, Chat
+from core.models import Avatar, Chat, Notification
 """
 /ws/serializers.py
 
@@ -21,3 +21,10 @@ class ChatWebSocketSerializer(serializers.ModelSerializer):
     class Meta:
         model = Chat
         fields = ['avatar', 'content', 'date_created']
+
+
+class NotificationWebSocketSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Notification
+        fields = ['level', 'message', 'extra_data', 'date_created', ]

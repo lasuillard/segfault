@@ -9,6 +9,7 @@ from .viewsets import (
     VoteViewSet,
     RoomViewSet,
     ChatViewSet,
+    NotificationViewSet,
 )
 
 app_name = 'v1'
@@ -22,6 +23,7 @@ router.register(r'comment', CommentViewSet, basename='comment')
 router.register(r'vote', VoteViewSet, basename='vote')
 router.register(r'chatroom', RoomViewSet, basename='chatroom')
 router.register(r'chat', ChatViewSet, basename='chat')
+router.register(r'notification', NotificationViewSet, basename='notification')
 
 urlpatterns = [
     path('', include(router.urls))

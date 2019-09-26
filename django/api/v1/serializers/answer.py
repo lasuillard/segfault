@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from api.models import Answer
+from core.models import Answer
 from .avatar import AvatarFieldMixin
 
 

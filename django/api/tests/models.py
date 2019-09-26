@@ -4,14 +4,13 @@ import random
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.contrib.auth import get_user_model
 from django.test import TestCase
-from segfault.utility import LabeledTestInput, generate_random_string
-from ..factories import (
-    get_factories_for_model,
-    UserFactory, AvatarFactory, FragmentFactory, AnswerFactory,
-    CommentFactory, VoteFactory, RoomFactory, ChatFactory
+from core.utility import LabeledTestInput, get_factories_for_model, generate_random_string
+from core.factories import (
+    AvatarFactory, FragmentFactory, AnswerFactory,
+    CommentFactory, VoteFactory, RoomFactory, ChatFactory, NotificationFactory
 )
-from ..models import (
-    Avatar, Fragment, Answer, Commentable, Comment, Votable, Vote, Room, Chat
+from core.models import (
+    Avatar, Commentable, Votable
 )
 
 User = get_user_model()
@@ -185,14 +184,6 @@ class VoteTest(TestCase):
 
 class RoomTest(TestCase):
 
-    def test_get_all_users(self):
-        test_cases = [LabeledTestInput(10, 11), LabeledTestInput(0, 1)]
-        for case in test_cases:
-            # count = users + 1(host)
-            users = [UserFactory() for _ in range(case.value)]
-            room = RoomFactory(users=users)
-            self.assertEqual(len(room.get_all_users()), case.label)
-
     def test_room_magic_method_str_includes_instance_id(self):
         room = RoomFactory()
         self.assertIn(str(room.pk), room.__str__())
@@ -203,3 +194,10 @@ class ChatTest(TestCase):
     def test_chat_magic_method_str_includes_instance_id(self):
         chat = ChatFactory()
         self.assertIn(str(chat.pk), chat.__str__())
+
+
+class NotificationTest(TestCase):
+
+    def test_notification_magic_method_str_includes_instance_id(self):
+        notification = NotificationFactory()
+        self.assertIn(str(notification.pk), notification.__str__())

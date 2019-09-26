@@ -1,6 +1,6 @@
 from django.contrib.auth import get_user_model
 from rest_framework.viewsets import ModelViewSet
-from api.models import Answer
+from core.models import Answer
 from api.permissions import IsOwnerOrReadOnly
 from ..serializers import AnswerSerializer, AnswerDetailSerializer
 

@@ -1,6 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.test import TestCase
-from ..models import Avatar
+from core.models import Avatar
 
 User = get_user_model()
 

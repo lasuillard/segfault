@@ -6,3 +6,4 @@ from .comment import CommentViewSet
 from .vote import VoteViewSet
 from .room import RoomViewSet
 from .chat import ChatViewSet
+from .notification import NotificationViewSet

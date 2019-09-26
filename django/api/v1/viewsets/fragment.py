@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from rest_framework.viewsets import ModelViewSet
-from api.models import Fragment
+from core.models import Fragment
 from ..serializers import FragmentSerializer, FragmentDetailSerializer
 from api.permissions import IsOwnerOrReadOnly
 

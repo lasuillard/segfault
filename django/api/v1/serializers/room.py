@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from api.models import Room
+from core.models import Room
 
 
 class RoomSerializer(serializers.ModelSerializer):

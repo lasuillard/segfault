@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from api.models import Fragment
+from core.models import Fragment
 from .avatar import AvatarFieldMixin
 from .answer import AnswerFieldMixin
 from .comment import CommentFieldMixin

@@ -1,6 +1,6 @@
 from django.contrib.auth import get_user_model
 from rest_framework.viewsets import ModelViewSet
-from api.models import Chat
+from core.models import Chat
 from ..serializers import ChatSerializer
 from api.permissions import IsOwnerOrReadOnly
 

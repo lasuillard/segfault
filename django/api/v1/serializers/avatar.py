@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from api.models import Avatar
+from core.models import Avatar
 
 
 class AvatarSerializer(serializers.ModelSerializer):

@@ -51,7 +51,7 @@ emails will be sent to console for debugging. check it at log/uwsgi.log
 # python manage.py shell
 
 // python console
->>> from api.factories import *
+>>> from core.factories import *
 
 // to use factory, call {Model}Factory(). for example:
 >>> FragmentFactory()
@@ -73,8 +73,8 @@ secret.json and db.json files are not included in repo.
 Free note here. but just your parts.
 
 * Backend
-  * Recategorize and do others for django admin page
-  * Improve API resource related things(models, serializers, viewsets, ...) with unit tests
+  * Write various tests for server application
+  * Implement websockets for notification / chat
   * (LATER) HTTPS/SSL for Nginx
 
 * Frontend
