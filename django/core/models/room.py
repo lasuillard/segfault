@@ -6,12 +6,12 @@ User = get_user_model()
 
 
 class Room(models.Model):
-    name = models.CharField(max_length=32, blank=False)
-    host = models.ForeignKey(
+    user = models.ForeignKey(
         User,
         related_name='host',
         on_delete=models.CASCADE,
     )
+    name = models.CharField(max_length=32, blank=False)
     _room_channel_group = models.UUIDField(default=uuid4, editable=False)
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)

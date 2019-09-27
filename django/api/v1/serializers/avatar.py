@@ -3,12 +3,19 @@ from core.models import Avatar
 
 
 class AvatarSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Avatar
+        fields = ['pk', 'profile_image', 'display_name', 'introduce_message', 'extra_data', 'date_modified']
+        read_only_fields = ['pk', 'date_modified']
+
+
+class AvatarListSerializer(serializers.ModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name='api:v1:avatar-detail')
 
     class Meta:
         model = Avatar
         fields = ['url', 'profile_image', 'display_name']
-        read_only_fields = ['url', 'profile_image', 'display_name']
 
 
 class AvatarDetailSerializer(serializers.ModelSerializer):
@@ -17,7 +24,6 @@ class AvatarDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Avatar
         fields = ['pk', 'user', 'profile_image', 'display_name', 'introduce_message', 'extra_data', 'date_modified']
-        read_only_fields = ['pk', 'user', 'date_modified']
 
 
 class AvatarFieldMixin(serializers.Serializer):

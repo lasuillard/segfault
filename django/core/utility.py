@@ -52,7 +52,7 @@ def get_factories_for_model(model, abstract=False, search_modules=None):
     :return: list of factory
     """
     if search_modules is None:
-        search_modules = ['api.factories', ]
+        search_modules = ['core.factories', ]
 
     factory_modules = [
         import_module(module_name) for module_name in search_modules

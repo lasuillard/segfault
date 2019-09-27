@@ -1,13 +1,13 @@
 from django.contrib.auth import get_user_model
 from django.test import TestCase
-from core.utility import (
+from ..utility import (
     LabeledTestInput,
     get_factories_for_model,
     get_serializers_for_model,
     generate_random_string
 )
+from ..factories import UserFactory
 from api.v1.serializers import UserSerializer, UserDetailSerializer
-from core.factories import UserFactory
 
 User = get_user_model()
 
@@ -20,7 +20,7 @@ class UtilityTest(TestCase):
         self.assertIn(UserDetailSerializer, serializers)
 
     def test_get_factories_for_model(self):
-        factories = get_factories_for_model(model=User, abstract=True, search_modules=['api.factories'])
+        factories = get_factories_for_model(model=User, abstract=True, search_modules=['core.factories'])
         self.assertIn(UserFactory, factories)
 
     def test_generate_random_string_with_default_charset(self):

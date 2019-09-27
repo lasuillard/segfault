@@ -4,13 +4,13 @@ import random
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.contrib.auth import get_user_model
 from django.test import TestCase
-from core.utility import LabeledTestInput, get_factories_for_model, generate_random_string
-from core.factories import (
+from ..utility import LabeledTestInput, get_factories_for_model, generate_random_string
+from ..models import (
+    Avatar, Commentable, Votable
+)
+from ..factories import (
     AvatarFactory, FragmentFactory, AnswerFactory,
     CommentFactory, VoteFactory, RoomFactory, ChatFactory, NotificationFactory
-)
-from core.models import (
-    Avatar, Commentable, Votable
 )
 
 User = get_user_model()

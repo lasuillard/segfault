@@ -2,8 +2,8 @@ from django.contrib.auth import get_user_model
 from rest_framework.permissions import IsAdminUser
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.mixins import RetrieveModelMixin, ListModelMixin
-from ..serializers import UserSerializer, UserDetailSerializer
-from api.permissions import IsOwnerOrReadOnly
+from ..serializers import UserSerializer, UserListSerializer, UserDetailSerializer
+from api.permissions import IsOwner
 
 User = get_user_model()
 
@@ -11,18 +11,20 @@ User = get_user_model()
 class UserViewSet(RetrieveModelMixin, ListModelMixin, GenericViewSet):
 
     def get_serializer_class(self):
-        if self.action == 'retrieve':
+        if self.action == 'list':
+            return UserListSerializer
+        elif self.action == 'retrieve':
             return UserDetailSerializer
-
-        return UserSerializer
+        else:
+            return UserSerializer
 
     def get_permissions(self):
         if self.action == 'list':
-            permission_classes = [IsAdminUser]
+            permissions = [IsAdminUser]
         else:
-            permission_classes = [IsOwnerOrReadOnly]
+            permissions = [IsOwner]
 
-        return [permission() for permission in permission_classes]
+        return [permission() for permission in permissions]
 
     def get_queryset(self):
         queryset = User.objects.all()

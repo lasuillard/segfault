@@ -6,7 +6,14 @@ from .comment import CommentFieldMixin
 from .vote import VoteFieldMixin
 
 
-class FragmentSerializer(AvatarFieldMixin, serializers.ModelSerializer):
+class FragmentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Fragment
+        fields = ['pk', 'title', 'content', 'tags', 'date_created']
+        read_only_fields = ['pk', 'date_created']
+
+
+class FragmentListSerializer(AvatarFieldMixin, serializers.ModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name='api:v1:fragment-detail')
     count_answer = serializers.IntegerField(source='get_answer_count', read_only=True)
     count_comment = serializers.IntegerField(source='get_comment_count', read_only=True)
@@ -17,7 +24,6 @@ class FragmentSerializer(AvatarFieldMixin, serializers.ModelSerializer):
         model = Fragment
         fields = ['pk', 'url', 'avatar', 'title', 'tags', 'status',
                   'count_answer', 'count_comment', 'count_vote', 'average_rating', 'date_created']
-        read_only_fields = []
 
 
 class FragmentDetailSerializer(AvatarFieldMixin, AnswerFieldMixin, CommentFieldMixin, VoteFieldMixin,
@@ -29,4 +35,3 @@ class FragmentDetailSerializer(AvatarFieldMixin, AnswerFieldMixin, CommentFieldM
             'pk', 'avatar', 'title', 'content', 'tags', 'status', 'answers', 'comments', 'votes',
             'date_created', 'date_modified', 'date_closed'
         ]
-        read_only_fields = []

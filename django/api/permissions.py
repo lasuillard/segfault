@@ -7,7 +7,10 @@ User = get_user_model()
 class IsOwner(permissions.BasePermission):
 
     def has_object_permission(self, request, view, obj):
-        return bool(obj.user == request.user)
+        if isinstance(obj, User):
+            return bool(request.user == obj)
+
+        return bool(request.user == obj.user)
 
 
 class IsOwnerOrReadOnly(permissions.BasePermission):
@@ -17,3 +20,12 @@ class IsOwnerOrReadOnly(permissions.BasePermission):
             return True
 
         return bool(request.user == obj.user)
+
+
+class IsRelatedUser(permissions.BasePermission):
+
+    def has_object_permission(self, request, view, obj):
+        try:
+            return bool(obj.users.get(pk=request.user.pk))
+        except User.DoesNotExist:
+            return False

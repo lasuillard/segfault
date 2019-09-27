@@ -1,15 +1,22 @@
 from django.contrib.auth import get_user_model
 from rest_framework.viewsets import ModelViewSet
 from core.models import Vote
-from ..serializers import VoteSerializer
+from ..serializers import VoteSerializer, VoteListSerializer, VoteDetailSerializer
 from api.permissions import IsOwnerOrReadOnly
 
 User = get_user_model()
 
 
 class VoteViewSet(ModelViewSet):
-    serializer_class = VoteSerializer
     permission_classes = [IsOwnerOrReadOnly]
+
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return VoteListSerializer
+        elif self.action == 'retrieve':
+            return VoteDetailSerializer
+
+        return VoteSerializer
 
     def get_queryset(self):
         queryset = Vote.objects.all()

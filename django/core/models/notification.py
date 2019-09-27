@@ -19,7 +19,7 @@ class Notification(models.Model):
         (CRITICAL, 'CRITICAL'),
     ]
 
-    # consider: StatusField with date_sent
+    # TODO: consider StatusField with date_sent
 
     users = models.ManyToManyField(User)
     level = models.CharField(max_length=16, choices=NOTIFICATION_LEVELS)

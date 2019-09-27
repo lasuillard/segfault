@@ -3,14 +3,21 @@ from core.models import Answer
 from .avatar import AvatarFieldMixin
 
 
-class AnswerSerializer(serializers.ModelSerializer, AvatarFieldMixin):
+class AnswerSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Answer
+        fields = ['pk', 'target', 'content', 'date_created']
+        read_only_fields = ['pk', 'date_created']
+
+
+class AnswerListSerializer(serializers.ModelSerializer, AvatarFieldMixin):
     url = serializers.HyperlinkedIdentityField(view_name='api:v1:answer-detail')
     target = serializers.HyperlinkedIdentityField(view_name='api:v1:fragment-detail')
 
     class Meta:
         model = Answer
         fields = ['url', 'avatar', 'target', 'content', 'date_created', 'date_modified']
-        read_only_fields = []
 
 
 class AnswerDetailSerializer(serializers.ModelSerializer, AvatarFieldMixin):
@@ -19,7 +26,6 @@ class AnswerDetailSerializer(serializers.ModelSerializer, AvatarFieldMixin):
     class Meta:
         model = Answer
         fields = ['pk', 'avatar', 'target', 'content', 'date_created', 'date_modified']
-        read_only_fields = []
 
 
 class AnswerFieldMixin(serializers.Serializer):

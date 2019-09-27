@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from rest_framework.viewsets import ModelViewSet
 from core.models import Answer
 from api.permissions import IsOwnerOrReadOnly
-from ..serializers import AnswerSerializer, AnswerDetailSerializer
+from ..serializers import AnswerSerializer, AnswerListSerializer, AnswerDetailSerializer
 
 User = get_user_model()
 
@@ -12,9 +12,11 @@ class AnswerViewSet(ModelViewSet):
 
     def get_serializer_class(self):
         if self.action == 'list':
-            return AnswerSerializer
+            return AnswerListSerializer
+        elif self.action == 'retrieve':
+            return AnswerDetailSerializer
 
-        return AnswerDetailSerializer
+        return AnswerSerializer
 
     def get_queryset(self):
         queryset = Answer.objects.all()

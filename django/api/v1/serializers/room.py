@@ -5,9 +5,17 @@ from core.models import Room
 class RoomSerializer(serializers.ModelSerializer):
     class Meta:
         model = Room
-        fields = ['pk', 'name', 'users', 'date_created', 'date_modified']
-        read_only_fields = ['users', 'date_created', 'date_modified']
+        fields = ['pk', 'name', 'date_created']
+        read_only_fields = ['pk', 'date_created']
+
+
+class RoomListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Room
+        fields = ['pk', 'user', 'name', 'date_created', 'date_modified']
 
 
 class RoomDetailSerializer(serializers.ModelSerializer):
-    pass
+    class Meta:
+        model = Room
+        fields = ['pk', 'user', 'name', 'date_created', 'date_modified']

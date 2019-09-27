@@ -67,7 +67,7 @@ class VoteAdmin(admin.ModelAdmin):
 
 @admin.register(Room)
 class RoomAdmin(admin.ModelAdmin):
-    list_display = ['pk', 'host', 'name', 'date_created', 'date_modified']
+    list_display = ['pk', 'user', 'name', 'date_created', 'date_modified']
     list_display_links = ['pk']
     search_fields = ['name']
 

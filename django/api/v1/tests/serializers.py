@@ -10,4 +10,4 @@ class SerializerTest(TestCase):
     def test_user_serializers_not_contain_credentials(self):
         user_serializers = get_serializers_for_model(model=User, abstract=True)
         for serializer in user_serializers:
-            self.assertNotIn('password', serializer.fields)
+            self.assertNotIn('password', serializer.Meta.fields)

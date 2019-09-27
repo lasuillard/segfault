@@ -91,7 +91,7 @@ class RoomFactory(factory.django.DjangoModelFactory):
         model = Room
 
     name = factory.LazyFunction(lambda: generate_random_string(length=8))
-    host = factory.SubFactory(UserFactory)
+    user = factory.SubFactory(UserFactory)
 
 
 class ChatFactory(factory.django.DjangoModelFactory):

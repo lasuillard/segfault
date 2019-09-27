@@ -30,15 +30,17 @@ class Votable(models.Model):
 
 class Vote(models.Model):
     GOOD = 1
+    NEUTRAL = 0
     BAD = -1
     VOTE_CHOICES = (
         (GOOD, 'Good'),
+        (NEUTRAL, 'Neutral'),
         (BAD, 'Bad')
     )
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, )
     target = models.ForeignKey(Votable, on_delete=models.CASCADE, )
-    rating = models.DecimalField(max_digits=1, decimal_places=0, choices=VOTE_CHOICES)
+    rating = models.IntegerField(choices=VOTE_CHOICES, default=NEUTRAL, )
 
     def __str__(self):
         return f'Vote { self.pk } ... { self.target }'

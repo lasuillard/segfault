@@ -5,12 +5,20 @@ from core.models import Comment
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
+        fields = ['pk', 'parent', 'target', 'content', 'date_created']
+        read_only_fields = ['pk', 'date_created']
+
+
+class CommentListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
         fields = ['pk', 'parent', 'user', 'target', 'content', 'date_created', 'date_modified']
-        read_only_fields = ['user', 'date_created', 'date_modified']
 
 
 class CommentDetailSerializer(serializers.ModelSerializer):
-    pass
+    class Meta:
+        model = Comment
+        fields = ['pk', 'parent', 'user', 'target', 'content', 'date_created', 'date_modified']
 
 
 class CommentFieldMixin(serializers.Serializer):

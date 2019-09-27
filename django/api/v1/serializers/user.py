@@ -6,13 +6,20 @@ User = get_user_model()
 
 
 class UserSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = ['pk', 'username']
+        read_only_fields = ['pk', 'username']
+
+
+class UserListSerializer(serializers.ModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name='api:v1:user-detail')
     avatar = AvatarSerializer()
 
     class Meta:
         model = User
         fields = ['url', 'avatar']
-        read_only_fields = ['url', 'avatar']
 
 
 class UserDetailSerializer(serializers.ModelSerializer):
@@ -23,5 +30,4 @@ class UserDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['pk', 'email', 'avatar']
-        read_only_fields = ['email', 'avatar']
+        fields = ['pk', 'email', 'username', 'avatar']
