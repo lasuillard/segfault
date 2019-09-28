@@ -2,14 +2,14 @@ from django.contrib.auth import get_user_model
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.mixins import RetrieveModelMixin, ListModelMixin, UpdateModelMixin, DestroyModelMixin
 from core.models import Chat
+from api.permissions import IsAdminUser, IsOwnerOrReadOnly
 from ..serializers import ChatSerializer, ChatListSerializer, ChatDetailSerializer
-from api.permissions import IsOwnerOrReadOnly
 
 User = get_user_model()
 
 
 class ChatViewSet(RetrieveModelMixin, ListModelMixin, UpdateModelMixin, DestroyModelMixin, GenericViewSet):
-    permission_classes = [IsOwnerOrReadOnly]
+    permission_classes = [IsOwnerOrReadOnly | IsAdminUser]
 
     def get_serializer_class(self):
         if self.action == 'list':

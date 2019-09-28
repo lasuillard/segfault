@@ -1,16 +1,15 @@
 from django.contrib.auth import get_user_model
-from rest_framework.permissions import IsAdminUser
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.mixins import RetrieveModelMixin, UpdateModelMixin, ListModelMixin
 from core.models import Avatar
-from api.permissions import IsOwnerOrReadOnly
+from api.permissions import IsAdminUser, IsOwnerOrReadOnly
 from ..serializers import AvatarSerializer, AvatarListSerializer, AvatarDetailSerializer
 
 User = get_user_model()
 
 
 class AvatarViewSet(RetrieveModelMixin, UpdateModelMixin, ListModelMixin, GenericViewSet):
-    permission_classes = [IsOwnerOrReadOnly]
+    permission_classes = [IsOwnerOrReadOnly | IsAdminUser]
 
     def get_serializer_class(self):
         if self.action == 'list':

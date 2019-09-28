@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from core.models import Notification
-from .user import UserSerializer
+from .user import UserListSerializer
 
 
 class NotificationSerializer(serializers.ModelSerializer):
@@ -12,16 +12,15 @@ class NotificationSerializer(serializers.ModelSerializer):
 
 
 class NotificationListSerializer(serializers.ModelSerializer):
-    users = UserSerializer(many=True)
-
-    class Meta:
-        model = Notification
-        fields = ['level', 'message', 'extra_data', 'date_created']
-
-
-class NotificationDetailSerializer(serializers.ModelSerializer):
-    users = UserSerializer(many=True)
+    users = UserListSerializer(many=True, read_only=True)
 
     class Meta:
         model = Notification
         fields = ['users', 'level', 'message', 'extra_data', 'date_created']
+
+
+class NotificationDetailSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Notification
+        fields = ['level', 'message', 'extra_data', 'date_created']

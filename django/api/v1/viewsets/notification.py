@@ -1,16 +1,15 @@
 from django.contrib.auth import get_user_model
+from django.shortcuts import get_object_or_404
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.mixins import RetrieveModelMixin, ListModelMixin
-from rest_framework.permissions import IsAdminUser
 from core.models import Notification
-from api.permissions import IsRelatedUser
+from api.permissions import IsAdminUser, IsRelatedUser
 from ..serializers import NotificationSerializer, NotificationListSerializer, NotificationDetailSerializer
 
 User = get_user_model()
 
 
 class NotificationViewSet(RetrieveModelMixin, ListModelMixin, GenericViewSet):
-    permission_classes = [IsRelatedUser]
 
     def get_serializer_class(self):
         if self.action == 'list':
@@ -22,7 +21,7 @@ class NotificationViewSet(RetrieveModelMixin, ListModelMixin, GenericViewSet):
 
     def get_permissions(self):
         if self.action == 'retrieve':
-            permissions = [IsRelatedUser]
+            permissions = [IsRelatedUser | IsAdminUser]
         else:
             permissions = [IsAdminUser]
 

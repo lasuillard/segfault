@@ -1,9 +1,8 @@
 from django.contrib.auth import get_user_model
-from rest_framework.permissions import IsAdminUser
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.mixins import RetrieveModelMixin, ListModelMixin
+from api.permissions import IsAdminUser, IsOwner
 from ..serializers import UserSerializer, UserListSerializer, UserDetailSerializer
-from api.permissions import IsOwner
 
 User = get_user_model()
 
@@ -22,7 +21,7 @@ class UserViewSet(RetrieveModelMixin, ListModelMixin, GenericViewSet):
         if self.action == 'list':
             permissions = [IsAdminUser]
         else:
-            permissions = [IsOwner]
+            permissions = [IsOwner | IsAdminUser]
 
         return [permission() for permission in permissions]
 

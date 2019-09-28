@@ -1,7 +1,9 @@
 from unittest import SkipTest
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import AnonymousUser
 from django.shortcuts import reverse
 from django.test import TestCase
+from rest_framework import status
 from rest_framework.test import APIClient
 from core.models import (
     Avatar, Fragment, Answer, Comment, Vote, Room, Chat, Notification
@@ -28,9 +30,13 @@ VIEWSET_PERMISSIONS = ['anonymous', 'authenticated', 'owner', 'admin']
 class ViewSetTestSetup(TestCase):
 
     def setUp(self):
+        # required attiributes:
+        for attr in ['view_name']:
+            if not hasattr(self, attr):
+                raise AttributeError(f'Required attribute {attr} does not exists.')
+
         self._url_list = reverse(f'{self.view_name}-list')
         self._url_detail = lambda args, kwargs: reverse(f'{self.view_name}-detail', args=args, kwargs=kwargs)
-
         super(ViewSetTestSetup, self).setUp()
 
     @property
@@ -39,6 +45,9 @@ class ViewSetTestSetup(TestCase):
 
     @staticmethod
     def get_client(permission):
+        """
+        Return client that is authenticated with user who has specific permission
+        """
         client = APIClient()
         if permission in ['authenticated', 'owner']:
             client.user = UserFactory()
@@ -46,19 +55,32 @@ class ViewSetTestSetup(TestCase):
         elif permission == 'admin':
             client.user = UserFactory(is_staff=True)
             client.force_authenticate(client.user)
+        else:
+            client.user = AnonymousUser()
 
+        # unspecified permission: anonymous by default
         return client
 
-    def get_item(self, permission, **kwargs):
+    def get_item(self, permission, action, client):
+        """
+        Returns the instance of model to be used for testing API requests.
+        in detail, it is used for creation of resource url
+        """
         if permission == 'owner':
-            return self.factory(user=kwargs['client'].user)
+            return self.factory(user=client.user)
 
         return self.factory()
 
     def get_data(self, permission, action):
-        pass
+        """
+        It is a data, that is used to create item via API request.
+        """
+        raise NotImplementedError('get_data must be implemented.')
 
     def get_url(self, action, args=None, kwargs=None):
+        """
+        DRF action mapping for url-list, url-detail.
+        """
         if action in ['list', 'create']:
             return self._url_list
         elif action in ['retrieve', 'update', 'partial_update', 'destroy']:
@@ -80,7 +102,8 @@ class ViewSetTestSetup(TestCase):
                 return client.delete(url, data=data, format='json')
 
         except ValueError:
-            pass
+            # the case when requested ownership-resources with anonymous user client.
+            return None
 
 
 class ViewSetActionTestMixin(ViewSetTestSetup):
@@ -92,22 +115,46 @@ class ViewSetActionTestMixin(ViewSetTestSetup):
         else:
             super(ViewSetActionTestMixin, cls).setUpClass()
 
+    def setUp(self):
+        # required attiributes:
+        for attr in ['model', 'factory', 'permissions_for_actions']:
+            if not hasattr(self, attr):
+                raise AttributeError(f'Required attribute {attr} does not exists.')
+
+        super(ViewSetActionTestMixin, self).setUp()
+
+    def get_data(self, permission, action):
+        pass
+
     def test_model_viewset_allowed_actions(self):
         for (action, permissions) in self.permissions_for_actions.items():
-            for permission in permissions:
+            for permission in VIEWSET_PERMISSIONS:
                 client = self.get_client(permission)
                 data = self.get_data(permission, action)
                 if action in ['list', 'create']:
                     url = self.get_url(action)
                 else:
-                    item = self.get_item(permission, client=client)
+                    item = self.get_item(permission, action, client=client)
                     url = self.get_url(action, kwargs={'pk': item.pk})
 
+                # request with client for resource url
                 response = self.get_response(client, action, url, data=data)
-                if not hasattr(response, 'status_code'):
+                if response is None:
+                    self.assertIn(action, ['create', 'update', 'partial_update', 'destroy'])
+                    self.assertIn(permission, ['anonymous'])
                     continue
 
-                self.assertIn(response.status_code, [200, 201, 204], msg=f'{self.tag}-{action}-{permission}')
+                # test!
+                if permission in permissions:
+                    self.assertIn(
+                        response.status_code,
+                        [status.HTTP_200_OK, status.HTTP_201_CREATED, status.HTTP_204_NO_CONTENT],
+                        msg=f'{self.tag}-{action}-{permission}')
+                else:
+                    self.assertEqual(
+                        response.status_code,
+                        status.HTTP_403_FORBIDDEN,
+                        msg=f'{self.tag}-{action}-{permission}')
 
     def test_model_viewset_not_allowed_actions(self):
         item = self.factory()
@@ -122,12 +169,10 @@ class ViewSetActionTestMixin(ViewSetTestSetup):
             if not hasattr(response, 'status_code'):
                 continue
 
-            self.assertEqual(response.status_code, 405,
-                             msg=f'{self.tag}-{action}')
-
-
-class ViewSetQueryTestMixin(ViewSetTestSetup):
-    pass
+            self.assertEqual(
+                response.status_code,
+                status.HTTP_405_METHOD_NOT_ALLOWED,
+                msg=f'{self.tag}-{action}')
 
 
 class UserViewSetTest(ViewSetActionTestMixin, TestCase):
@@ -136,14 +181,17 @@ class UserViewSetTest(ViewSetActionTestMixin, TestCase):
     factory = UserFactory
     permissions_for_actions = {
         'list': ['admin'],
-        'retrieve': ['owner']
+        'retrieve': ['owner', 'admin']
     }
 
-    def get_item(self, permission, **kwargs):
+    def get_item(self, permission, action, client):
         if permission == 'owner':
-            return kwargs['client'].user
+            return client.user
 
         return self.factory()
+
+    def get_data(self, permission, action):
+        return {}
 
 
 class AvatarViewSetTest(ViewSetActionTestMixin, TestCase):
@@ -151,10 +199,10 @@ class AvatarViewSetTest(ViewSetActionTestMixin, TestCase):
     model = Avatar
     factory = AvatarFactory
     permissions_for_actions = {
-        'list': ['admin'],
+        'list': VIEWSET_PERMISSIONS,
         'retrieve': VIEWSET_PERMISSIONS,
-        'update': ['owner'],
-        'partial_update': ['owner']
+        'update': ['owner', 'admin'],
+        'partial_update': ['owner', 'admin']
     }
 
     def get_data(self, permission, action):
@@ -172,9 +220,9 @@ class FragmentViewSetTest(ViewSetActionTestMixin, TestCase):
         'list': VIEWSET_PERMISSIONS,
         'create': ['authenticated', 'owner', 'admin'],
         'retrieve': VIEWSET_PERMISSIONS,
-        'update': ['owner'],
-        'partial_update': ['owner'],
-        'destroy': ['owner']
+        'update': ['owner', 'admin'],
+        'partial_update': ['owner', 'admin'],
+        'destroy': ['owner', 'admin']
     }
 
     def get_data(self, permission, action):
@@ -192,9 +240,9 @@ class AnswerViewSetTest(ViewSetActionTestMixin, TestCase):
         'list': VIEWSET_PERMISSIONS,
         'create': ['authenticated', 'owner', 'admin'],
         'retrieve': VIEWSET_PERMISSIONS,
-        'update': ['owner'],
-        'partial_update': ['owner'],
-        'destroy': ['owner']
+        'update': ['owner', 'admin'],
+        'partial_update': ['owner', 'admin'],
+        'destroy': ['owner', 'admin']
     }
 
     def get_data(self, permission, action):
@@ -212,9 +260,9 @@ class CommentViewSetTest(ViewSetActionTestMixin, TestCase):
         'list': VIEWSET_PERMISSIONS,
         'create': ['authenticated', 'owner', 'admin'],
         'retrieve': VIEWSET_PERMISSIONS,
-        'update': ['owner'],
-        'partial_update': ['owner'],
-        'destroy': ['owner']
+        'update': ['owner', 'admin'],
+        'partial_update': ['owner', 'admin'],
+        'destroy': ['owner', 'admin']
     }
 
     def get_data(self, permission, action):
@@ -232,9 +280,9 @@ class VoteViewSetTest(ViewSetActionTestMixin, TestCase):
         'list': VIEWSET_PERMISSIONS,
         'create': ['authenticated', 'owner', 'admin'],
         'retrieve': VIEWSET_PERMISSIONS,
-        'update': ['owner'],
-        'partial_update': ['owner'],
-        'destroy': ['owner']
+        'update': ['owner', 'admin'],
+        'partial_update': ['owner', 'admin'],
+        'destroy': ['owner', 'admin']
     }
 
     def get_data(self, permission, action):
@@ -252,9 +300,9 @@ class RoomViewSetTest(ViewSetActionTestMixin, TestCase):
         'list': VIEWSET_PERMISSIONS,
         'create': ['authenticated', 'owner', 'admin'],
         'retrieve': VIEWSET_PERMISSIONS,
-        'update': ['owner'],
-        'partial_update': ['owner'],
-        'destroy': ['owner']
+        'update': ['owner', 'admin'],
+        'partial_update': ['owner', 'admin'],
+        'destroy': ['owner', 'admin']
     }
 
     def get_data(self, permission, action):
@@ -270,9 +318,9 @@ class ChatViewSetTest(ViewSetActionTestMixin, TestCase):
     permissions_for_actions = {
         'list': VIEWSET_PERMISSIONS,
         'retrieve': VIEWSET_PERMISSIONS,
-        'update': ['owner'],
-        'partial_update': ['owner'],
-        'destroy': ['owner']
+        'update': ['owner', 'admin'],
+        'partial_update': ['owner', 'admin'],
+        'destroy': ['owner', 'admin']
     }
 
     def get_data(self, permission, action):
@@ -287,11 +335,16 @@ class NotificationViewSetTest(ViewSetActionTestMixin, TestCase):
     factory = NotificationFactory
     permissions_for_actions = {
         'list': ['admin'],
-        'retrieve': ['owner'],
+        'retrieve': ['owner', 'admin'],
     }
 
-    def get_item(self, permission, **kwargs):
-        return self.factory(users=[kwargs['client'].user, ])
+    def get_item(self, permission, action, client):
+        if permission == 'owner':
+            return self.factory(users=[client.user, ])
+
+        return self.factory()
 
     def get_data(self, permission, action):
-        return {}
+        return {
+            'name': 'TEST'
+        }

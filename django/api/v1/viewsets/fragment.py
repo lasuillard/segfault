@@ -1,15 +1,14 @@
 from django.contrib.auth import get_user_model
-from django.shortcuts import get_object_or_404
 from rest_framework.viewsets import ModelViewSet
 from core.models import Fragment
+from api.permissions import IsAdminUser, IsOwnerOrReadOnly
 from ..serializers import FragmentSerializer, FragmentListSerializer, FragmentDetailSerializer
-from api.permissions import IsOwnerOrReadOnly
 
 User = get_user_model()
 
 
 class FragmentViewSet(ModelViewSet):
-    permission_classes = [IsOwnerOrReadOnly]
+    permission_classes = [IsOwnerOrReadOnly | IsAdminUser]
 
     def get_serializer_class(self):
         if self.action == 'list':

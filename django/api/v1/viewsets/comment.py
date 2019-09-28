@@ -1,15 +1,14 @@
 from django.contrib.auth import get_user_model
-from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.viewsets import ModelViewSet
 from core.models import Comment
+from api.permissions import IsAdminUser, IsOwnerOrReadOnly
 from ..serializers import CommentSerializer, CommentListSerializer, CommentDetailSerializer
-from api.permissions import IsOwnerOrReadOnly
 
 User = get_user_model()
 
 
 class CommentViewSet(ModelViewSet):
-    permission_classes = [IsOwnerOrReadOnly]
+    permission_classes = [IsOwnerOrReadOnly | IsAdminUser]
 
     def get_serializer_class(self):
         if self.action == 'list':

@@ -1,14 +1,14 @@
 from django.contrib.auth import get_user_model
 from rest_framework.viewsets import ModelViewSet
 from core.models import Answer
-from api.permissions import IsOwnerOrReadOnly
+from api.permissions import IsAdminUser, IsOwnerOrReadOnly
 from ..serializers import AnswerSerializer, AnswerListSerializer, AnswerDetailSerializer
 
 User = get_user_model()
 
 
 class AnswerViewSet(ModelViewSet):
-    permission_classes = [IsOwnerOrReadOnly]
+    permission_classes = [IsOwnerOrReadOnly | IsAdminUser]
 
     def get_serializer_class(self):
         if self.action == 'list':
