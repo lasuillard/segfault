@@ -1,8 +1,11 @@
+import logging
+from rest_framework import status
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from channels import layers
 from core.models import Notification
 from ..serializers import NotificationWebSocketSerializer
 
+logger = logging.getLogger(__name__)
 GLOBAL_NOTIFICATION_CHANNEL = 'GLOBAL-NOTIFICATION-CHANNEL-GROUP'
 
 
@@ -34,7 +37,7 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
         try:
             self.user = self.scope['user']
             if not self.user.is_authenticated:
-                await self.close(code=401)  # Unauthorized
+                await self.close(code=status.HTTP_401_UNAUTHORIZED)  # Unauthorized
                 return
 
             self.channel_group = self.user.avatar.get_channel_group()
@@ -43,7 +46,7 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
             await self.accept(subprotocol='access_token')  # OK
 
         except KeyError:
-            await self.close(code=500)  # Internal server error
+            await self.close(code=status.HTTP_500_INTERNAL_SERVER_ERROR)  # Internal server error
 
     async def disconnect(self, code):
         await self.channel_layer.group_discard(GLOBAL_NOTIFICATION_CHANNEL, self.channel_name)

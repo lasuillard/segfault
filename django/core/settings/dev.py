@@ -50,18 +50,61 @@ CACHES = {
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
+    },
+    'filters': {
+        'debug': {
+            '()': 'django.utils.log.RequireDebugTrue'
+        },
+    },
     'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'filters': ['debug'],
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple'
+        },
         'file': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': 'debug.log',
+            'filename': 'log/log.log',
+            'formatter': 'verbose'
+        },
+        'dev': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'log/debug.log',
+            'formatter': 'verbose'
         }
     },
     'loggers': {
         'django': {
-            'handlers': ['file', ],
-            'level': 'DEBUG',
-            'propagate': True,
-        }
+            'handlers': ['file'],
+            'propagate': True
+        },
+        'django.request': {
+            'handlers': ['console'],
+            'propagate': False
+        },
+        'core': {
+            'handlers': ['console', 'file'],
+            'propagate': True
+        },
+        'api': {
+            'handlers': ['console', 'file'],
+            'propagate': True
+        },
+        'ws': {
+            'handlers': ['console', 'file'],
+            'propagate': True
+        },
     },
 }

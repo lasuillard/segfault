@@ -48,12 +48,12 @@ class Avatar(models.Model):
 
         super(Avatar, self).save(*args, **kwargs)
 
-    def delete(self, using=None, keep_parents=False):
+    def delete(self, *args, **kwargs):
         profile_image = self.profile_image
         if profile_image.name != Avatar.AVATAR_DEFAULT_IMAGE and os.path.exists(profile_image.path):
             profile_image.delete(save=False)
 
-        super(Avatar, self).delete(using, keep_parents)
+        super(Avatar, self).delete(*args, **kwargs)
 
     def get_channel_group(self):
         return str(self._notification_channel_group)

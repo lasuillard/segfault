@@ -27,5 +27,5 @@ class ChatViewSet(RetrieveModelMixin, ListModelMixin, UpdateModelMixin, DestroyM
 
         return queryset
 
-    def perform_create(self, serializer):
+    def perform_update(self, serializer):
         serializer.save(user=self.request.user)

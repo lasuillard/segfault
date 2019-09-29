@@ -14,17 +14,20 @@ from core.factories import (
 )
 
 User = get_user_model()
-"""
-Methods-actions mapping for DRF
 
-GET: list, retrieve
-POST: create
-PUT: update
-PATCH: partial_update
-DELETE: destroy
-"""
 VIEWSET_ACTIONS = ['list', 'retrieve', 'create', 'update', 'partial_update', 'destroy']
 VIEWSET_PERMISSIONS = ['anonymous', 'authenticated', 'owner', 'admin']
+
+"""
+Viewset tests permissions and actions also.
+
+method-action mapping for DRF
+- GET: list, retrieve
+- POST: create
+- PUT: update
+- PATCH: partial_update
+- DELETE: destroy
+"""
 
 
 class ViewSetTestSetup(TestCase):
