@@ -79,6 +79,7 @@ export default {
       password: null
     },
     socialLogins: [
+      // static images at /static folder
       {
         provider: 'naver',
         displayName: 'Naver',

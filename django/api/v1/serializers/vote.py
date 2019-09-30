@@ -25,4 +25,4 @@ class VoteDetailSerializer(serializers.ModelSerializer):
 
 
 class VoteFieldMixin(serializers.Serializer):
-    votes = VoteSerializer(source='vote_set', many=True, read_only=True)
+    votes = VoteListSerializer(source='vote_set', many=True, read_only=True)

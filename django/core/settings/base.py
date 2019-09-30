@@ -94,7 +94,7 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 # django-allauth config
-ACCOUNT_ADAPTER = 'core.adapter.CustomAccountAdapter'
+ACCOUNT_ADAPTER = 'auth.adapter.CustomAccountAdapter'
 
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 ACCOUNT_AUTHENTICATION_METHOD = 'email'

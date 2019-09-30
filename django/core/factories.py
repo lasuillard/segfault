@@ -2,15 +2,14 @@ import random
 import factory
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.contrib.auth import get_user_model
-from django.db.models import signals
 from core.utility import get_factories_for_model, generate_random_string
 from core.models import Avatar, Fragment, Answer, Commentable, Comment, Votable, Vote, Room, Chat, Notification
 
 User = get_user_model()
 
 
-@factory.django.mute_signals(signals.post_save)
 class UserFactory(factory.django.DjangoModelFactory):
+    # Avatar is created with user by signal
 
     class Meta:
         model = User
@@ -18,8 +17,8 @@ class UserFactory(factory.django.DjangoModelFactory):
     username = factory.LazyFunction(lambda: generate_random_string(length=16))
 
 
-@factory.django.mute_signals(signals.pre_save, signals.post_delete)
 class AvatarFactory(factory.django.DjangoModelFactory):
+    # For special purposes: testing, etc.
 
     class Meta:
         model = Avatar

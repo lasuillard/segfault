@@ -54,7 +54,6 @@ export default {
   ** See https://axios.nuxtjs.org/options
   */
   axios: {
-    // nginx
     baseURL: 'http://localhost:80/'
   },
   /*

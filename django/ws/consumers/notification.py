@@ -34,19 +34,15 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
         super(NotificationConsumer, self).__init__(*args, **kwargs)
 
     async def connect(self):
-        try:
-            self.user = self.scope['user']
-            if not self.user.is_authenticated:
-                await self.close(code=status.HTTP_401_UNAUTHORIZED)  # Unauthorized
-                return
+        self.user = self.scope['user']
+        if not self.user.is_authenticated:
+            await self.close(code=status.HTTP_401_UNAUTHORIZED)  # Unauthorized
+            return
 
-            self.channel_group = self.user.avatar.get_channel_group()
-            await self.channel_layer.group_add(GLOBAL_NOTIFICATION_CHANNEL, self.channel_name)
-            await self.channel_layer.group_add(self.channel_group, self.channel_name)
-            await self.accept(subprotocol='access_token')  # OK
-
-        except KeyError:
-            await self.close(code=status.HTTP_500_INTERNAL_SERVER_ERROR)  # Internal server error
+        self.channel_group = self.user.avatar.get_channel_group()
+        await self.channel_layer.group_add(GLOBAL_NOTIFICATION_CHANNEL, self.channel_name)
+        await self.channel_layer.group_add(self.channel_group, self.channel_name)
+        await self.accept(subprotocol='access_token')  # OK
 
     async def disconnect(self, code):
         await self.channel_layer.group_discard(GLOBAL_NOTIFICATION_CHANNEL, self.channel_name)

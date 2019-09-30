@@ -38,10 +38,6 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
             await self.accept(subprotocol='access_token')  # OK
             logger.info(f'Accepted user:{self.user}')
 
-        except KeyError as e:
-            await self.close(code=status.HTTP_500_INTERNAL_SERVER_ERROR)  # Internal server error
-            logger.error(f'KeyError occurred while establishing connection: {e}')
-
         except Room.DoesNotExist as e:
             await self.close(code=status.HTTP_400_BAD_REQUEST)  # Bad Request
             logger.warning(f'Cannot find room for chat socket: {e}')

@@ -15,7 +15,7 @@ class AvatarListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Avatar
-        fields = ['url', 'profile_image', 'display_name']
+        fields = ['pk', 'url', 'profile_image', 'display_name']
 
 
 class AvatarDetailSerializer(serializers.ModelSerializer):
@@ -30,4 +30,4 @@ class AvatarFieldMixin(serializers.Serializer):
     """
         This mixins is for using avatar instance indirectly via user instance
     """
-    avatar = AvatarSerializer(source='user.avatar', read_only=True)
+    avatar = AvatarListSerializer(source='user.avatar', read_only=True)

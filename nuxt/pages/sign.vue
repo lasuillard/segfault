@@ -81,16 +81,16 @@ export default {
     }
   },
   methods: {
-    async signUp () {
+    signUp () {
       try {
-        let result = await this.$axios.$post(URL_REGISTRATION, { ...this.credentials })
-
-        // TODO: I guess another fancy alert components could be made.
-        // it will return message "Verification e-mail sent." on success.
-        alert(result.detail)
-
-        // DISABLED_FOR_DEBUG: Replace route to homepage.
-        // this.$router.replace({ name: 'index' })
+        this.$axios.$post(URL_REGISTRATION, { ...this.credentials })
+        .then(response => {
+          alert(result.detail)
+          this.$router.replace({ name: 'index' })
+        })
+        .catch(err => {
+          // write error handling here
+        })
       }
       catch (e) {
         alert(e)

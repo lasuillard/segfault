@@ -13,15 +13,15 @@ export const DEFAULT_CONFIG = {
 }
 
 // mutation-types
-export const SET_TOKEN   = 'SET_TOKEN'
-export const SET_PROFILE = 'SET_PROFILE'
-export const SET_CONFIG  = 'SET_CONFIG'
+const SET_TOKEN   = 'SET_TOKEN'
+const SET_PROFILE = 'SET_PROFILE'
+const SET_CONFIG  = 'SET_CONFIG'
 
 // urls for api
-const URL_LOCAL_LOGIN  = '/auth/login/'
-const URL_SOCIAL_LOGIN = '/auth/o/'
-const URL_LOGOUT       = '/auth/logout/'
-const URL_USER_PROFILE = '/auth/user/'
+export const URL_LOCAL_LOGIN  = '/auth/login/'
+export const URL_SOCIAL_LOGIN = '/auth/o/'
+export const URL_LOGOUT       = '/auth/logout/'
+export const URL_USER_PROFILE = '/auth/user/'
 
 
 export const state = () => ({

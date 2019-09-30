@@ -9,13 +9,21 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
+
 export default {
   layout: 'empty',
+  methods: {
+    ...mapActions({
+      _finishLogin: 'user/finishSocialLogin'
+    })
+  },
   created () { 
-    let result = this.$store.dispatch('user/finishSocialLogin', this.$route.query)
-    if (result)
-      this.$router.replace({ name: 'index' })
-      
+    this._finishLogin(this.$route.query)
+    .then(ok => this.$router.replace({ name: 'index' }))
+    .catch(err => {
+      // write error handling here
+    })
   }
 }
 </script>

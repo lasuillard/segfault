@@ -29,4 +29,4 @@ class AnswerDetailSerializer(serializers.ModelSerializer, AvatarFieldMixin):
 
 
 class AnswerFieldMixin(serializers.Serializer):
-    answers = AnswerSerializer(source='answer_set', many=True, read_only=True)
+    answers = AnswerListSerializer(source='answer_set', many=True, read_only=True)

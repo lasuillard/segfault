@@ -22,4 +22,4 @@ class CommentDetailSerializer(serializers.ModelSerializer):
 
 
 class CommentFieldMixin(serializers.Serializer):
-    comments = CommentSerializer(source='comment_set', many=True, read_only=True)
+    comments = CommentListSerializer(source='comment_set', many=True, read_only=True)

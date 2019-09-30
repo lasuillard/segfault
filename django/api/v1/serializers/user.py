@@ -1,6 +1,6 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
-from .avatar import AvatarSerializer
+from .avatar import AvatarListSerializer
 
 User = get_user_model()
 
@@ -15,7 +15,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 class UserListSerializer(serializers.ModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name='api:v1:user-detail')
-    avatar = AvatarSerializer()
+    avatar = AvatarListSerializer()
 
     class Meta:
         model = User
@@ -26,7 +26,7 @@ class UserDetailSerializer(serializers.ModelSerializer):
     """
         it overrides django-rest-auth UserDetailsSerializer with custom settings
     """
-    avatar = AvatarSerializer()
+    avatar = AvatarListSerializer()
 
     class Meta:
         model = User

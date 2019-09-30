@@ -1,5 +1,6 @@
 <template>
-  <v-app :style="{ background: $vuetify.theme.themes.dark.warning }">
+<!--  <v-app :style="{ background: $vuetify.theme.themes.dark.warning }"> -->
+  <v-app>
     <!-- Top navigation bar -->
     <v-app-bar app v-bind="theme">
       <v-app-bar-nav-icon @click="isDrawerOpen = !isDrawerOpen" />
@@ -70,6 +71,8 @@
       </v-list>
     </v-navigation-drawer>
 
+    <notification-box />
+
     <!-- Content -->
     <v-content v-bind="theme">
       <v-container>
@@ -81,11 +84,13 @@
 
 <script>
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
-import LoginDialogVue from '../components/LoginDialog.vue'
+import LoginDialogVue from '../components/LoginDialog'
+import NotificationBox from '../components/NotificationBox'
 
 export default {
   components: {
-    'login-dialog': LoginDialogVue
+    'login-dialog': LoginDialogVue,
+    'notification-box': NotificationBox
   },
   data: () => ({
     isDrawerOpen: false,

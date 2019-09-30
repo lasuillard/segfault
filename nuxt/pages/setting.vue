@@ -26,7 +26,7 @@
     <v-card-actions>
       <v-spacer />
       <v-btn color="secondary" @click="resetConfig">Reset</v-btn>
-      <v-btn color="primary" :disabled="isChangeOccurred" @click="saveConfig({ ...localChanges })">Save</v-btn>
+      <v-btn color="primary" :disabled="!isChangeOccurred" @click="saveConfig({ ...localChanges })">Save</v-btn>
     </v-card-actions>
   </v-card>
 </template>
@@ -66,10 +66,7 @@ export default {
   watch: {
     localChanges: {
       handler: function (val, oldVal) {
-        console.log('Change: ', oldVal, val)
-        console.log(this.oldSetting)
         for (var key in this.oldSetting) { 
-          console.log(key)
           if (this.oldSetting[key] != val[key]) {
             this.isChangeOccurred = true
             return
