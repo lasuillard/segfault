@@ -1,10 +1,10 @@
 from django.db import models
 from django.contrib.auth import get_user_model
-from django.contrib.postgres.fields import ArrayField
 from model_utils import Choices
 from model_utils.fields import StatusField, MonitorField
 from .comment import Commentable
 from .vote import Votable
+from .tag import Tag
 
 User = get_user_model()
 
@@ -18,15 +18,7 @@ class Fragment(Commentable, Votable):
     )
     title = models.CharField(max_length=256)
     content = models.TextField()
-    tags = ArrayField(
-        models.CharField(  # consider using SlugField instead
-            max_length=16,
-            blank=True,
-        ),
-        # size=16,
-        default=list,
-        blank=True
-    )
+    tags = models.ManyToManyField(Tag)
     status = StatusField(choices=STATUS, default=STATUS.OPEN)
     date_created = models.DateTimeField(auto_now_add=True, editable=False)
     date_modified = models.DateTimeField(auto_now=True, editable=False)
@@ -35,7 +27,10 @@ class Fragment(Commentable, Votable):
     )
 
     def __str__(self):
-        return f'Fragment { self.pk }'
+        return f"{ self.pk } { self.title[:10] if len(self.title) > 10 else self.title }"
 
     def get_answer_count(self):
+        if not hasattr(self, 'answer_set'):
+            raise AttributeError('answer_set does not exists. please be make sure that model Answer has target field.')
+
         return self.answer_set.count()

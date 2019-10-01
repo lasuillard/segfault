@@ -41,6 +41,8 @@ class Vote(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, )
     target = models.ForeignKey(Votable, on_delete=models.CASCADE, )
     rating = models.IntegerField(choices=VOTE_CHOICES, default=NEUTRAL, )
+    date_created = models.DateTimeField(auto_now_add=True, editable=False)
+    date_modified = models.DateTimeField(auto_now=True, editable=False)
 
     def __str__(self):
-        return f'Vote { self.pk } ... { self.target }'
+        return f'{ self.pk } for Votable { self.target }'

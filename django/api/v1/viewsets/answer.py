@@ -1,14 +1,14 @@
 from django.contrib.auth import get_user_model
 from rest_framework.viewsets import ModelViewSet
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from core.models import Answer
-from api.permissions import IsAdminUser, IsOwnerOrReadOnly
+from api.permissions import IsAdminUser, IsOwner
 from ..serializers import AnswerSerializer, AnswerListSerializer, AnswerDetailSerializer
 
 User = get_user_model()
 
 
 class AnswerViewSet(ModelViewSet):
-    permission_classes = [IsOwnerOrReadOnly | IsAdminUser]
 
     def get_serializer_class(self):
         if self.action == 'list':
@@ -17,6 +17,16 @@ class AnswerViewSet(ModelViewSet):
             return AnswerDetailSerializer
 
         return AnswerSerializer
+
+    def get_permissions(self):
+        if self.action in ['list', 'retrieve']:
+            permissions = [AllowAny, ]
+        elif self.action == 'create':
+            permissions = [IsAuthenticated | IsAdminUser, ]
+        else:
+            permissions = [IsOwner | IsAdminUser, ]
+
+        return [permission() for permission in permissions]
 
     def get_queryset(self):
         queryset = Answer.objects.all()

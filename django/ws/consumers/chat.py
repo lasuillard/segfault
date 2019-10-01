@@ -15,7 +15,7 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         self.room = None
         self.user = None
         self.channel_group = None
-        super(ChatConsumer, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     async def connect(self):
         try:

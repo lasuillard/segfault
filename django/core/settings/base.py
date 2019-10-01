@@ -20,24 +20,7 @@ DEBUG = False
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 # SECURITY WARNING: keep the secret key used in production secret!
-try:
-    with open('secret.json') as f:
-        _secrets = json.load(f)
-
-except FileNotFoundError:
-    pass
-
-
-def _load_secret_key():
-    try:
-        _secret_key = _secrets['DJANGO_SECRET_KEY']
-    except KeyError:
-        _secret_key = os.environ.get('DJANGO_SECRET_KEY')
-
-    return _secret_key
-
-
-SECRET_KEY = _load_secret_key()
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'segfault-secret-key-not-set')
 
 URL_FRONT = ''
 
@@ -66,27 +49,12 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.google',
     'rest_auth',
     'rest_auth.registration',
+    'fcm_django',
     # custom apps
     'core',
     'api',
     'ws',
 ]
-
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.TokenAuthentication'
-    ],
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAdminUser'
-    ],
-    'DEFAULT_RENDERER_CLASSES': [
-        'rest_framework.renderers.JSONRenderer',
-        'api.renderers.BrowsableAPIRendererWithoutForms'
-    ],
-    'DEFAULT_PAGINATION_CLASS': 'api.pagination.TinyLimitOffsetPagination',
-    'PAGE_SIZE': 10,
-}
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
@@ -108,13 +76,36 @@ ACCOUNT_USERNAME_REQUIRED = False
 SOCIALACCOUNT_EMAIL_VERIFICATION = 'none'
 SOCIALACCOUNT_EMAIL_REQUIRED = False
 
-ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = '/'
+# ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = '/'
 
-# django-rest-auth config
 OLD_PASSWORD_FIELD_ENABLED = True
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication'
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAdminUser'
+    ],
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer'
+        #  'api.renderers.BrowsableAPIRendererWithoutForms'
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'api.pagination.TinyLimitOffsetPagination',
+    'PAGE_SIZE': 10,
+}
 
 REST_AUTH_SERIALIZERS = {
     'USER_DETAILS_SERIALIZER': 'api.v1.serializers.UserDetailSerializer'
+}
+
+FCM_DJANGO_SETTINGS = {
+    'APP_VERBOSE_NAME': 'SegFault',
+    'FCM_SERVER_KEY': 'AAAArYxHZEg:APA91bE_JIRE62Zz9zU50vDWHqr8PrCahCqvSGuSswM0n2YOSJIIvnMy1xeFaqVdsHnPDkEkehDvfi2siRnX27YgLs-CsugYBkNigKjo7TTy_c1dt4cZJrPOMkpH-7xaaxH2y13HD7yq',
+    'ONE_DEVICE_PER_USER': False,
+    'DELETE_INACTIVE_DEVICES': True,
 }
 
 # django

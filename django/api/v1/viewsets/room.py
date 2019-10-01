@@ -1,14 +1,14 @@
 from django.contrib.auth import get_user_model
 from rest_framework.viewsets import ModelViewSet
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from core.models import Room
-from api.permissions import IsAdminUser, IsOwnerOrReadOnly
+from api.permissions import IsAdminUser, IsOwner
 from ..serializers import RoomSerializer, RoomListSerializer, RoomDetailSerializer
 
 User = get_user_model()
 
 
 class RoomViewSet(ModelViewSet):
-    permission_classes = [IsOwnerOrReadOnly | IsAdminUser]
 
     def get_serializer_class(self):
         if self.action == 'list':
@@ -17,6 +17,16 @@ class RoomViewSet(ModelViewSet):
             return RoomDetailSerializer
 
         return RoomSerializer
+
+    def get_permissions(self):
+        if self.action in ['list', 'retrieve']:
+            permissions = [AllowAny, ]
+        elif self.action == 'create':
+            permissions = [IsAuthenticated | IsAdminUser, ]
+        else:
+            permissions = [IsOwner | IsAdminUser, ]
+
+        return [permission() for permission in permissions]
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)

@@ -1,15 +1,8 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .viewsets import (
-    UserViewSet,
-    AvatarViewSet,
-    FragmentViewSet,
-    AnswerViewSet,
-    CommentViewSet,
-    VoteViewSet,
-    RoomViewSet,
-    ChatViewSet,
-    NotificationViewSet,
+    UserViewSet, AvatarViewSet, FragmentViewSet, AnswerViewSet, CommentViewSet,
+    VoteViewSet, RoomViewSet, ChatViewSet, NotificationViewSet, TagViewSet,
 )
 
 app_name = 'v1'
@@ -24,6 +17,7 @@ router.register(r'vote', VoteViewSet, basename='vote')
 router.register(r'room', RoomViewSet, basename='room')
 router.register(r'chat', ChatViewSet, basename='chat')
 router.register(r'notification', NotificationViewSet, basename='notification')
+router.register(r'tag', TagViewSet, basename='tag')
 
 urlpatterns = [
     path('', include(router.urls))

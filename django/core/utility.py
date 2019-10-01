@@ -5,11 +5,27 @@ from collections import namedtuple
 from inspect import isclass
 import factory
 from rest_framework import serializers
+from core.models import Tag
 
 """
     For testing purposes mainly
 """
 LabeledTestInput = namedtuple('LabeledTestInput', 'value label')
+
+
+def convert_tag_str_to_model(tags):
+    """
+    Convert string-only array into Tag instance array.
+    if tag with string does not exists, it will create.
+    """
+    if any(map(lambda t: not isinstance(t, str), tags)):
+        raise ValueError('tags should be pure array of string.')
+
+    tags_already_exists = Tag.objects.filter(name__in=tags)
+    for tag in tags_already_exists:
+        tags.remove(tag.name)
+    tags_newly_created = map(lambda t: Tag.objects.create(name=t), tags)
+    return [*tags_already_exists, *tags_newly_created]
 
 
 def get_serializers_for_model(model, abstract=False, search_modules=None):

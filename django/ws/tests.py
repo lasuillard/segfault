@@ -9,19 +9,24 @@ from core.factories import UserFactory, AvatarFactory, RoomFactory
 @pytest.mark.django_db(transaction=True)
 class TestChatWebSocket:
 
-    async def test_chat_websocket_connection(self):
+    @staticmethod
+    def get_communicator(room, token):
+        communicator = WebsocketCommunicator(
+            application=application,
+            path=f'/ws/chat/{room.pk}/',
+            subprotocols=['access_token', token.key]
+        )
+        communicator.scope['url_route'] = {'kwargs': {'room_id': room.pk}}
+        return communicator
+
+    async def test_chat_websocket_valid_user_connection(self):
         # setup
         user = UserFactory()
         token = Token.objects.create(user=user)
         room = RoomFactory()
 
         # connection establishment
-        communicator = WebsocketCommunicator(
-            application=application,
-            path=f'/ws/chat/{room.pk}/',
-            subprotocols=['access_token', token.key]
-        )
-        communicator.scope['url_route'] = {'kwargs': {'room_id': room.id}}
+        communicator = self.get_communicator(room, token)
         connected, subprotocol = await communicator.connect()
         scope = communicator.scope
 
@@ -35,7 +40,10 @@ class TestChatWebSocket:
         # teardown
         await communicator.disconnect()
 
-    async def test_chat_websocket_behavior(self):
+    async def test_chat_websocket_invalid_user_fails_connection(self):
+        pass
+
+    async def test_chat_websocket_behavior_send_message(self):
         pass
 
 
@@ -43,18 +51,24 @@ class TestChatWebSocket:
 @pytest.mark.django_db(transaction=True)
 class TestNotificationWebSocket:
 
-    async def test_chat_websocket_connection(self):
+    @staticmethod
+    def get_communicator(room, token):
+        communicator = WebsocketCommunicator(
+            application=application,
+            path=f'/ws/notification/',
+            subprotocols=['access_token', token.key]
+        )
+        communicator.scope['url_route'] = {'kwargs': {'room_id': room.pk}}
+        return communicator
+
+    async def test_chat_websocket_valid_user_connection(self):
         # setup
         user = UserFactory()
         avatar = AvatarFactory(user=user)
         token = Token.objects.create(user=user)
 
         # connection establishment
-        communicator = WebsocketCommunicator(
-            application=application,
-            path=f'/ws/notification/',
-            subprotocols=['access_token', token.key]
-        )
+        communicator = self.get_communicator(user, token)
         connected, subprotocol = await communicator.connect()
         scope = communicator.scope
 
@@ -67,3 +81,9 @@ class TestNotificationWebSocket:
 
         # teardown
         await communicator.disconnect()
+
+    async def test_notification_websocket_invalid_user_fails_connection(self):
+        pass
+
+    async def test_notification_websocket_behavior_send_message(self):
+        pass

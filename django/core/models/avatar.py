@@ -12,9 +12,10 @@ def get_image_uuid4(instance, filename):
 
 
 class Avatar(models.Model):
+    """
+    Avatar is an model for user to store data (especially public display data)
+    """
     AVATAR_DEFAULT_IMAGE = 'profile.png'
-
-    _notification_channel_group = models.UUIDField(default=uuid4, editable=False)
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     profile_image = models.ImageField(upload_to=get_image_uuid4, default=AVATAR_DEFAULT_IMAGE)
@@ -23,11 +24,14 @@ class Avatar(models.Model):
     extra_data = JSONField(null=True, blank=True)
     date_modified = models.DateTimeField(auto_now=True)
 
+    # for websocket
+    _notification_channel_group = models.UUIDField(default=uuid4, editable=False)
+
     class Meta:
         order_with_respect_to = 'user'
 
     def __str__(self):
-        return f'Avatar { self.pk } ... User { self.user }'
+        return f'{ self.pk } for User { self.user }'
 
     def save(self, *args, **kwargs):
         # give default display name as user's account name
@@ -46,14 +50,14 @@ class Avatar(models.Model):
             except Avatar.DoesNotExist:
                 pass
 
-        super(Avatar, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
         profile_image = self.profile_image
         if profile_image.name != Avatar.AVATAR_DEFAULT_IMAGE and os.path.exists(profile_image.path):
             profile_image.delete(save=False)
 
-        super(Avatar, self).delete(*args, **kwargs)
+        super().delete(*args, **kwargs)
 
     def get_channel_group(self):
         return str(self._notification_channel_group)

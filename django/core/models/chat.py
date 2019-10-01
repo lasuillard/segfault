@@ -19,4 +19,4 @@ class Chat(models.Model):
     date_modified = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f'Chat { self.pk } ... { self.room })'
+        return f'{ self.pk } for Room { self.room })'

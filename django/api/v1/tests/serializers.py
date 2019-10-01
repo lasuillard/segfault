@@ -6,12 +6,8 @@ User = get_user_model()
 
 """
 Serializer tests are not important, because is tested by its framework.
-so we tests serializer spec, the developer handles, such as fields must (or not) be included.
+so we tests serializer spec, that developer handles, such as fields must (or not) be included.
 """
-
-
-class SerializerSpecTest(TestCase):
-    pass
 
 
 class SerializerConstraintTest(TestCase):

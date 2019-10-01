@@ -10,7 +10,7 @@ class IsAdminUser(permissions.IsAdminUser):
         return bool(request.user and request.user.is_staff)
 
 
-class IsOwner(permissions.IsAuthenticated):
+class IsOwner(permissions.BasePermission):
 
     def has_object_permission(self, request, view, obj):
         if isinstance(obj, User):
@@ -19,7 +19,7 @@ class IsOwner(permissions.IsAuthenticated):
         return bool(request.user and request.user == obj.user)
 
 
-class IsOwnerOrReadOnly(permissions.IsAuthenticatedOrReadOnly):
+class IsOwnerOrReadOnly(permissions.BasePermission):
 
     def has_object_permission(self, request, view, obj):
         if request.method in permissions.SAFE_METHODS:
@@ -28,7 +28,7 @@ class IsOwnerOrReadOnly(permissions.IsAuthenticatedOrReadOnly):
         return bool(request.user and request.user == obj.user)
 
 
-class IsRelatedUser(permissions.IsAuthenticated):
+class IsRelatedUser(permissions.BasePermission):
     """
     Check is user in object.users ManyToMany field.
     """

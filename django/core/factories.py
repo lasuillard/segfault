@@ -2,12 +2,16 @@ import random
 import factory
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.contrib.auth import get_user_model
+from django.db.models import signals
 from core.utility import get_factories_for_model, generate_random_string
-from core.models import Avatar, Fragment, Answer, Commentable, Comment, Votable, Vote, Room, Chat, Notification
+from core.models import (
+    Avatar, Fragment, Tag, Answer, Commentable, Comment, Votable, Vote, Room, Chat, Notification
+)
 
 User = get_user_model()
 
 
+@factory.django.mute_signals(signals.post_save)
 class UserFactory(factory.django.DjangoModelFactory):
     # Avatar is created with user by signal
 
@@ -44,7 +48,26 @@ class FragmentFactory(factory.django.DjangoModelFactory):
     user = factory.SubFactory(UserFactory)
     title = factory.LazyFunction(lambda: generate_random_string(length=32))
     content = factory.LazyFunction(lambda: generate_random_string(length=1024))
-    tags = factory.LazyFunction(lambda: [generate_random_string(8) for _ in range(random.randint(0, 6))])
+
+    @factory.post_generation
+    def tags(self, create, extracted, **kwargs):
+        if not create:
+            return
+
+        if isinstance(extracted, list):
+            self.tags.set(extracted)
+        else:
+            for _ in range(random.randint(1, 10)):
+                self.tags.add(TagFactory())
+
+
+class TagFactory(factory.django.DjangoModelFactory):
+
+    class Meta:
+        model = Tag
+
+    name = factory.LazyFunction(lambda: generate_random_string(length=16))
+    is_official = factory.LazyFunction(lambda: random.choice([True, False]))
 
 
 class AnswerFactory(factory.django.DjangoModelFactory):
@@ -114,12 +137,10 @@ class NotificationFactory(factory.django.DjangoModelFactory):
             return
 
         if isinstance(extracted, list):
-            users = extracted
+            self.users.set(extracted)
         else:
-            users = [UserFactory() for _ in range(random.randint(1, 10))]
+            for _ in range(random.randint(1, 10)):
+                self.users.add(UserFactory())
 
-        for user in users:
-            self.users.add(user)
-
-    level = factory.LazyFunction(lambda: random.choice([l[0] for l in Notification.NOTIFICATION_LEVELS]))
-    message = factory.LazyFunction(lambda: generate_random_string(length=64))
+    title = factory.LazyFunction(lambda: generate_random_string(length=32))
+    body = factory.LazyFunction(lambda: generate_random_string(length=96))

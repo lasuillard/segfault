@@ -9,7 +9,7 @@ from ..models import (
     Avatar, Commentable, Votable
 )
 from ..factories import (
-    AvatarFactory, FragmentFactory, AnswerFactory,
+    AvatarFactory, FragmentFactory, TagFactory, AnswerFactory,
     CommentFactory, VoteFactory, RoomFactory, ChatFactory, NotificationFactory
 )
 
@@ -103,6 +103,16 @@ class FragmentTest(TestCase):
     def test_fragment_magic_method_str_includes_instance_id(self):
         fragment = FragmentFactory()
         self.assertIn(str(fragment.pk), fragment.__str__())
+
+
+class TagTest(TestCase):
+
+    def test_tag_magic_method_str_includes_instance_id(self):
+        tag = TagFactory()
+        self.assertIn(str(tag.pk), tag.__str__())
+
+    def test_get_content_count(self):
+        self.assertFalse(True, msg='Code me!')
 
 
 class AnswerTest(TestCase):
@@ -201,3 +211,9 @@ class NotificationTest(TestCase):
     def test_notification_magic_method_str_includes_instance_id(self):
         notification = NotificationFactory()
         self.assertIn(str(notification.pk), notification.__str__())
+
+    def test_mark_as_read(self):
+        self.assertFalse(True, msg='Code me!')
+
+    def test_send(self):
+        self.assertFalse(True, msg='Code me!')

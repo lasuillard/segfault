@@ -6,7 +6,7 @@ const CONNECT = 'CONNECT'
 const SET_STATUS = 'SET_STATUS'
 export const ADD_HANDLER = 'ADD_HANDLER'
 
-const POSSIBLE_STATUS =[WebSocket.CONNECTING, WebSocket.OPEN, WebSocket.CLOSING, WebSocket.CLOSED]
+const POSSIBLE_STATUS = [WebSocket.CONNECTING, WebSocket.OPEN, WebSocket.CLOSING, WebSocket.CLOSED]
 
 // !! HARD CODED URL !!
 export const URL_WEBSOCKET_NOTIFICATION = 'ws://localhost:80/ws/notification/'
@@ -14,7 +14,6 @@ export const URL_WEBSOCKET_NOTIFICATION = 'ws://localhost:80/ws/notification/'
 
 export const state = () => ({
   ws: null,
-  status: WebSocket.CLOSED,
   handlers: [],
 })
 
@@ -27,12 +26,6 @@ export const getters = {
 export const mutations = {
   [CONNECT]: (state, token) => {
     state.ws = new WebSocket(URL_WEBSOCKET_NOTIFICATION, ['access_token', token])
-  },
-  [SET_STATUS]: (state, newStatus) => {
-    if (POSSIBLE_STATUS.includes(newStatus))
-      state.status = newStatus
-    else
-      throw Error(`Unavailable status ${newStatus} received`)
   },
   [ADD_HANDLER]: (state, handler) => {
     /*
@@ -55,10 +48,15 @@ export const actions = {
     context.commit(CONNECT, context.rootState.user.token)
     let ws = context.state.ws
 
-    // status monitoring
-    context.commit(SET_STATUS, WebSocket.CONNECTING)
-    ws.onopen  = (ev) => { context.commit(SET_STATUS, WebSocket.OPEN) }
-    ws.onclose = (ev) => { context.commit(SET_STATUS, WebSocket.CLOSED) }
+    ws.onopen  = (ev) => {
+      for (handler of context.state.handlers)
+        handler({ type: 'open', event: ev })
+    }
+
+    ws.onclose = (ev) => {
+      for (handler of context.state.handlers)
+        handler({ type: 'close', event: ev })
+    }
 
     // error handling
     ws.onerror = (ev) => {

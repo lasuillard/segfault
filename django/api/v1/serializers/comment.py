@@ -1,24 +1,23 @@
 from rest_framework import serializers
 from core.models import Comment
+from api.mixins import ReadOnlySerializerMixin
+from ..serializers import AvatarFieldMixin
 
 
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
-        fields = ['pk', 'parent', 'target', 'content', 'date_created']
-        read_only_fields = ['pk', 'date_created']
+        fields = ['pk', 'parent', 'target', 'content', 'date_created', 'date_modified']
 
 
-class CommentListSerializer(serializers.ModelSerializer):
+class CommentListSerializer(AvatarFieldMixin, ReadOnlySerializerMixin, serializers.ModelSerializer):
     class Meta:
         model = Comment
-        fields = ['pk', 'parent', 'user', 'target', 'content', 'date_created', 'date_modified']
+        fields = ['pk', 'parent', 'avatar', 'target', 'content', 'date_created', 'date_modified']
 
 
-class CommentDetailSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Comment
-        fields = ['pk', 'parent', 'user', 'target', 'content', 'date_created', 'date_modified']
+class CommentDetailSerializer(CommentListSerializer):
+    pass
 
 
 class CommentFieldMixin(serializers.Serializer):

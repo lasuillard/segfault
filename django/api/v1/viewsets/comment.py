@@ -1,14 +1,14 @@
 from django.contrib.auth import get_user_model
 from rest_framework.viewsets import ModelViewSet
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from core.models import Comment
-from api.permissions import IsAdminUser, IsOwnerOrReadOnly
+from api.permissions import IsAdminUser, IsOwner
 from ..serializers import CommentSerializer, CommentListSerializer, CommentDetailSerializer
 
 User = get_user_model()
 
 
 class CommentViewSet(ModelViewSet):
-    permission_classes = [IsOwnerOrReadOnly | IsAdminUser]
 
     def get_serializer_class(self):
         if self.action == 'list':
@@ -17,6 +17,16 @@ class CommentViewSet(ModelViewSet):
             return CommentDetailSerializer
 
         return CommentSerializer
+
+    def get_permissions(self):
+        if self.action in ['list', 'retrieve']:
+            permissions = [AllowAny, ]
+        elif self.action == 'create':
+            permissions = [IsAuthenticated | IsAdminUser, ]
+        else:
+            permissions = [IsOwner | IsAdminUser, ]
+
+        return [permission() for permission in permissions]
 
     def get_queryset(self):
         queryset = Comment.objects.all()

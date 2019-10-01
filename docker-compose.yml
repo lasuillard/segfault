@@ -73,7 +73,7 @@ services:
     build:
       context: ./django
       dockerfile: ../compose/django/Dockerfile.dev
-    image: segfault_django:latest
+    image: segfault:latest
     depends_on:
       - postgres
       - redis
@@ -94,7 +94,7 @@ services:
     restart: always
 
   uwsgi:
-    image: segfault_django:latest
+    image: segfault:latest
     depends_on:
       - postgres
       - redis

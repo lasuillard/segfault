@@ -1,17 +1,27 @@
 from django.contrib.auth import get_user_model
-from django.shortcuts import get_object_or_404
 from rest_framework.viewsets import GenericViewSet
-from rest_framework.mixins import RetrieveModelMixin, ListModelMixin
+from rest_framework.mixins import RetrieveModelMixin, ListModelMixin, DestroyModelMixin
 from core.models import Notification
 from api.permissions import IsAdminUser, IsRelatedUser
-from ..serializers import NotificationSerializer, NotificationListSerializer, NotificationDetailSerializer
+from ..serializers import (
+    NotificationSerializer, NotificationListSerializer, NotificationAdminListSerializer,
+    NotificationDetailSerializer, NotificationAdminDetailSerializer
+)
 
 User = get_user_model()
 
 
-class NotificationViewSet(RetrieveModelMixin, ListModelMixin, GenericViewSet):
+class NotificationViewSet(RetrieveModelMixin, ListModelMixin, DestroyModelMixin, GenericViewSet):
 
     def get_serializer_class(self):
+        # for admin
+        if self.request.user and self.request.user.is_staff:
+            if self.action == 'list':
+                return NotificationAdminListSerializer
+            elif self.action == 'retrieve':
+                return NotificationAdminDetailSerializer
+
+        # for users
         if self.action == 'list':
             return NotificationListSerializer
         elif self.action == 'retrieve':
@@ -20,7 +30,7 @@ class NotificationViewSet(RetrieveModelMixin, ListModelMixin, GenericViewSet):
         return NotificationSerializer
 
     def get_permissions(self):
-        if self.action == 'retrieve':
+        if self.action in ['retrieve', 'destroy']:
             permissions = [IsRelatedUser | IsAdminUser]
         else:
             permissions = [IsAdminUser]
@@ -31,3 +41,6 @@ class NotificationViewSet(RetrieveModelMixin, ListModelMixin, GenericViewSet):
         queryset = Notification.objects.all()
 
         return queryset
+
+    def perform_destroy(self, instance):
+        instance.mark_as_read(self.request.user)

@@ -1,4 +1,5 @@
-from unittest import SkipTest
+import random
+from unittest import SkipTest, skip
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AnonymousUser
 from django.shortcuts import reverse
@@ -6,12 +7,13 @@ from django.test import TestCase
 from rest_framework import status
 from rest_framework.test import APIClient
 from core.models import (
-    Avatar, Fragment, Answer, Comment, Vote, Room, Chat, Notification
+    Avatar, Fragment, Tag, Answer, Comment, Vote, Room, Chat, Notification
 )
 from core.factories import (
-    UserFactory, AvatarFactory, FragmentFactory, AnswerFactory, CommentFactory, VoteFactory,
-    RoomFactory, ChatFactory, NotificationFactory
+    UserFactory, AvatarFactory, FragmentFactory, TagFactory, AnswerFactory, CommentFactory,
+    VoteFactory, RoomFactory, ChatFactory, NotificationFactory
 )
+from core.utility import generate_random_string
 
 User = get_user_model()
 
@@ -32,15 +34,18 @@ method-action mapping for DRF
 
 class ViewSetTestSetup(TestCase):
 
-    def setUp(self):
-        # required attiributes:
+    @classmethod
+    def setUpClass(cls):
+        # required attributes:
         for attr in ['view_name']:
-            if not hasattr(self, attr):
+            if not hasattr(cls, attr):
                 raise AttributeError(f'Required attribute {attr} does not exists.')
+        super().setUpClass()
 
+    def setUp(self):
         self._url_list = reverse(f'{self.view_name}-list')
         self._url_detail = lambda args, kwargs: reverse(f'{self.view_name}-detail', args=args, kwargs=kwargs)
-        super(ViewSetTestSetup, self).setUp()
+        super().setUp()
 
     @property
     def tag(self):
@@ -116,15 +121,12 @@ class ViewSetActionTestMixin(ViewSetTestSetup):
         if cls == ViewSetActionTestMixin:
             raise SkipTest(f"{__class__.__name__}: Don't test mixins.")
         else:
-            super(ViewSetActionTestMixin, cls).setUpClass()
+            super().setUpClass()
 
-    def setUp(self):
-        # required attiributes:
+        # required attributes:
         for attr in ['model', 'factory', 'permissions_for_actions']:
-            if not hasattr(self, attr):
+            if not hasattr(cls, attr):
                 raise AttributeError(f'Required attribute {attr} does not exists.')
-
-        super(ViewSetActionTestMixin, self).setUp()
 
     def get_data(self, permission, action):
         pass
@@ -143,8 +145,11 @@ class ViewSetActionTestMixin(ViewSetTestSetup):
                 # request with client for resource url
                 response = self.get_response(client, action, url, data=data)
                 if response is None:
-                    self.assertIn(action, ['create', 'update', 'partial_update', 'destroy'])
-                    self.assertIn(permission, ['anonymous'])
+                    # anonymous user access handling
+                    self.assertIn(action, ['create', 'update', 'partial_update', 'destroy'],
+                                  msg=f'{self.tag}-{action}-{permission}; {response.data}')
+                    self.assertIn(permission, ['anonymous'],
+                                  msg=f'{self.tag}-{action}-{permission}; {response.data}')
                     continue
 
                 # test!
@@ -152,12 +157,12 @@ class ViewSetActionTestMixin(ViewSetTestSetup):
                     self.assertIn(
                         response.status_code,
                         [status.HTTP_200_OK, status.HTTP_201_CREATED, status.HTTP_204_NO_CONTENT],
-                        msg=f'{self.tag}-{action}-{permission}')
+                        msg=f'{self.tag}-{action}-{permission}; {response.data}')
                 else:
                     self.assertEqual(
                         response.status_code,
                         status.HTTP_403_FORBIDDEN,
-                        msg=f'{self.tag}-{action}-{permission}')
+                        msg=f'{self.tag}-{action}-{permission}; {response.data}')
 
     def test_model_viewset_not_allowed_actions(self):
         item = self.factory()
@@ -169,13 +174,15 @@ class ViewSetActionTestMixin(ViewSetTestSetup):
             url = self.get_url(action, kwargs={'pk': item.pk})
 
             response = self.get_response(client, action, url)
-            if not hasattr(response, 'status_code'):
+            if response is None:
+                self.assertIn(action, ['create', 'update', 'partial_update', 'destroy'],
+                              msg=f'{self.tag}-{action}; {response.data}')
                 continue
 
             self.assertEqual(
                 response.status_code,
                 status.HTTP_405_METHOD_NOT_ALLOWED,
-                msg=f'{self.tag}-{action}')
+                msg=f'{self.tag}-{action}; {response.data}')
 
 
 class UserViewSetTest(ViewSetActionTestMixin, TestCase):
@@ -231,7 +238,31 @@ class FragmentViewSetTest(ViewSetActionTestMixin, TestCase):
     def get_data(self, permission, action):
         return {
             'title': 'TEST',
-            'content': 'TEST'
+            'content': 'TEST',
+            'tags': [generate_random_string(length=32) for _ in range(random.randint(1, 6))]
+        }
+
+
+class TagViewSetTest(ViewSetActionTestMixin, TestCase):
+    view_name = 'api:v1:tag'
+    model = Tag
+    factory = TagFactory
+    permissions_for_actions = {
+        'list': VIEWSET_PERMISSIONS,
+        'create': ['admin'],
+        'retrieve': VIEWSET_PERMISSIONS,
+        'update': ['admin'],
+        'partial_update': ['admin'],
+        'destroy': ['admin']
+    }
+
+    def get_item(self, permission, action, client):
+        return self.factory()
+
+    def get_data(self, permission, action):
+        return {
+            'name': generate_random_string(length=32),
+            'is_official': True
         }
 
 
@@ -339,6 +370,7 @@ class NotificationViewSetTest(ViewSetActionTestMixin, TestCase):
     permissions_for_actions = {
         'list': ['admin'],
         'retrieve': ['owner', 'admin'],
+        'destroy': ['owner', 'admin']
     }
 
     def get_item(self, permission, action, client):

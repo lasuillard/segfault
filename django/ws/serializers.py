@@ -22,9 +22,3 @@ class ChatWebSocketSerializer(serializers.ModelSerializer):
         model = Chat
         fields = ['avatar', 'content', 'date_created']
 
-
-class NotificationWebSocketSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Notification
-        fields = ['level', 'message', 'extra_data', 'date_created', ]

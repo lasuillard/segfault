@@ -17,7 +17,7 @@ class Room(models.Model):
     date_modified = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f'Room { self.pk }'
+        return f"{ self.pk } { self.name[:10] if len(self.name) > 10 else self.name }"
 
     def get_channel_group(self):
         return str(self._room_channel_group)

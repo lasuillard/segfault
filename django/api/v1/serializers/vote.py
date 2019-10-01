@@ -1,27 +1,25 @@
 from rest_framework import serializers
 from core.models import Vote
+from api.mixins import ReadOnlySerializerMixin
+from ..serializers import AvatarFieldMixin
 
 
 class VoteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Vote
-        fields = ['pk', 'target', 'rating']
-        read_only_fields = ['pk', 'user']
+        fields = ['pk', 'target', 'rating', 'date_created', 'date_modified']
 
 
-class VoteListSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Vote
-        fields = ['pk', 'user', 'target', 'rating']
-
-
-class VoteDetailSerializer(serializers.ModelSerializer):
+class VoteListSerializer(AvatarFieldMixin, ReadOnlySerializerMixin, serializers.ModelSerializer):
 
     class Meta:
         model = Vote
-        fields = ['pk', 'user', 'target', 'rating']
+        fields = ['pk', 'avatar', 'target', 'rating', 'date_created', 'date_modified']
+
+
+class VoteDetailSerializer(VoteListSerializer):
+    pass
 
 
 class VoteFieldMixin(serializers.Serializer):

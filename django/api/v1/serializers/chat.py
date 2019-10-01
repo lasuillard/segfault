@@ -1,21 +1,22 @@
 from rest_framework import serializers
 from core.models import Chat
+from api.mixins import ReadOnlySerializerMixin
+from ..serializers import AvatarFieldMixin
 
 
 class ChatSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = Chat
-        fields = ['pk', 'content', 'date_created']
-        read_only_fields = ['pk', 'date_created']
+        fields = ['pk', 'content', 'date_created', 'date_modified']
 
 
-class ChatListSerializer(serializers.ModelSerializer):
+class ChatListSerializer(AvatarFieldMixin, ReadOnlySerializerMixin, serializers.ModelSerializer):
+
     class Meta:
         model = Chat
-        fields = ['pk', 'user', 'room', 'content', 'date_created', 'date_modified']
+        fields = ['pk', 'avatar', 'room', 'content', 'date_created', 'date_modified']
 
 
-class ChatDetailSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Chat
-        fields = ['pk', 'user', 'room', 'content', 'date_created', 'date_modified']
+class ChatDetailSerializer(ChatListSerializer):
+    pass

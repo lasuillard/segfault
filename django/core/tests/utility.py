@@ -2,26 +2,35 @@ from django.contrib.auth import get_user_model
 from django.test import TestCase
 from ..utility import (
     LabeledTestInput,
+    convert_tag_str_to_model,
     get_factories_for_model,
     get_serializers_for_model,
     generate_random_string
 )
-from ..factories import UserFactory
-from api.v1.serializers import UserSerializer, UserDetailSerializer
+from ..factories import UserFactory, TagFactory
 
 User = get_user_model()
 
 
 class UtilityTest(TestCase):
 
+    def test_convert_tag_str_to_model(self):
+        # good test case
+        tags = ['Test', 'Test_2', 'Test_3']
+        converted_tags = map(lambda ct: ct.name, convert_tag_str_to_model(tags))
+        self.assertTrue(all(map(lambda t: t in converted_tags, tags)))
+        # bad test case
+        assert not 'Code me!'
+
     def test_get_serializers_for_model(self):
         serializers = get_serializers_for_model(model=User, abstract=True, search_modules=['api.v1.serializers'])
-        self.assertIn(UserSerializer, serializers)
-        self.assertIn(UserDetailSerializer, serializers)
+        for serializer in serializers:
+            self.assertTrue(issubclass(serializer.Meta.model, User))
 
     def test_get_factories_for_model(self):
         factories = get_factories_for_model(model=User, abstract=True, search_modules=['core.factories'])
-        self.assertIn(UserFactory, factories)
+        for factory in factories:
+            self.assertTrue(issubclass(getattr(factory, '_meta').model, User))
 
     def test_generate_random_string_with_default_charset(self):
         """
