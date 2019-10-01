@@ -38,7 +38,8 @@ export default {
   */
   plugins: [
     { src: '~/plugins/axios.js', ssr: false },
-    { src: '~/plugins/vee-validate.js', ssr: false }
+    { src: '~/plugins/vee-validate.js', ssr: false },
+    { src: '~/plugins/firebase.js', ssr: false }
   ],
   /*
   ** Nuxt.js modules
@@ -47,7 +48,8 @@ export default {
     '@nuxtjs/vuetify',
     // Doc: https://axios.nuxtjs.org/usage
     '@nuxtjs/axios',
-    '@nuxtjs/proxy'
+    '@nuxtjs/proxy',
+    '@nuxtjs/pwa'
   ],
   /*
   ** Axios module configuration
@@ -69,6 +71,38 @@ export default {
       warning: colors.amber.base,
       error: colors.deepOrange.accent4,
       success: colors.green.accent3,
+    }
+  },
+  /*
+   ** PWA Setting - Rena Makise
+   */
+  pwa: {
+    manifest: {
+      name: 'SegFault',
+      short_name: 'SegFault',
+      start_url: '/',
+      display: 'standalone',
+      background_color: '#F2F2F2',
+      icons: [{
+        "src": "/icon.png",
+        "sizes": "192x192",
+        "type": "image/png"
+      }, {
+        "src": "/icon.png",
+        "sizes": "512x512",
+        "type": "image/png"
+      }]
+    },
+    workbox: {
+      dev: true,
+      runtimeCaching: [
+        {
+          urlPattern: "/*",
+          handler: "networkFirst",
+          method: "GET"
+        }
+      ],
+      offlinePage: "offline.html"
     }
   },
   /*

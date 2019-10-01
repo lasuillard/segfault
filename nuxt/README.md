@@ -20,3 +20,7 @@ $ yarn generate
 ```
 
 For detailed explanation on how things work, checkout [Nuxt.js docs](https://nuxtjs.org).
+
+## FCM Setting
+* plugins/firebase.js  -  FCM config 
+* static/firebase-messaging-sw.js  -  FCM messagingSenderId
