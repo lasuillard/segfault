@@ -1,11 +1,45 @@
 from .dev import *
 
+# Django Channels
 CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels.layers.InMemoryChannelLayer',
     }
 }
 
-# log
-LOGGING['loggers'].pop('django')  # disabled because it makes too many db-query logs
-LOGGING['handlers']['file']['filename'] = 'log/test.log'  # log to test.log, not debug.log
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': True,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'test': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': f'log/django-test.log',
+            'formatter': 'verbose',
+        },
+    },
+    'loggers': {
+        'core': {
+            'level': 'DEBUG',
+            'handlers': ['test'],
+        },
+        'auth': {
+            'level': 'DEBUG',
+            'handlers': ['test'],
+        },
+        'api': {
+            'level': 'DEBUG',
+            'handlers': ['test'],
+        },
+        'ws': {
+            'level': 'DEBUG',
+            'handlers': ['test'],
+        },
+    },
+}

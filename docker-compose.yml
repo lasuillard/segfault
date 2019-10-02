@@ -22,12 +22,8 @@ x-common-variables: &network-configs
 
 x-common-variables: &django-settings
   DJANGO_SETTINGS_MODULE: core.settings.dev
-  ## TODO: handle secrets in other ways
-  DATABASE_HOST: postgres
-  DATABASE_PORT: 5432
-  DATABASE_NAME: segfault
-  DATABASE_USERNAME: dbuser
-  DATABASE_PASSWORD: 9306
+  DATABASE_URL: postgres://dbuser:9306@postgres:5432/segfault
+  REDIS_URL: redis://localhost:6379
 
 volumes:
   postgres: {}

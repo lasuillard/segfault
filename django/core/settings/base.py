@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 
 import os
 import json
+from django.core.exceptions import ImproperlyConfigured
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
@@ -19,12 +20,20 @@ DEBUG = False
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+# Load secret.json file
+try:
+    with open(os.path.join(BASE_DIR, 'secret.json')) as f:
+        SECRETS = json.load(f)
+
+except FileNotFoundError:
+    raise ImproperlyConfigured("Couldn't find secret.json file.")
+
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'segfault-secret-key-not-set')
+SECRET_KEY = SECRETS['DJANGO_SECRET_KEY'] if 'DJANGO_SECRET_KEY' in SECRETS else os.environ.get('DJANGO_SECRET_KEY')
 
 URL_FRONT = ''
 
-ALLOWED_HOSTS = [""" NOTHING YET """]
+ALLOWED_HOSTS = []
 
 # Application definition
 INSTALLED_APPS = [
@@ -103,7 +112,7 @@ REST_AUTH_SERIALIZERS = {
 
 FCM_DJANGO_SETTINGS = {
     'APP_VERBOSE_NAME': 'SegFault',
-    'FCM_SERVER_KEY': 'AAAArYxHZEg:APA91bE_JIRE62Zz9zU50vDWHqr8PrCahCqvSGuSswM0n2YOSJIIvnMy1xeFaqVdsHnPDkEkehDvfi2siRnX27YgLs-CsugYBkNigKjo7TTy_c1dt4cZJrPOMkpH-7xaaxH2y13HD7yq',
+    'FCM_SERVER_KEY': SECRETS['FCM_SERVER_KEY'] if 'FCM_SERVER_KEY' in SECRETS else os.environ.get('FCM_SERVER_KEY'),
     'ONE_DEVICE_PER_USER': False,
     'DELETE_INACTIVE_DEVICES': True,
 }
@@ -185,3 +194,51 @@ STATICFILES_DIRS = [
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
+
+# Logging
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
+    },
+    'filters': {
+        'debug': {
+            '()': 'django.utils.log.RequireDebugTrue'
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'filters': ['debug'],
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple'
+        },
+        'applog': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': f'log/django-debug.log',
+            'formatter': 'verbose',
+            'maxBytes': 1024*1024*10,
+            'backupCount': 10,
+        },
+    },
+    'loggers': {
+        '': {
+            'level': 'DEBUG',
+            'handlers': ['debug'],
+        },
+        'django': {
+            'level': 'DEBUG',
+            'handlers': ['debug'],
+            'propagate': True
+        },
+    },
+}
