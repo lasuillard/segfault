@@ -25,6 +25,7 @@ Django==2.2.5
 django-allauth==0.39.1
 django-cors-headers==3.0.2
 django-extensions==2.1.9
+django-heroku==0.3.1
 django-model-utils==3.2.0
 django-oauth-toolkit==1.2.0
 django-rest-auth==0.9.5
@@ -77,5 +78,6 @@ txaio==18.8.1
 uritemplate==3.0.0
 urllib3==1.25.3
 wcwidth==0.1.7
+whitenoise==4.1.4
 zipp==0.6.0
 zope.interface==4.6.0

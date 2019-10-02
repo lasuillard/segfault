@@ -12,10 +12,9 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 
 import os
 import json
-from django.core.exceptions import ImproperlyConfigured
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = bool(os.environ.get('DEBUG', False))
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -26,14 +25,15 @@ try:
         SECRETS = json.load(f)
 
 except FileNotFoundError:
-    raise ImproperlyConfigured("Couldn't find secret.json file.")
+    # you are responsible of handling all secret variables, such as heroku or other services.
+    SECRETS = {}
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = SECRETS['DJANGO_SECRET_KEY'] if 'DJANGO_SECRET_KEY' in SECRETS else os.environ.get('DJANGO_SECRET_KEY')
 
 URL_FRONT = ''
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 # Application definition
 INSTALLED_APPS = [
@@ -121,6 +121,7 @@ FCM_DJANGO_SETTINGS = {
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -186,16 +187,18 @@ USE_L10N = True
 USE_TZ = True
 
 # Static and Media Files
-STATIC_ROOT = os.path.normpath(os.path.join(BASE_DIR, 'collected_static'))
+STATIC_ROOT = os.path.normpath(os.path.join(BASE_DIR, 'staticfiles'))
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
 # Logging
+"""
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -242,3 +245,4 @@ LOGGING = {
         },
     },
 }
+"""

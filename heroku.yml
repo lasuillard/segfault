@@ -1,0 +1,7 @@
+build:
+  docker:
+    web: Dockerfile
+  config:
+    DJANGO_SETTINGS_MODULE: core.settings.heroku
+run:
+  web: gunicorn core.wsgi:application --bind 0.0.0.0:$PORT
