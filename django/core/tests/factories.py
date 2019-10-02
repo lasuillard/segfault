@@ -19,6 +19,3 @@ class ModelFactoryTest(TestCase):
         for model in self.models:
             factories = get_factories_for_model(model, search_modules=['core.factories'])
             self.assertGreater(len(factories), 0)
-
-    def test_core_models_factory_assists_natural_trait(self):
-        assert not 'Implement and code me!'

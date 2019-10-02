@@ -1,22 +1,19 @@
 import random
 import string
-from importlib import import_module
-from collections import namedtuple
-from inspect import isclass
 import factory
+from importlib import import_module
+from inspect import isclass
+from django.db import models
 from rest_framework import serializers
 from core.models import Tag
-
-"""
-    For testing purposes mainly
-"""
-LabeledTestInput = namedtuple('LabeledTestInput', 'value label')
 
 
 def convert_tag_str_to_model(tags):
     """
-    Convert string-only array into Tag instance array.
-    if tag with string does not exists, it will create.
+    Return string mapping to Tag model instance, create if does not exists.
+
+    :param tags: pure string array,
+    :return: list of Tag instances.
     """
     if any(map(lambda t: not isinstance(t, str), tags)):
         raise ValueError('tags should be pure array of string.')
@@ -85,7 +82,7 @@ def get_factories_for_model(model, abstract=False, search_modules=None):
     return factories
 
 
-def generate_random_string(length, charset=None):
+def generate_random_string(length=12, charset=None):
     """
     return a string with given length of randomly selected from charset
 
@@ -93,7 +90,36 @@ def generate_random_string(length, charset=None):
     :param charset: set of characters to select a random character
     :return: string
     """
+    length = 0 if length < 0 else length
     if charset is None:
         charset = string.ascii_letters + string.digits
 
     return ''.join([random.choice(charset) for _ in range(length)])
+
+
+def get_or_create_random_model_instances(model, model_factory, num=1):
+    """
+    Populate given length of list with items. fill lacks if existing models are not enough.
+
+    :param model: Django Model class.
+    :param model_factory: Factory-boy DjangoModelFactory class.
+    :param num: count of instances
+    :return: list of model instances
+    """
+    if not issubclass(model, models.Model):
+        raise TypeError('model must be subclass of django.db.models.Model')
+    if not issubclass(model_factory, factory.django.DjangoModelFactory):
+        raise TypeError('model_factory must be subclass of factory.django.DjangoModelFactory')
+
+    try:
+        selected = list(set(random.choices(model.objects.all(), k=num)))
+    except IndexError:
+        # there's nothing to select
+        selected = []
+
+    if len(selected) < num:
+        additional = [model_factory() for _ in range(num - len(selected))]
+    else:
+        additional = []
+
+    return [*selected, *additional]

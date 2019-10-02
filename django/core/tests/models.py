@@ -1,19 +1,21 @@
 import os
 import statistics
 import random
+from collections import namedtuple
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.contrib.auth import get_user_model
 from django.test import TestCase
-from ..utility import LabeledTestInput, get_factories_for_model, generate_random_string
+from ..utility import get_factories_for_model, generate_random_string
 from ..models import (
     Avatar, Commentable, Votable
 )
 from ..factories import (
-    AvatarFactory, FragmentFactory, TagFactory, AnswerFactory,
+    UserFactory, AvatarFactory, FragmentFactory, TagFactory, AnswerFactory,
     CommentFactory, VoteFactory, RoomFactory, ChatFactory, NotificationFactory
 )
 
 User = get_user_model()
+LabeledTestInput = namedtuple('LabeledTestInput', 'value label')
 
 
 class AvatarTest(TestCase):
@@ -107,12 +109,14 @@ class FragmentTest(TestCase):
 
 class TagTest(TestCase):
 
+    def test_get_content_count(self):
+        tag = TagFactory()
+        FragmentFactory.create_batch(tags=tag, size=10)
+        self.assertEqual(tag.get_content_count(), 10)
+
     def test_tag_magic_method_str_includes_instance_id(self):
         tag = TagFactory()
         self.assertIn(str(tag.pk), tag.__str__())
-
-    def test_get_content_count(self):
-        self.assertFalse(True, msg='Code me!')
 
 
 class AnswerTest(TestCase):
@@ -213,7 +217,10 @@ class NotificationTest(TestCase):
         self.assertIn(str(notification.pk), notification.__str__())
 
     def test_mark_as_read(self):
-        self.assertFalse(True, msg='Code me!')
+        user = UserFactory()
+        notification = NotificationFactory(users=user)
+        notification.mark_as_read(user)
+        self.assertNotIn(user, notification.users.all())
 
     def test_send(self):
         self.assertFalse(True, msg='Code me!')

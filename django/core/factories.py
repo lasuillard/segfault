@@ -3,7 +3,7 @@ import factory
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.contrib.auth import get_user_model
 from django.db.models import signals
-from core.utility import get_factories_for_model, generate_random_string
+from core.utility import get_factories_for_model, generate_random_string, get_or_create_random_model_instances
 from core.models import (
     Avatar, Fragment, Tag, Answer, Commentable, Comment, Votable, Vote, Room, Chat, Notification
 )
@@ -54,7 +54,9 @@ class FragmentFactory(factory.django.DjangoModelFactory):
         if not create:
             return
 
-        if isinstance(extracted, list):
+        if isinstance(extracted, Tag):
+            self.tags.add(extracted)
+        elif isinstance(extracted, list):
             self.tags.set(extracted)
         else:
             for _ in range(random.randint(1, 10)):
@@ -136,7 +138,9 @@ class NotificationFactory(factory.django.DjangoModelFactory):
         if not create:
             return
 
-        if isinstance(extracted, list):
+        if isinstance(extracted, User):
+            self.users.add(extracted)
+        elif isinstance(extracted, list):
             self.users.set(extracted)
         else:
             for _ in range(random.randint(1, 10)):
