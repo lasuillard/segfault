@@ -124,8 +124,6 @@
 
 <script>
 
-import { messaging } from '~/plugins/firebase.js'
-
 export default {
   data: function() {
     return {
@@ -185,33 +183,6 @@ export default {
   },
   methods: {
 
-  },
-  created () {
-    // FCM 메시지 설정 코드
-    messaging.requestPermission()
-        .then(function(){
-            console.log('메세징 권한 획득');
-            return messaging.getToken();
-        })
-        .then(function(token){
-            console.log('fcm token: ', token);
-            //// 백그라운드 작업 예시
-            // $.ajax({
-            //     type: "POST",
-            //     url: "/main/updateToken",
-            //     data: token,
-            //     dataType: "TEXT",
-            //     success: function(text){
-            //         console.log('전송성공');
-            //     },
-            //     error: function(xhr, status, error){
-            //         console.log(error);
-            //     }
-            // });
-        })
-        .catch(function(e){
-            console.log('메세징 권한 획득 중 에러', e);
-        });
   },
 }
 

@@ -3,18 +3,15 @@
 */
 
 const CONNECT = 'CONNECT'
-const SET_STATUS = 'SET_STATUS'
 export const ADD_HANDLER = 'ADD_HANDLER'
 
-const POSSIBLE_STATUS = [WebSocket.CONNECTING, WebSocket.OPEN, WebSocket.CLOSING, WebSocket.CLOSED]
-
 // !! HARD CODED URL !!
-export const URL_WEBSOCKET_NOTIFICATION = 'ws://localhost:80/ws/notification/'
+export const URL_WEBSOCKET_NOTIFICATION = 'ws://localhost:8000/ws/notification/'
 
 
 export const state = () => ({
   ws: null,
-  handlers: [],
+  handlers: [() => {}, ],
 })
 
 export const getters = {
@@ -48,25 +45,27 @@ export const actions = {
     context.commit(CONNECT, context.rootState.user.token)
     let ws = context.state.ws
 
+    // on connection established
     ws.onopen  = (ev) => {
-      for (handler of context.state.handlers)
+      for (var handler of context.state.handlers)
         handler({ type: 'open', event: ev })
     }
 
+    // when connection completely closed (by client or server whatever)
     ws.onclose = (ev) => {
-      for (handler of context.state.handlers)
+      for (var handler of context.state.handlers)
         handler({ type: 'close', event: ev })
     }
 
     // error handling
     ws.onerror = (ev) => {
-      for (handler of context.state.handlers)
+      for (var handler of context.state.handlers)
         handler({ type: 'error', event: ev })
     }
 
     // message handling
     ws.onmessage = (ev) => {
-      for (handler of context.state.handlers)
+      for (var handler of context.state.handlers)
         handler({ type: 'message', event: ev })
     }
   },

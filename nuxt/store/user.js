@@ -1,4 +1,6 @@
+import { messaging } from '~/plugins/firebase.js'
 import { getLoginPage } from '~/src/auth'
+import { getUserDeviceType } from '~/src/util'
 
 // defaults
 export const DEFAULT_PROFILE = {
@@ -18,10 +20,11 @@ const SET_PROFILE = 'SET_PROFILE'
 const SET_CONFIG  = 'SET_CONFIG'
 
 // urls for api
-export const URL_LOCAL_LOGIN  = '/auth/login/'
-export const URL_SOCIAL_LOGIN = '/auth/o/'
-export const URL_LOGOUT       = '/auth/logout/'
-export const URL_USER_PROFILE = '/auth/user/'
+export const URL_LOCAL_LOGIN         = '/auth/login/'
+export const URL_SOCIAL_LOGIN        = '/auth/o/'
+export const URL_LOGOUT              = '/auth/logout/'
+export const URL_REGISTER_FCM_DEVICE = '/api/fcm/device/'
+export const URL_USER_PROFILE        = '/auth/user/'
 
 
 export const state = () => ({
@@ -98,6 +101,7 @@ export const actions = {
           resolve(true)
         }
         else {
+          // for future..
           throw Error('Not implemented.')
         }
       }
@@ -188,9 +192,25 @@ export const actions = {
     })
   },
   _afterLogin (context, { token }) {
-    /*
-    load user informations (profile, config, ...)
-    */
+    // register device to server for FCM push notification
+    messaging.requestPermission()
+    .then(async () => {
+      // user agreed with receiving messages
+      let token = await messaging.getToken()
+      // get user device type (android, ios, web)
+      let type = getUserDeviceType()
+      if (!['ios', 'android'].includes(type))
+        type = 'web'
+
+      // send info for fcm messaging service
+      var _ = await this.$axios.$post(URL_REGISTER_FCM_DEVICE, {
+        type: 'ios',
+        registration_id: token,
+      })
+    })
+    .catch(err => {}) // do nothing
+
+    // load user informations (profile, config, ...)
     return new Promise(async (resolve, reject) => {
       try {
         context.commit(SET_TOKEN, token)
