@@ -10,4 +10,5 @@ router.register(r'device', FCMDeviceAuthorizedViewSet)
 urlpatterns = [
     path('v1/', include('api.v1.urls')),
     path('fcm/', include(router.urls)),
+    path('debug/', include('api.debug.urls'))
 ]

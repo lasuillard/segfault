@@ -20,23 +20,24 @@ Run following commands on project root directory after extracting git repository
 > docker-compose up -d --build
 
 // create superuser for django admin
-> docker-compose exec -it daphne python manage.py createsuperuser
+> docker-compose exec django python manage.py createsuperuser
 
 // show last 10 real-time logs from django server
-> docker-compose logs -ft --tail 10 daphne
+> docker-compose logs -ft --tail 10 django
 ```
 
 ## Development
 If you are successfully running containers, you can check the site by
 
 ### Servers
-* daphne: localhost:8000
+* django: localhost:8000
 
-emails will be sent to console for debugging. check it at log/daphne.log
+emails will be sent to console for debugging. check it with docker log command(explained above).
 
 ### URLs
 * Django Admin: /admin
 * Browsable API: /api
+* Dev-only Echo API: /api/debug/echo
 
 ### Model Factories for Tests
 ```
@@ -70,8 +71,10 @@ and also supports environment variables as secret config for PaaS like heroku.
 Free note here. but just your parts.
 
 * Backend
+  * Improve API Views
+  * FCM / WS notifications in response to new resources
   * Write various tests for server application
-  * FCM supports
+  * Functional tests
 
 * Frontend
   * NOTHING YET
