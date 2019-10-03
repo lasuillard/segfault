@@ -7,7 +7,7 @@ SegFault is an SNS web service for developers.
 ## Getting Started
 Introductions for setting up development environment for co-workers.
 
-Make sure that secret files won't be included in repository.
+! Make sure that secret files won't be included in repository !
 
 ### Prequisites
 * Git
@@ -20,23 +20,19 @@ Run following commands on project root directory after extracting git repository
 > docker-compose up -d --build
 
 // create superuser for django admin
-> docker container ls 
-> docker exec -it <container> python manage.py createsuperuser
+> docker-compose exec -it daphne python manage.py createsuperuser
 
-// show all logs from django server
-> docker-compose logs -ft server
+// show last 10 real-time logs from django server
+> docker-compose logs -ft --tail 10 daphne
 ```
 
 ## Development
 If you are successfully running containers, you can check the site by
 
 ### Servers
-* uWSGI: localhost:8000
-* daphne: localhost:8443
-* Nginx: localhost:80 (or just localhost)
+* daphne: localhost:8000
 
-for development, i recommend using just Nginx gateway.<br/>
-emails will be sent to console for debugging. check it at log/uwsgi.log
+emails will be sent to console for debugging. check it at log/daphne.log
 
 ### URLs
 * Django Admin: /admin
@@ -67,15 +63,15 @@ Factory-boy e0kY6Mc3OcWBxdHXw5HkJQUTKsNymi ['qiuK5yAa']
 ```
 
 ### Secrets
-secret.json and db.json files are not included in repo.
+All secrets will be handled by secret.json, which is not included in repo.<br/>
+and also supports environment variables as secret config for PaaS like heroku.
 
 ### TODO
 Free note here. but just your parts.
 
 * Backend
   * Write various tests for server application
-  * Implement websockets for notification / chat
-  * (LATER) HTTPS/SSL for Nginx
+  * FCM supports
 
 * Frontend
   * NOTHING YET

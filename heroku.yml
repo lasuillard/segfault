@@ -1,7 +1,10 @@
 build:
   docker:
-    web: Dockerfile
-  config:
-    DJANGO_SETTINGS_MODULE: core.settings.heroku
+    web: Dockerfile.heroku
 run:
-  web: gunicorn core.wsgi:application --bind 0.0.0.0:$PORT
+  # heroku runs each as a process
+  web: daphne core.asgi.heroku:application -b 0.0.0.0 -p $PORT -v2
+  worker: 
+    image: web
+    command: 
+      - python manage.py runworker notification chat -v2

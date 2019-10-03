@@ -20,7 +20,7 @@ LOGGING = {
         'test': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': f'log/django-test.log',
+            'filename': 'log/django-test.log',
             'formatter': 'verbose',
         },
     },
