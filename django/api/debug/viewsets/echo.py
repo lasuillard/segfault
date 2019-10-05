@@ -10,7 +10,6 @@ from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 from fcm_django.models import FCMDevice
 from fcm_django.api.rest_framework import FCMDeviceSerializer
-from api.permissions import IsAdminUser
 
 User = get_user_model()
 
@@ -25,7 +24,7 @@ class EchoViewSet(ViewSet):
         if settings.DEBUG:
             permissions = [IsAuthenticated, ]
         else:
-            permissions = [IsAdminUser, ]
+            return False
 
         return [permission() for permission in permissions]
 
@@ -73,7 +72,7 @@ class EchoViewSet(ViewSet):
         user = request.user
         data = json.dumps(request.data)
         try:
-            device = FCMDevice.objects.get(user=user)
+            device = FCMDevice.objects.filter(user=user)
             device.send_message(
                 title='SegFault FCM Echo',
                 body=data

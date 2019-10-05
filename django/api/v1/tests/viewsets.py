@@ -210,7 +210,7 @@ class AvatarViewSetTest(ViewSetActionTestMixin, TestCase):
     factory = AvatarFactory
     permissions_for_actions = {
         'list': VIEWSET_PERMISSIONS,
-        'retrieve': VIEWSET_PERMISSIONS,
+        'retrieve': ['owner', 'admin'],
         'update': ['owner', 'admin'],
         'partial_update': ['owner', 'admin']
     }

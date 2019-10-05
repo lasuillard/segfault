@@ -10,6 +10,12 @@ User = get_user_model()
 
 
 class AvatarViewSet(RetrieveModelMixin, UpdateModelMixin, ListModelMixin, GenericViewSet):
+    """
+    API for avatar object
+
+    - Supported list filters:
+    name: filter queries by display name of avatar, case in-sensitive partial match.
+    """
 
     def get_serializer_class(self):
         if self.action == 'list':
@@ -22,9 +28,9 @@ class AvatarViewSet(RetrieveModelMixin, UpdateModelMixin, ListModelMixin, Generi
         return None
 
     def get_permissions(self):
-        if self.action in ['list', 'retrieve']:
+        if self.action in ['list']:
             permissions = [AllowAny, ]
-        elif self.action in ['update', 'partial_update']:
+        elif self.action in ['retrieve', 'update', 'partial_update']:
             permissions = [IsOwner | IsAdminUser, ]
         else:
             permissions = [IsAdminUser, ]
@@ -33,6 +39,9 @@ class AvatarViewSet(RetrieveModelMixin, UpdateModelMixin, ListModelMixin, Generi
 
     def get_queryset(self):
         queryset = Avatar.objects.all()
+        name = self.request.query_params.get('name', default=None)
+        if name is not None:
+            queryset = queryset.filter(display_name__icontains=name)
 
         return queryset
 

@@ -13,6 +13,6 @@ so we tests serializer spec, that developer handles, such as fields must (or not
 class SerializerConstraintTest(TestCase):
 
     def test_user_serializers_not_contain_credentials(self):
-        user_serializers = get_serializers_for_model(model=User, abstract=True)
+        user_serializers = get_serializers_for_model(model=User, search_modules=['api.v1.serializers', ], abstract=True)
         for serializer in user_serializers:
             self.assertNotIn('password', serializer.Meta.fields)

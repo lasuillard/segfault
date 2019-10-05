@@ -9,7 +9,13 @@ User = get_user_model()
 
 
 class AnswerViewSet(ModelViewSet):
+    """
+    API for Answer object
 
+    - Supported filters:
+    by: id or name of avatar. exact match for id, case in-sensitive partial match for name.
+    target: fragment id, exact match.
+    """
     def get_serializer_class(self):
         if self.action == 'list':
             return AnswerListSerializer
@@ -30,13 +36,19 @@ class AnswerViewSet(ModelViewSet):
 
     def get_queryset(self):
         queryset = Answer.objects.all()
-        user = self.request.query_params.get('user', default=None)
-        target = self.request.query_params.get('target', default=None)
-        if user is not None:
-            queryset = queryset.filter(user__username=user)
+        by = self.request.query_params.get('by', default=None)
+        if by is not None:
+            try:
+                queryset = queryset.filter(user__avatar__pk=by)
+            except ValueError:
+                queryset = queryset.filter(user__avatar__display_name__icontains=by)
 
+        target = self.request.query_params.get('target', default=None)
         if target is not None:
-            queryset = queryset.filter(target__pk=target)
+            try:
+                queryset = queryset.filter(target__pk=target)
+            except ValueError:
+                pass
 
         return queryset
 

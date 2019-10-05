@@ -1,7 +1,10 @@
+import logging
 from django.db import close_old_connections
 from django.contrib.auth.models import AnonymousUser
 from rest_framework.authtoken.models import Token
 from channels.auth import AuthMiddlewareStack
+
+logger = logging.getLogger(__name__)
 
 
 class TokenAuthMiddleware:
@@ -16,16 +19,18 @@ class TokenAuthMiddleware:
             token = Token.objects.get(key=key)
             scope['user'] = token.user
             close_old_connections()
-
         except ValueError:
             scope['user'] = AnonymousUser()
-
+            logger.debug('Authorization failed due to malformed subprotocol: {}'.format(subprotocols))
         except Token.DoesNotExist:
             scope['user'] = AnonymousUser()
+            logger.debug('Authorization failed due to invalid token: {}'.format(key))
 
         return self.inner(scope)
 
 
-TokenAuthMiddlewareStack = lambda inner: TokenAuthMiddleware(
-    AuthMiddlewareStack(inner)
-)
+def token_auth(inner):
+    return TokenAuthMiddleware(AuthMiddlewareStack(inner))
+
+
+TokenAuthMiddlewareStack = token_auth

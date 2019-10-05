@@ -7,6 +7,7 @@ User = get_user_model()
 
 
 class UserViewSet(ReadOnlyModelViewSet):
+    queryset = User.objects.all()
 
     def get_serializer_class(self):
         if self.action == 'list':
@@ -23,11 +24,3 @@ class UserViewSet(ReadOnlyModelViewSet):
             permissions = [IsAdminUser, ]
 
         return [permission() for permission in permissions]
-
-    def get_queryset(self):
-        queryset = User.objects.all()
-        username = self.request.query_params.get('username', default=None)
-        if username is not None:
-            queryset = queryset.filter(username__icontains=username)
-
-        return queryset

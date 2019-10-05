@@ -25,11 +25,35 @@ try:
         SECRETS = json.load(f)
 
 except FileNotFoundError:
-    # you are responsible of handling all secret variables, such as heroku or other services.
-    SECRETS = {}
+    # load secrets from os envs
+    SECRETS = {
+        'DJANGO_SECRET_KEY': os.environ.get('DJANGO_SECRET_KEY'),
+        'FCM_SERVER_KEY': os.environ.get('FCM_SERVER_KEY'),
+        'OAUTH': [
+            {
+                'PROVIDER': 'naver',
+                'NAME': 'Naver',
+                'CLIENT_ID': os.environ.get('NAVER_OAUTH2_CLIENT_ID'),
+                'CLIENT_SECRET': os.environ.get('NAVER_OAUTH2_CLIENT_SECRET')
+            },
+            {
+                'PROVIDER': 'kakao',
+                'NAME': 'Kakao',
+                'CLIENT_ID': os.environ.get('KAKAO_OAUTH2_CLIENT_SECRET'),
+                'CLIENT_SECRET': os.environ.get('KAKAO_OAUTH2_CLIENT_SECRET')
+            },
+            {
+                'PROVIDER': 'google',
+                'NAME': 'Google',
+                'CLIENT_ID': os.environ.get('GOOGLE_OAUTH2_CLIENT_ID'),
+                'CLIENT_SECRET': os.environ.get('GOOGLE_OAUTH2_CLIENT_SECRET')
+            },
+            # more services should be dealt here too, not only secret.json
+        ]
+    }
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = SECRETS['DJANGO_SECRET_KEY'] if 'DJANGO_SECRET_KEY' in SECRETS else os.environ.get('DJANGO_SECRET_KEY')
+SECRET_KEY = SECRETS['DJANGO_SECRET_KEY']
 
 URL_FRONT = ''
 
@@ -112,7 +136,7 @@ REST_AUTH_SERIALIZERS = {
 
 FCM_DJANGO_SETTINGS = {
     'APP_VERBOSE_NAME': 'SegFault',
-    'FCM_SERVER_KEY': SECRETS['FCM_SERVER_KEY'] if 'FCM_SERVER_KEY' in SECRETS else os.environ.get('FCM_SERVER_KEY'),
+    'FCM_SERVER_KEY': SECRETS['FCM_SERVER_KEY'],
     'ONE_DEVICE_PER_USER': False,
     'DELETE_INACTIVE_DEVICES': True,
 }
@@ -173,7 +197,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ko-KR'
 
 TIME_ZONE = 'Asia/Seoul'
 
@@ -201,12 +225,11 @@ LOGGING = {
     'disable_existing_loggers': False,
     'formatters': {
         'verbose': {
-            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
-            'style': '{',
+            'format': '%(asctime)s %(levelname)-8s %(name).%(module): %(message)s',
         },
         'simple': {
-            'format': '{levelname} {message}',
-            'style': '{',
+            'format': '%(asctime)s %(levelname)-8s %(name).%(module): %(message)s',
+            'datefmt': '%Y-%m-%d %H:%M:%S'
         },
     },
     'filters': {
@@ -216,7 +239,7 @@ LOGGING = {
     },
     'handlers': {
         'console': {
-            'level': 'DEBUG',
+            'level': 'INFO',
             'filters': ['debug'],
             'class': 'logging.StreamHandler',
             'formatter': 'simple'
@@ -224,22 +247,22 @@ LOGGING = {
         'applog': {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': f'log/django-debug.log',
+            'filename': f'log/app.log',
             'formatter': 'verbose',
-            'maxBytes': 1024*1024*10,
+            'maxBytes': 1024*1024*10,  # 10MB
             'backupCount': 10,
         },
     },
     'loggers': {
         '': {
             'level': 'DEBUG',
-            'handlers': ['debug'],
+            'handlers': ['applog'],
         },
-        'django': {
-            'level': 'DEBUG',
-            'handlers': ['debug'],
-            'propagate': True
-        },
+        'django.request': {
+            'level': 'INFO',
+            'handlers': ['console'],
+            'propagate': False,
+        }
     },
 }
 """

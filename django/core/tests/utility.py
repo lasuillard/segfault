@@ -1,9 +1,10 @@
+from uuid import uuid4
 from collections import namedtuple
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from core.factories import UserFactory
 from ..utility import (
-    convert_tag_str_to_model,
+    is_uuid4,
     get_factories_for_model,
     get_serializers_for_model,
     generate_random_string,
@@ -13,29 +14,39 @@ from ..utility import (
 User = get_user_model()
 
 
+class Dummy:
+    pass
+
+
 class UtilityTest(TestCase):
 
-    def test_convert_tag_str_to_model(self):
-        # good test case
-        tags = ['qr/631fx', '21^_3h90e1$', 'asfUG+;']
-        converted_tags = map(lambda ct: ct.name, convert_tag_str_to_model(tags))
-        self.assertTrue(all(map(lambda t: t in converted_tags, tags)))
-        # bad test case
-        tags = [3, 'afxx_5', -518]
-        with self.assertRaises(ValueError) as _:
-            converted_tags = map(lambda ct: ct.name, convert_tag_str_to_model(tags))
+    def test_is_uuid4(self):
+        # test uuid4 string
+        string = str(uuid4())
+        self.assertTrue(is_uuid4(string))
+        # test a string
+        string = 'Hello World!'
+        self.assertFalse(is_uuid4(string))
 
     def test_get_serializers_for_model(self):
         # specified model
-        serializers = get_serializers_for_model(model=User, abstract=True, search_modules=['api.v1.serializers'])
+        serializers = get_serializers_for_model(model=User, search_modules=['api.v1.serializers'], abstract=True)
         for serializer in serializers:
             self.assertTrue(issubclass(serializer.Meta.model, User))
 
+        # no modules given
+        serializers = get_serializers_for_model(model=User, search_modules=None, abstract=True)
+        self.assertIsNone(serializers)
+
     def test_get_factories_for_model(self):
         # specified model
-        factories = get_factories_for_model(model=User, abstract=True, search_modules=['core.factories'])
+        factories = get_factories_for_model(model=User, search_modules=['core.factories'], abstract=True)
         for factory in factories:
             self.assertTrue(issubclass(getattr(factory, '_meta').model, User))
+
+        # no modules given
+        factories = get_factories_for_model(model=User, search_modules=None, abstract=True)
+        self.assertIsNone(factories)
 
     def test_generate_random_string_with_default_charset(self):
         DataSet = namedtuple('DataSet', 'length charset label')
@@ -62,6 +73,16 @@ class UtilityTest(TestCase):
         # for zero length
         generated = get_or_create_random_model_instances(User, UserFactory, num=0)
         self.assertEqual(len(generated), 0)
-        # minus count
+        # minus count should return list of zero length
         generated = get_or_create_random_model_instances(User, UserFactory, num=-4)
         self.assertEqual(len(generated), 0)
+        # when nothing to select
+        User.objects.all().delete()
+        generated = get_or_create_random_model_instances(User, UserFactory, num=3)
+        self.assertEqual(len(generated), 3)
+        # invalid model class
+        with self.assertRaises(TypeError) as _:
+            get_or_create_random_model_instances(Dummy, UserFactory, num=3)
+        # invalid factory class
+        with self.assertRaises(TypeError) as _:
+            get_or_create_random_model_instances(User, Dummy, num=3)

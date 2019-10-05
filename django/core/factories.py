@@ -29,15 +29,22 @@ class AvatarFactory(factory.django.DjangoModelFactory):
         django_get_or_create = ['user', ]
 
     user = factory.SubFactory(UserFactory)
-    profile_image = factory.LazyFunction(
-        lambda: SimpleUploadedFile(
-            name=f'{ generate_random_string(length=16) }.jpg',
-            content=b'\x00' * random.randint(0, 65536),
-            content_type='image/jpeg'
-        )
-    )
+    profile_image = factory.LazyFunction(lambda: SimpleUploadedFile(
+        name=f'{ generate_random_string(length=16) }.jpg',
+        content=b'\x00' * random.randint(1, 65536),
+        content_type='image/jpeg'
+    ))
     display_name = factory.LazyFunction(lambda: generate_random_string(length=16))
-    introduce_message = factory.LazyFunction(lambda: generate_random_string(length=64))
+
+    @factory.post_generation
+    def introduce_message(self, create, extracted, **kwargs):
+        if not create:
+            return
+
+        if extracted:
+            self.introduce_message = extracted
+        else:
+            self.introduce_message = generate_random_string(length=64)
 
 
 class FragmentFactory(factory.django.DjangoModelFactory):
@@ -89,7 +96,7 @@ class CommentFactory(factory.django.DjangoModelFactory):
 
     user = factory.SubFactory(UserFactory)
     target = factory.LazyFunction(
-        lambda: random.choice(get_factories_for_model(Commentable, abstract=True))()
+        lambda: random.choice(get_factories_for_model(Commentable, search_modules=['core.factories'], abstract=True))()
     )
     parent = factory.LazyAttribute(
         lambda o: random.choice([None, *Comment.objects.filter(target=o.target)]) if random.random() > 0.5 else None
@@ -104,7 +111,8 @@ class VoteFactory(factory.django.DjangoModelFactory):
 
     user = factory.SubFactory(UserFactory)
     target = factory.LazyFunction(
-        lambda: random.choice(get_factories_for_model(Votable, abstract=True))()
+        lambda: random.choice(
+            get_factories_for_model(Votable, search_modules=['core.factories'], abstract=True))()
     )
     rating = factory.LazyFunction(lambda: random.choice([v[0] for v in Vote.VOTE_CHOICES]))
 
