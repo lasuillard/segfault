@@ -21,10 +21,11 @@ class NotificationListSerializer(ReadOnlySerializerMixin, serializers.ModelSeria
 
 class NotificationAdminListSerializer(ReadOnlySerializerMixin, serializers.ModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name='api:v1:notification-detail')
+    users = UserListSerializer(many=True, read_only=True)
 
     class Meta:
         model = Notification
-        fields = ['pk', 'url', 'title', 'body', 'date_created']
+        fields = ['pk', 'url', 'users', 'title', 'body', 'date_created']
 
 
 class NotificationDetailSerializer(ReadOnlySerializerMixin, serializers.ModelSerializer):

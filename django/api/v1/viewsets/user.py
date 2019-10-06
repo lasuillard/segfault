@@ -7,8 +7,11 @@ User = get_user_model()
 
 
 class UserViewSet(ReadOnlyModelViewSet):
-    queryset = User.objects.all()
+    """
+    API for user resources
 
+    name: partial match for username
+    """
     def get_serializer_class(self):
         if self.action == 'list':
             return UserListSerializer
@@ -24,3 +27,12 @@ class UserViewSet(ReadOnlyModelViewSet):
             permissions = [IsAdminUser, ]
 
         return [permission() for permission in permissions]
+
+    def get_queryset(self):
+        queryset = User.objects.all()
+
+        # name, partial match for username
+        name = self.request.query_params.get('name', default=None)
+        queryset = queryset.filter(username__icontains=name) if name else queryset
+
+        return queryset

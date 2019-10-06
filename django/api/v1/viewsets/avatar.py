@@ -11,12 +11,10 @@ User = get_user_model()
 
 class AvatarViewSet(RetrieveModelMixin, UpdateModelMixin, ListModelMixin, GenericViewSet):
     """
-    API for avatar object
+    API for avatar resources
 
-    - Supported list filters:
-    name: filter queries by display name of avatar, case in-sensitive partial match.
+    name: case-insensitive partial match for display name
     """
-
     def get_serializer_class(self):
         if self.action == 'list':
             return AvatarListSerializer
@@ -38,10 +36,12 @@ class AvatarViewSet(RetrieveModelMixin, UpdateModelMixin, ListModelMixin, Generi
         return [permission() for permission in permissions]
 
     def get_queryset(self):
-        queryset = Avatar.objects.all()
-        name = self.request.query_params.get('name', default=None)
-        if name is not None:
-            queryset = queryset.filter(display_name__icontains=name)
+        queryset = Avatar.objects.order_by('display_name')
+        query_params = self.request.query_params
+
+        # name, case-insensitive partial match for display name
+        name = query_params.get('name')
+        queryset = queryset.filter(display_name__icontains=name) if name else queryset
 
         return queryset
 

@@ -9,7 +9,13 @@ User = get_user_model()
 
 
 class VoteViewSet(ModelViewSet):
+    """
+    API for vote resources
 
+    avatar, exact match for primary key or case-insensitive partial match for display name
+    target, exact match, primary key
+    rating, exact match for rating
+    """
     def get_serializer_class(self):
         if self.action == 'list':
             return VoteListSerializer
@@ -29,15 +35,30 @@ class VoteViewSet(ModelViewSet):
         return [permission() for permission in permissions]
 
     def get_queryset(self):
-        queryset = Vote.objects.all()
-        user = self.request.query_params.get('user', default=None)
-        target = self.request.query_params.get('target', default=None)
+        queryset = Vote.objects.order_by('-date_created')
+        query_params = self.request.query_params
 
-        if user is not None:
-            queryset = queryset.filter(user__pk=user)
+        # avatar, exact match for primary key or case-insensitive partial match for display name
+        avatar = query_params.get('avatar')
+        if avatar:
+            try:
+                avatar = int(avatar)
+                queryset = queryset.filter(user__avatar__pk=avatar)
+            except ValueError:
+                queryset = queryset.filter(user__avatar__display_name__icontains=avatar)
 
-        if target is not None:
-            queryset = queryset.filter(target__pk=target)
+        # target, exact match, primary key
+        target = query_params.get('target')
+        if target:
+            try:
+                target = int(target)
+                queryset = queryset.filter(target__pk=target)
+            except ValueError:
+                pass
+
+        # rating, exact match for rating
+        rating = query_params.get('rating')
+        queryset = queryset.filter(rating=rating) if rating else queryset
 
         return queryset
 

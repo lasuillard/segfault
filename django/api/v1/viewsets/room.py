@@ -9,7 +9,11 @@ User = get_user_model()
 
 
 class RoomViewSet(ModelViewSet):
+    """
+    API for chat room resources
 
+    name: case-insensitive partial match for name
+    """
     def get_serializer_class(self):
         if self.action == 'list':
             return RoomListSerializer
@@ -28,11 +32,18 @@ class RoomViewSet(ModelViewSet):
 
         return [permission() for permission in permissions]
 
+    def get_queryset(self):
+        queryset = Room.objects.all()
+        query_params = self.request.query_params
+
+        # name, case-insensitive partial match for name
+        name = query_params.get('name')
+        queryset = queryset.filter(name__icontains=name) if name else queryset
+
+        return queryset
+
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
     def perform_update(self, serializer):
         serializer.save(user=self.request.user)
-
-    def get_queryset(self):
-        return Room.objects.all()
