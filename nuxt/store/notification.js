@@ -24,16 +24,20 @@ export const mutations = {
   [CONNECT]: (state, token) => {
     state.ws = new WebSocket(URL_WEBSOCKET_NOTIFICATION, ['access_token', token])
   },
-  [ADD_HANDLER]: (state, handler) => {
+  [ADD_HANDLER]: (state, handler, force_add=false) => {
     /*
     ** adds a handler for notification message
     ** handler will be given an object like:
     ** {
-    **   type: 'message' or 'error'
+    **   type : 'open', 'close', 'error', 'message'
     **   event: Object
+    **   data : event.data
     ** }
     */
-    state.handlers.push(handler)
+    if (force_add === true
+      || state.handlers.findIndex(f => f == handler) === (-1)) {
+      state.handlers.push(handler)
+    }
   }
 }
 
@@ -48,25 +52,25 @@ export const actions = {
     // on connection established
     ws.onopen  = (ev) => {
       for (var handler of context.state.handlers)
-        handler({ type: 'open', event: ev })
+        handler({ type: 'open', event: ev, data: ev.data })
     }
 
     // when connection completely closed (by client or server whatever)
     ws.onclose = (ev) => {
       for (var handler of context.state.handlers)
-        handler({ type: 'close', event: ev })
+        handler({ type: 'close', event: ev, data: ev.data })
     }
 
     // error handling
     ws.onerror = (ev) => {
       for (var handler of context.state.handlers)
-        handler({ type: 'error', event: ev })
+        handler({ type: 'error', event: ev, data: ev.data })
     }
 
     // message handling
     ws.onmessage = (ev) => {
       for (var handler of context.state.handlers)
-        handler({ type: 'message', event: ev })
+        handler({ type: 'message', event: ev, data: ev.data })
     }
   },
 }

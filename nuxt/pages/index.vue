@@ -44,24 +44,22 @@
         </v-card-text>
      </v-card>
 
-     <v-card class="mx-auto" :flat="false" :height="cardHeight" :outlined="ture" :width="350" :align="center">
-       <v-card-title class="display-1">Interest Fragments</v-card-title>
-       <v-col>
-         <v-list three-line>
-           <template v-for="item in items">
-             <v-list-item :key="item.title">
-             <v-list-item-avatar>
-              <v-img :src="item.avatar"></v-img>
-            </v-list-item-avatar>
-
-            <v-list-item-content>
-              <v-list-item-title v-html="item.title"></v-list-item-title>
-              <v-list-item-subtitle v-html="item.contents"></v-list-item-subtitle>
-            </v-list-item-content>
-           </v-list-item>
-
-           <v-divider v-if="divider" :key="item" :inset="inset"></v-divider>
-           </template>
+    <v-card class="mx-auto" :flat="false" :height="cardHeight" :outlined="ture" :width="350" :align="center">
+      <v-card-title class="display-1">Recent Fragments</v-card-title>
+      <v-col>
+        <v-list three-line>
+          <template v-for="item in recentFragments">
+            <v-list-item :key="item.pk">
+              <v-list-item-avatar>
+                <v-img :src="item.avatar.profile_image"></v-img>
+              </v-list-item-avatar>
+              <v-list-item-content>
+                <v-list-item-title>{{ item.title }}</v-list-item-title>
+                <v-list-item-subtitle>{{ Array(item.tags.map(v => v.name)).slice(0, 2).join(', ') }}</v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+            <v-divider inset :key="`_${item.pk}`"></v-divider>
+          </template>
          </v-list>
         </v-col>
       <v-col align="right">
@@ -69,29 +67,27 @@
       </v-col>
       
       <v-btn text color="primary" :to="{ name: 'fragment' }">View more..</v-btn>
-     </v-card>
+    </v-card>
 
-     <v-card class="mx-auto" :flat="false" :height="cardHeight" :outlined="ture" :width="cardWidth" :align="center">
-       <v-card-title class="display-1">Fragment Distribution</v-card-title>
-       <v-card-text>Recent 1 week, Top 10</v-card-text>
-       <v-col>
-         <v-list three-line>
-           <template v-for="rank in ranking">
-             <v-list-item :key="rank.tagName">
-            <v-list-item-content>
-              <v-list-item-title v-html="rank.tagName" class="headline"></v-list-item-title>
-              <v-list-item-subtitle>
-                <p>{{rank.numberQ}} of Fragment existed</p>
-              </v-list-item-subtitle>
-            </v-list-item-content>
-
-           </v-list-item>
-           <v-divider v-if="divider" :key="rank"></v-divider>
-           </template>
-         </v-list>
+    <v-card class="mx-auto" :flat="false" :height="cardHeight" :outlined="ture" :width="cardWidth" :align="center">
+      <v-card-title class="display-1">Popular Tags</v-card-title>
+      <v-col>
+        <v-list three-line>
+          <template v-for="tag in popularTags">
+            <v-list-item :key="tag.pk">
+              <v-list-item-content>
+                <v-list-item-title class="headline">{{ tag.name }}</v-list-item-title>
+                <v-list-item-subtitle>
+                  <p>There are {{ tag.count_related_contents || 0 }} related contents</p>
+                </v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+            <v-divider inset :key="`_${tag.pk}`"></v-divider>
+          </template>
+        </v-list>
       </v-col>
       <v-btn text color="primary" href="">View more</v-btn>
-     </v-card>
+    </v-card>
 
        </v-row>
       </div>
@@ -125,32 +121,20 @@
 <script>
 
 export default {
-  data: function() {
-    return {
-      colors: [
-        'primary',
-        'secondary',
-        'red',
-      ],
-      items: [{
-        title: "nginx 질문",
-        name: "adele",
-        avatar: 'https://cdn.vuetifyjs.com/images/lists/1.jpg',
-        contents: "ajdskfla;jskdf333333333333333333333333333333333333333l;ajskdl;f" ,
-      },
-      {
-        title: "도커 질문입니다!",
-        name: "dave",
-        avatar: 'https://cdn.vuetifyjs.com/images/lists/2.jpg',
-        contents: "ajdskfla;jskdfl;ajskdl;f" ,
-      },
-     {
-      title:"웹 소켓 질문이에요!" ,
-      name: "Mike",
-       avatar: 'https://cdn.vuetifyjs.com/images/lists/3.jpg',
-       contents: "ajdskfla;jskdfl;ajskdl;f" ,
-      }],
-      links: [
+  data: () => ({
+    colors: [
+      'primary',
+      'secondary',
+      'red',
+    ],
+    recentFragments: null,
+    popularTags: null,
+    hideDelimiters: true,
+    cycle: true,
+    height: 300,
+    cardWidth: 450,
+    cardHeight: 600,
+    links: [
       'Home',
       'About Us',
       'Dev Team',
@@ -158,27 +142,19 @@ export default {
       'Twitter',
       'Contact Us',
     ],
-      ranking: [{
-        tagName: '인공지능',
-        rank: 1,
-        numberQ: 23,
-      },{
-        tagName: 'JavaScript',
-        rank: 2,
-        numberQ: 22,
-      }],
-      hideDelimiters: true,
-      cycle: true,
-      height: 300,
-      cardWidth: 450,
-      cardHeight: 600,
-      divider: true, inset: true,
+  }),
+  async asyncData ({ $axios }) {
+    var recentFragments = await $axios.$get('/api/v1/fragment?limit=10')
+    var popularTags = await $axios.$get('/api/v1/tag?order=count_related_content')
+    return {
+      recentFragments: recentFragments.results,
+      popularTags: popularTags.results
     }
   },
   computed: {
     timeLable: function() {
-      var time = new Date();
-      return time.getHours()+':'+time.getMinutes()+':'+time.getSeconds()+' 에 동기화 됨'
+      var time = new Date()
+      return 'Synchrnoized data at ' + time.getHours() + ':' + time.getMinutes() + ':' + time.getSeconds()
     },
   },
   methods: {

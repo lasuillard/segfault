@@ -13,7 +13,7 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
 
     @database_sync_to_async
     def get_room(self):
-        room_id = self.scope['url_route']['kwargs']['id']
+        room_id = self.scope['url_route']['kwargs']['room_id']
         return Room.objects.get(pk=room_id)
 
     @database_sync_to_async
@@ -35,18 +35,18 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         # Authenticate incoming request
         room_id = self.scope['url_route']['kwargs']['room_id'],
         self.user = self.scope['user']
-        logger.info('Incoming connection request for room {} by user {}'.format(room_id, self.user))
-        if not self.user.is_authenticated:
-            logger.info('Rejected connection request for room {} because authorization has failed: {}'.format(
-                room_id, self.user))
-            await self.close(code=status.HTTP_401_UNAUTHORIZED)  # Unauthorized
-            return
-
         try:
             self.room = await self.get_room()
         except Room.DoesNotExist:
             logger.warning('Rejected connection for room {} because it does not exist: {}'.format(room_id, self.user))
             await self.close(code=status.HTTP_400_BAD_REQUEST)
+            return
+
+        logger.info('Incoming connection request for room {} by user {}'.format(room_id, self.user))
+        if not self.user.is_authenticated:
+            logger.info('Rejected connection request for room {} because authorization has failed: {}'.format(
+                room_id, self.user))
+            await self.close(code=status.HTTP_401_UNAUTHORIZED)  # Unauthorized
             return
 
         logger.info('Accepted user for room {}: {}'.format(room_id, self.user))
@@ -55,7 +55,9 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         await self.accept(subprotocol='access_token')  # OK
 
     async def disconnect(self, code):
-        logger.info('Disconnected user {} from room {}'.format(self.user, self.room.pk))
+        logger.info('Disconnected user {} from room {}'.format(
+            self.user, self.scope['url_route']['kwargs']['room_id'])
+        )
         await self.channel_layer.group_discard(self.channel_group, self.channel_name)
 
     async def receive_json(self, content, **kwargs):

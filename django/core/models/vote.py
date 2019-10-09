@@ -38,6 +38,9 @@ class Vote(models.Model):
         (BAD, 'Bad')
     )
 
+    class Meta:
+        unique_together = [('user', 'target'), ]
+
     user = models.ForeignKey(User, on_delete=models.CASCADE, )
     target = models.ForeignKey(Votable, on_delete=models.CASCADE, )
     rating = models.IntegerField(choices=VOTE_CHOICES, default=NEUTRAL, )
