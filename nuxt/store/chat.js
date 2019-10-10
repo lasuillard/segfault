@@ -3,8 +3,9 @@
 */
 import Vue from 'vue'
 
-const JOIN = 'JOIN'
-export const LEAVE = 'LEAVE'
+       const JOIN        = 'JOIN'
+export const LEAVE       = 'LEAVE'
+export const LOG         = 'LOG'
 export const ADD_HANDLER = 'ADD_HANDLER'
 
 // !! HARD CODED URL !!
@@ -13,18 +14,31 @@ export const BASE_URL_WEBSOCKET_CHAT = 'ws://localhost:8000/ws/chat'
 
 export const state = () => ({
   rooms: {
+    /*
     'null': {
       ws: null,
-      handlers: [() => {}]
+      handlers: [() => {}, ],
+      messages: [],
     }
+    */
   }
 })
 
 export const getters = {
+  isRoomJoined: (state) => (roomId) => {
+    return state.rooms.hasOwnProperty(roomId)
+  },
+  getRooms: (state) => {
+    return Object.keys(state.rooms)
+  },
   getStatus: (state) => (roomId) => {
     let room = state.rooms.hasOwnProperty(roomId) ? state.rooms[roomId] : null
     return room ? room.ws.readyState : WebSocket.CONNECTING
   },
+  getMessages: (state) => (roomId) => {
+    let room = state.rooms.hasOwnProperty(roomId) ? state.rooms[roomId] : null
+    return room ? room.messages : []
+  }
 }
 
 export const mutations = {
@@ -35,7 +49,8 @@ export const mutations = {
       // open fresh websocket connection
       Vue.set(state.rooms, roomId, {
         ws: new WebSocket(`${BASE_URL_WEBSOCKET_CHAT}/${roomId}/`, ['access_token', token]),
-        handlers: [() => {}, ]
+        handlers: [() => {}, ],
+        messages: []
       })
     }
     else if (room.ws.readyState == WebSocket.OPEN) {
@@ -50,11 +65,17 @@ export const mutations = {
   [LEAVE]: (state, roomId) => {
     let room = state.rooms.hasOwnProperty(roomId) ? state.rooms[roomId] : null
     if (room) {
-      room.ws.disconnect()
+      room.ws.close()
       Vue.delete(state.rooms, roomId)
     }
   },
-  [ADD_HANDLER]: (state, roomId, handler, force_add=false) => {
+  [LOG]: (state, { roomId, obj }) => {
+    let room = state.rooms.hasOwnProperty(roomId) ? state.rooms[roomId] : null
+    if (room) {
+      room.messages.push(obj)
+    }
+  },
+  [ADD_HANDLER]: (state, { roomId, handler, force_add }) => {
     /*
     ** adds a handler for notification message
     ** handler will be given an object like:
@@ -64,8 +85,8 @@ export const mutations = {
     **   data : event.data
     ** }
     */
-   let room = state.rooms.hasOwnProperty(roomId) ? state.rooms[roomId] : null
-   if (room && (force_add === true || _room.handlers.findIndex(f => f == handler) === (-1))) {
+    let room = state.rooms.hasOwnProperty(roomId) ? state.rooms[roomId] : null
+    if (room && (force_add === true || room.handlers.findIndex(f => f == handler) === (-1))) {
       room.handlers.push(handler)
     }
   }
@@ -87,30 +108,46 @@ export const actions = {
 
     let ws = room.ws
     // on connection open
-    ws.onopen  = (ev) => { 
+    ws.onopen = (ev) => { 
+      let obj = { type: 'open', event: ev }
+      context.commit(LOG, { roomId: roomId, obj: obj })
       for (var handler of room.handlers)
-        handler({ type: 'open', event: ev, data: ev.data })
+        handler(obj)
     }
 
     // when disconnected by user or server
     ws.onclose = (ev) => {
+      let obj = { type: 'close', event: ev }
+      context.commit(LOG, { roomId: roomId, obj: obj })
       for (var handler of room.handlers)
-        handler({ type: 'close', event: ev, data: ev.data })
+        handler(obj)
     }
 
     // error handling
     ws.onerror = (ev) => {
+      let obj = { type: 'error', event: ev }
+      context.commit(LOG, { roomId: roomId, obj: obj })
       for (var handler of room.handlers)
-        handler({ type: 'error', event: ev, data: ev.data })
+        handler(obj)
     }
 
     // message handling
     ws.onmessage = (ev) => {
+      let obj = { type: 'message', event: ev, data: ev.data }
+      context.commit(LOG, { roomId: roomId, obj: obj })
       for (var handler of room.handlers)
-        handler({ type: 'message', event: ev, data: ev.data })
+        handler(obj)
     }
   },
-  leaveRoom(context, roomId) {
+  leaveRoom (context, roomId) {
     context.commit(LEAVE, roomId)
-  }
+  },
+  sendMessage (context, { roomId, message }) {
+    let ws = context.state.rooms.hasOwnProperty(roomId) ? context.state.rooms[roomId].ws : null
+    if (ws) {
+      ws.send(JSON.stringify({
+        'content': message
+      }))
+    }
+  },
 }

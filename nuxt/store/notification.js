@@ -24,7 +24,7 @@ export const mutations = {
   [CONNECT]: (state, token) => {
     state.ws = new WebSocket(URL_WEBSOCKET_NOTIFICATION, ['access_token', token])
   },
-  [ADD_HANDLER]: (state, handler, force_add=false) => {
+  [ADD_HANDLER]: (state, { handler, force_add }) => {
     /*
     ** adds a handler for notification message
     ** handler will be given an object like:
