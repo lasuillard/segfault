@@ -21,7 +21,7 @@
           </template>
 
           <!-- Login modal component -->
-          <login-dialog />
+          <login-dialog></login-dialog>
 
         </v-dialog>
         <v-btn :to="{ name: 'sign' }" text outlined>Sign up</v-btn>
@@ -79,6 +79,7 @@
         <nuxt />
       </v-container>
     </v-content>
+    
   </v-app>
 </template>
 
@@ -110,14 +111,19 @@ export default {
         { 
           title: 'Fragment',
           icon: 'mdi-view-dashboard-variant',
-          link: { name: 'fragment'}
+          link: { name: 'fragment' }
+        },
+        {
+          title: 'Live Chat',
+          icon: 'mdi-forum',
+          link: { name: 'chat' }
         },
         {
           title: 'Setting',
           icon: 'mdi-settings',
           link: { name: 'setting' }
         }
-      ]
+      ],
     }
   }),
   computed: {

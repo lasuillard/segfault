@@ -7,16 +7,14 @@ from .fragment import Fragment
 User = get_user_model()
 
 
-class Answer(Commentable, Votable):
-    user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
+class Answer(Commentable, Votable, models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, )
+    target = models.ForeignKey(Fragment, on_delete=models.CASCADE, )
+    content = models.CharField(
+        blank=False,
+        max_length=2048,
+        help_text='Answer for a fragment, maximum length of 2048.',
     )
-    target = models.ForeignKey(
-        Fragment,
-        on_delete=models.CASCADE,
-    )
-    content = models.TextField(blank=False)
     date_created = models.DateTimeField(auto_now_add=True, editable=False)
     date_modified = models.DateTimeField(auto_now=True, editable=False)
 

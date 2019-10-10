@@ -6,7 +6,7 @@ User = get_user_model()
 
 # interface class for resources that can be voted
 class Votable(models.Model):
-    votable_id = models.AutoField(primary_key=True)
+    _votable_id = models.AutoField(primary_key=True)
 
     def get_child_object(self):
         for cls in Votable.__subclasses__():
@@ -25,7 +25,7 @@ class Votable(models.Model):
     get_average_rating.short_description = 'Rating'
 
     def __str__(self):
-        return f'{ self.get_child_object() }'
+        return f'{ self.pk } for { self.get_child_object() }'
 
 
 class Vote(models.Model):
@@ -37,6 +37,9 @@ class Vote(models.Model):
         (NEUTRAL, 'Neutral'),
         (BAD, 'Bad')
     )
+
+    class Meta:
+        unique_together = [('user', 'target'), ]
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, )
     target = models.ForeignKey(Votable, on_delete=models.CASCADE, )

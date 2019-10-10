@@ -1,6 +1,5 @@
 from rest_framework import serializers
 from core.models import Fragment, Tag
-from core.utility import convert_tag_str_to_model
 from api.mixins import ReadOnlySerializerMixin
 from .avatar import AvatarFieldMixin
 from .answer import AnswerFieldMixin
@@ -19,7 +18,7 @@ class FragmentSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         tags = validated_data.pop('tags', [])
         fragment = super().create(validated_data)
-        fragment.tags.set(convert_tag_str_to_model(tags))
+        fragment.tags.set(Tag.objects.get_or_create_from_string(tags))
         return fragment
 
     def update(self, instance, validated_data):
@@ -27,7 +26,7 @@ class FragmentSerializer(serializers.ModelSerializer):
         instance.title = validated_data.get('title', instance.title)
         instance.content = validated_data.get('content', instance.content)
         instance.tags.set(
-            convert_tag_str_to_model(validated_data.pop('tags', instance.tags))
+            Tag.objects.get_or_create_from_string(validated_data.pop('tags', instance.tags))
         )
         instance.save()
         return instance

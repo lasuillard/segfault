@@ -6,7 +6,7 @@ User = get_user_model()
 
 # interface class for resources that can be commented
 class Commentable(models.Model):
-    commentable_id = models.AutoField(primary_key=True)
+    _commentable_id = models.AutoField(primary_key=True)
 
     def get_child_object(self):
         for cls in Commentable.__subclasses__():
@@ -21,7 +21,7 @@ class Commentable(models.Model):
         return self.comment_set.count()
 
     def __str__(self):
-        return f'{ self.get_child_object() }'
+        return f'{ self.pk } for { self.get_child_object() }'
 
 
 class Comment(models.Model):
@@ -41,9 +41,9 @@ class Comment(models.Model):
         default=None,
         on_delete=models.CASCADE,
     )
-    content = models.TextField()
-    date_created = models.DateTimeField(auto_now_add=True)
-    date_modified = models.DateTimeField(auto_now=True)
+    content = models.CharField(max_length=512)
+    date_created = models.DateTimeField(auto_now_add=True, editable=False)
+    date_modified = models.DateTimeField(auto_now=True, editable=False)
 
     def __str__(self):
         return f'{ self.pk } for Commentable { self.target }'

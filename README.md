@@ -7,8 +7,6 @@ SegFault is an SNS web service for developers.
 ## Getting Started
 Introductions for setting up development environment for co-workers.
 
-! Make sure that secret files won't be included in repository !
-
 ### Prequisites
 * Git
 * Docker
@@ -20,23 +18,26 @@ Run following commands on project root directory after extracting git repository
 > docker-compose up -d --build
 
 // create superuser for django admin
-> docker-compose exec -it daphne python manage.py createsuperuser
-
-// show last 10 real-time logs from django server
-> docker-compose logs -ft --tail 10 daphne
+> docker-compose exec django python manage.py createsuperuser
 ```
 
 ## Development
-If you are successfully running containers, you can check the site by
+If you are successfully running containers, you can check the site by below
 
 ### Servers
-* daphne: localhost:8000
+* django: localhost:8000
 
-emails will be sent to console for debugging. check it at log/daphne.log
+Type following commands to monitor what server do
 
+```
+docker-compose logs -ft --tail 10 django
+```
+
+it is useful because emails for user verification will be sent to console. 
 ### URLs
 * Django Admin: /admin
 * Browsable API: /api
+* Dev-only Echo API: /api/debug/echo
 
 ### Model Factories for Tests
 ```
@@ -60,6 +61,8 @@ fields not specified will be random or default value.
 >>> fragment = FragmentFactory(title='Factory-boy')
 >>> print(fragment.title, fragment.content[:30], fragment.tags)
 Factory-boy e0kY6Mc3OcWBxdHXw5HkJQUTKsNymi ['qiuK5yAa']
+
+// to create multiple instances, use {Model}Factory.create_batch(args, size=n)
 ```
 
 ### Secrets
@@ -70,8 +73,7 @@ and also supports environment variables as secret config for PaaS like heroku.
 Free note here. but just your parts.
 
 * Backend
-  * Write various tests for server application
-  * FCM supports
+  * Helping frontend works
 
 * Frontend
   * NOTHING YET

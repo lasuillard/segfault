@@ -10,6 +10,13 @@ class VoteSerializer(serializers.ModelSerializer):
         model = Vote
         fields = ['pk', 'target', 'rating', 'date_created', 'date_modified']
 
+    def create(self, validated_data):
+        vote, _ = Vote.objects.update_or_create(
+            user=validated_data['user'],
+            target=validated_data['target'],
+            defaults={'rating': validated_data['rating']})
+        return vote
+
 
 class VoteListSerializer(AvatarFieldMixin, ReadOnlySerializerMixin, serializers.ModelSerializer):
 

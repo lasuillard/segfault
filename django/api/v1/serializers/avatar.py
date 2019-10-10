@@ -15,7 +15,7 @@ class AvatarListSerializer(ReadOnlySerializerMixin, serializers.ModelSerializer)
 
     class Meta:
         model = Avatar
-        fields = ['pk', 'url', 'profile_image', 'display_name']
+        fields = ['pk', 'url', 'profile_image', 'display_name', 'introduce_message']
 
 
 class AvatarDetailSerializer(ReadOnlySerializerMixin, serializers.ModelSerializer):

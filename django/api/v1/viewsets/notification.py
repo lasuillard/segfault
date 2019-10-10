@@ -12,7 +12,11 @@ User = get_user_model()
 
 
 class NotificationViewSet(RetrieveModelMixin, ListModelMixin, DestroyModelMixin, GenericViewSet):
+    """
+    API for notification resources
 
+    avatars: partial inclusion for display name with exact match, separated with comma(,)
+    """
     def get_serializer_class(self):
         # for admin
         if self.request.user and self.request.user.is_staff:
@@ -38,7 +42,13 @@ class NotificationViewSet(RetrieveModelMixin, ListModelMixin, DestroyModelMixin,
         return [permission() for permission in permissions]
 
     def get_queryset(self):
-        queryset = Notification.objects.all()
+        queryset = Notification.objects.order_by('-date_created')
+        query_params = self.request.query_params
+
+        avatars = query_params.get('avatars')
+        if avatars:
+            avatars = avatars.split(',')
+            queryset = queryset.filter(users__avatar__display_name__in=avatars)
 
         return queryset
 

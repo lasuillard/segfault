@@ -1,90 +1,153 @@
 /*
 ** notification is receive-only web socket
 */
+import Vue from 'vue'
 
-export const JOIN = 'JOIN'
-export const LEAVE = 'LEAVE'
-const SET_STATUS = 'SET_STATUS'
+       const JOIN        = 'JOIN'
+export const LEAVE       = 'LEAVE'
+export const LOG         = 'LOG'
 export const ADD_HANDLER = 'ADD_HANDLER'
 
-const POSSIBLE_STATUS =[WebSocket.CONNECTING, WebSocket.OPEN, WebSocket.CLOSING, WebSocket.CLOSED]
-
 // !! HARD CODED URL !!
-export const BASE_URL_WEBSOCKET_CHAT = 'ws://localhost:80/ws/chat'
+export const BASE_URL_WEBSOCKET_CHAT = 'ws://localhost:8000/ws/chat'
 
 
 export const state = () => ({
-  rooms: {}
+  rooms: {
+    /*
+    'null': {
+      ws: null,
+      handlers: [() => {}, ],
+      messages: [],
+    }
+    */
+  }
 })
 
 export const getters = {
-  getStatus: (state, room) => {
-    return state[room].ws ? state.ws[room].readyState : WebSocket.CONNECTING
+  isRoomJoined: (state) => (roomId) => {
+    return state.rooms.hasOwnProperty(roomId)
   },
+  getRooms: (state) => {
+    return Object.keys(state.rooms)
+  },
+  getStatus: (state) => (roomId) => {
+    let room = state.rooms.hasOwnProperty(roomId) ? state.rooms[roomId] : null
+    return room ? room.ws.readyState : WebSocket.CONNECTING
+  },
+  getMessages: (state) => (roomId) => {
+    let room = state.rooms.hasOwnProperty(roomId) ? state.rooms[roomId] : null
+    return room ? room.messages : []
+  }
 }
 
 export const mutations = {
-  [JOIN]: (state, room, token) => {
-    if (!state.rooms.hasOwnProperty(room)) {
-      state.rooms[room] = {
-        ws: null,
-        status: WebSocket.CONNECTING,
-        handlers: []
-      }
+  [JOIN]: (state, payload) => {
+    let { roomId, token } = payload
+    let room = state.rooms.hasOwnProperty(roomId) ? state.rooms[room] : null
+    if (!room) {
+      // open fresh websocket connection
+      Vue.set(state.rooms, roomId, {
+        ws: new WebSocket(`${BASE_URL_WEBSOCKET_CHAT}/${roomId}/`, ['access_token', token]),
+        handlers: [() => {}, ],
+        messages: []
+      })
     }
-    _room = state.rooms[room]
-    _room.ws = new WebSocket(`${BASE_URL_WEBSOCKET_CHAT}/${room}/`, ['access_token', token])
+    else if (room.ws.readyState == WebSocket.OPEN) {
+      // already joined room
+      throw Error('You have already joined room: ' + roomId)
+    }
+    else {
+      // retry for connection
+      state.rooms[roomId].ws = new WebSocket(`${BASE_URL_WEBSOCKET_CHAT}/${room}/`, ['access_token', token])
+    }
   },
-  [LEAVE]: (state, room) => {
-    if (!state.rooms.hasOwnProperty(room))
-      return
-
-    _room = state.rooms[room]
-    _room.status = WebSocket.CLOSING
-
+  [LEAVE]: (state, roomId) => {
+    let room = state.rooms.hasOwnProperty(roomId) ? state.rooms[roomId] : null
+    if (room) {
+      room.ws.close()
+      Vue.delete(state.rooms, roomId)
+    }
   },
-  [SET_STATUS]: (state, newStatus) => {
-    if (POSSIBLE_STATUS.includes(newStatus))
-      state.status = newStatus
-    else
-      throw Error(`Unavailable status ${newStatus} received`)
+  [LOG]: (state, { roomId, obj }) => {
+    let room = state.rooms.hasOwnProperty(roomId) ? state.rooms[roomId] : null
+    if (room) {
+      room.messages.push(obj)
+    }
   },
-  [ADD_HANDLER]: (state, room, handler) => {
+  [ADD_HANDLER]: (state, { roomId, handler, force_add }) => {
     /*
     ** adds a handler for notification message
     ** handler will be given an object like:
     ** {
-    **   type: 'message' or 'error'
+    **   type : 'open', 'close', 'error', 'message'
     **   event: Object
+    **   data : event.data
     ** }
     */
-    state.handlers.push(handler)
+    let room = state.rooms.hasOwnProperty(roomId) ? state.rooms[roomId] : null
+    if (room && (force_add === true || room.handlers.findIndex(f => f == handler) === (-1))) {
+      room.handlers.push(handler)
+    }
   }
 }
 
 export const actions = {
-  connect (context) {
-    if (!context.rootGetters['user/isLoggedIn'])
+  joinRoom (context, roomId) {
+    if (!context.rootGetters['user/isLoggedIn']) {
+      console.log('Authenticated users can join room.')
       return
+    }
 
-    context.commit(CONNECT, context.rootState.user.token)
-    let ws = context.state.ws
+    context.commit(JOIN, { roomId: roomId, token: context.rootState.user.token })
+    let room = context.state.rooms.hasOwnProperty(roomId) ? context.state.rooms[roomId] : null
+    if (!room) {
+      console.log('Could not join room. invalid user token or internal server error.')
+      return
+    }
 
-    // status monitoring
-    context.commit(SET_STATUS, WebSocket.CONNECTING)
-    ws.onopen  = (ev) => { context.commit(SET_STATUS, WebSocket.OPEN) }
-    ws.onclose = (ev) => { context.commit(SET_STATUS, WebSocket.CLOSED) }
+    let ws = room.ws
+    // on connection open
+    ws.onopen = (ev) => { 
+      let obj = { type: 'open', event: ev }
+      context.commit(LOG, { roomId: roomId, obj: obj })
+      for (var handler of room.handlers)
+        handler(obj)
+    }
+
+    // when disconnected by user or server
+    ws.onclose = (ev) => {
+      let obj = { type: 'close', event: ev }
+      context.commit(LOG, { roomId: roomId, obj: obj })
+      for (var handler of room.handlers)
+        handler(obj)
+    }
 
     // error handling
     ws.onerror = (ev) => {
-      for (handler of context.state.handlers)
-        handler({ type: 'error', event: ev })
+      let obj = { type: 'error', event: ev }
+      context.commit(LOG, { roomId: roomId, obj: obj })
+      for (var handler of room.handlers)
+        handler(obj)
     }
 
     // message handling
     ws.onmessage = (ev) => {
-      for (handler of context.state.handlers)
-        handler({ type: 'message', event: ev })
+      let obj = { type: 'message', event: ev, data: ev.data }
+      context.commit(LOG, { roomId: roomId, obj: obj })
+      for (var handler of room.handlers)
+        handler(obj)
+    }
+  },
+  leaveRoom (context, roomId) {
+    context.commit(LEAVE, roomId)
+  },
+  sendMessage (context, { roomId, message }) {
+    let ws = context.state.rooms.hasOwnProperty(roomId) ? context.state.rooms[roomId].ws : null
+    if (ws) {
+      ws.send(JSON.stringify({
+        'content': message
+      }))
     }
   },
 }

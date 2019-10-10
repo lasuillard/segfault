@@ -12,9 +12,11 @@ class Room(models.Model):
         on_delete=models.CASCADE,
     )
     name = models.CharField(max_length=32, blank=False)
-    _room_channel_group = models.UUIDField(default=uuid4, editable=False)
-    date_created = models.DateTimeField(auto_now_add=True)
-    date_modified = models.DateTimeField(auto_now=True)
+    date_created = models.DateTimeField(auto_now_add=True, editable=False)
+    date_modified = models.DateTimeField(auto_now=True, editable=False)
+
+    # for web socket
+    _room_channel_group = models.UUIDField(default=uuid4, unique=True, editable=False)
 
     def __str__(self):
         return f"{ self.pk } { self.name[:10] if len(self.name) > 10 else self.name }"

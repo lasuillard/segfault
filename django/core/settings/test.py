@@ -12,32 +12,21 @@ LOGGING = {
     'disable_existing_loggers': True,
     'formatters': {
         'verbose': {
-            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
-            'style': '{',
+            'format': '%(asctime)s %(levelname)-8s %(name)s.%(module)s %(message)s',
+            'datefmt': '%Y-%m-%d %H:%M:%S'
         },
     },
     'handlers': {
         'test': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': 'log/django-test.log',
+            'filename': 'log/test.log',
+            'mode': 'w',
             'formatter': 'verbose',
         },
     },
     'loggers': {
-        'core': {
-            'level': 'DEBUG',
-            'handlers': ['test'],
-        },
-        'auth': {
-            'level': 'DEBUG',
-            'handlers': ['test'],
-        },
-        'api': {
-            'level': 'DEBUG',
-            'handlers': ['test'],
-        },
-        'ws': {
+        '': {
             'level': 'DEBUG',
             'handlers': ['test'],
         },

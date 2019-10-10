@@ -9,7 +9,15 @@ User = get_user_model()
 
 
 class FragmentViewSet(ModelViewSet):
+    """
+    API for fragment resources
 
+    avatar : exact match for avatar primary key or case-insensitive inclusion for display name
+    title  : case-insensitive partial match for content
+    content: case-insensitive partial match for content
+    status : exact match for status
+    tags   : partial inclusion for tags with exact match, separated with comma(,)
+    """
     def get_serializer_class(self):
         if self.action == 'list':
             return FragmentListSerializer
@@ -30,10 +38,34 @@ class FragmentViewSet(ModelViewSet):
 
     def get_queryset(self):
         queryset = Fragment.objects.all().order_by('-date_created')
+        query_params = self.request.query_params
 
-        user = self.request.query_params.get('user', default=None)
-        if user is not None:
-            queryset = queryset.filter(user__pk=user)
+        # avatar, exact match for primary key or case-insensitive partial match for display name
+        avatar = query_params.get('avatar')
+        if avatar:
+            try:
+                avatar = int(avatar)
+                queryset = queryset.filter(user__avatar__pk=avatar)
+            except ValueError:
+                queryset = queryset.filter(user__avatar__display_name__icontains=avatar)
+
+        # title, case in-sensitive partial match for content
+        title = query_params.get('title')
+        queryset = queryset.filter(title__icontains=title) if title else queryset
+
+        # content, case in-sensitive partial match for content
+        content = query_params.get('content')
+        queryset = queryset.filter(content__icontains=content) if content else queryset
+
+        # status, exact match for status
+        status = query_params.get('status')
+        queryset = queryset.filter(status=status) if status else queryset
+
+        # tags, partial inclusion for tags
+        tags = query_params.get('tags')
+        if tags:
+            tags = tags.split(',')
+            queryset = queryset.filter(tags__name__in=tags).distinct()
 
         return queryset
 

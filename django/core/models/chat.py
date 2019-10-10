@@ -14,9 +14,9 @@ class Chat(models.Model):
         Room,
         on_delete=models.CASCADE,
     )
-    content = models.TextField(max_length=1024, blank=True)
-    date_created = models.DateTimeField(auto_now_add=True)
-    date_modified = models.DateTimeField(auto_now=True)
+    content = models.CharField(max_length=1024, blank=True)
+    date_created = models.DateTimeField(auto_now_add=True, editable=False)
+    date_modified = models.DateTimeField(auto_now=True, editable=False)
 
     def __str__(self):
         return f'{ self.pk } for Room { self.room })'

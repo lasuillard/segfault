@@ -15,7 +15,7 @@
             prepend-icon="mdi-email"
             label="E-mail"
             persistent-hint 
-            :error-messages="veeErrors.collect('credentials.email')"
+            :error-messages="String(veeErrors.collect('credentials.email')).split(',').join('<br/>')"
           />
           <v-text-field
             v-model="credentials.password1"
@@ -27,7 +27,7 @@
             prepend-icon="mdi-key"
             label="Password"
             persistent-hint
-            :error-messages="veeErrors.collect('credentials.password1')"
+            :error-messages="String(veeErrors.collect('credentials.password1')).split(',').join('<br/>')"
           />
           <v-text-field
             v-model="credentials.password2"
@@ -42,7 +42,7 @@
             prepend-icon="mdi-key"
             label="Repeat Password"
             persistent-hint
-            :error-messages="veeErrors.collect('credentials.password2')"
+            :error-messages="String(veeErrors.collect('credentials.password2')).split(',').join('<br/>')"
           />
           <v-layout justify-end>
             <v-btn
@@ -68,33 +68,52 @@ const URL_REGISTRATION = '/auth/registration/'
 
 export default {
   data: () => ({
-    ssv: {},
     credentials: {
       email: null,
       password1: null,
       password2: null
-    }
+    },
   }),
   computed: {
     isFormFilled () {
       return Object.values(this.credentials).every(field => Boolean(field))
-    }
+    },
   },
   methods: {
     signUp () {
-      try {
-        this.$axios.$post(URL_REGISTRATION, { ...this.credentials })
-        .then(response => {
-          alert(result.detail)
-          this.$router.replace({ name: 'index' })
-        })
-        .catch(err => {
-          // write error handling here
-        })
-      }
-      catch (e) {
-        alert(e)
-      }
+      this.$axios.$post(URL_REGISTRATION, { ...this.credentials })
+      .then(response => {
+        alert(response.detail)
+        this.$router.replace({ name: 'index' })
+      })
+      .catch(error => {
+        if (error.response) {
+          let feedback = error.response.data
+          for (var key of Object.keys(feedback)) {
+            if (this.credentials.hasOwnProperty(key)) {
+              Array(feedback[key]).map(msg => {
+                this.veeErrors.add({
+                  field: `credentials.${key}`,
+                  msg: msg,
+                })
+              })
+            }
+            else {
+              // handle unhandled errors to be attached to password2 field
+              this.veeErrors.add({
+                field: 'credentials.password2',
+                msg: feedback[key]
+              })
+            }
+          }
+        }
+        else if (error.request) {
+          throw Error(error.request)
+        }
+        else {
+          throw Error(error.message)
+        }
+      })
     }
   }
 }
