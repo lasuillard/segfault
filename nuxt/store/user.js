@@ -204,7 +204,8 @@ export const actions = {
 
       // send info for fcm messaging service
       var _ = await this.$axios.$post(URL_REGISTER_FCM_DEVICE, {
-        type: 'ios',
+        type: type,
+        device_id: token, // ? would it be safe ?
         registration_id: token,
       })
     })
