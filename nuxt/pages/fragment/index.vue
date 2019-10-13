@@ -41,30 +41,20 @@
 
       </v-col>
     </v-row>
-      <v-footer
-        v-bind="localAttrs"
-        :padless="padless"
+    
+    <v-btn
+       class="mx-2"
+       color="primary"
+       dark
+       absolute
+       bottom
+       right
+       fab
+       large
       >
-        <v-card
-          flat
-          tile
-          width="100%"
-          class="primary lighten-3 text-center"
-        >
-          <v-card-text>
-                <v-btn
-                  color="pink"
-                  dark
-                  absolute
-                  top
-                  right
-                  fab
-                >
-                  <v-icon>mdi-plus</v-icon>
-                </v-btn>
-          </v-card-text>
-        </v-card>
-      </v-footer>
+       <v-icon>mdi-pencil</v-icon>
+   </v-btn>
+
   </v-container>
 </template>
 
