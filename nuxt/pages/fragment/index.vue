@@ -41,6 +41,30 @@
 
       </v-col>
     </v-row>
+      <v-footer
+        v-bind="localAttrs"
+        :padless="padless"
+      >
+        <v-card
+          flat
+          tile
+          width="100%"
+          class="primary lighten-3 text-center"
+        >
+          <v-card-text>
+                <v-btn
+                  color="pink"
+                  dark
+                  absolute
+                  top
+                  right
+                  fab
+                >
+                  <v-icon>mdi-plus</v-icon>
+                </v-btn>
+          </v-card-text>
+        </v-card>
+      </v-footer>
   </v-container>
 </template>
 
@@ -67,6 +91,12 @@ export default {
       return this.items.sort((a, b) => {
         return new Date(b.date_created) - new Date(a.date_created) 
       })
+    },
+    localAttrs () {
+      //this computed obj for footer
+      const attrs = {}
+      attrs.absolute = true
+      return attrs;
     }
   },
 

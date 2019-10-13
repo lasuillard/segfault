@@ -230,3 +230,5 @@ typings/
 .dynamodb/
 
 # End of https://www.gitignore.io/api/node,django
+nuxt/plugins/firebase.js
+nuxt/static/firebase-messaging-sw.js
