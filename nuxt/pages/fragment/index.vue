@@ -41,7 +41,7 @@
 
       </v-col>
     </v-row>
-    
+
     <v-btn
        class="mx-2"
        color="primary"
@@ -82,12 +82,12 @@ export default {
         return new Date(b.date_created) - new Date(a.date_created) 
       })
     },
-    localAttrs () {
+    /*localAttrs () {
       //this computed obj for footer
       const attrs = {}
       attrs.absolute = true
       return attrs;
-    }
+    }*/
   },
 
   methods: {

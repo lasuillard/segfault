@@ -1,6 +1,6 @@
 <template>
-  <div style="border: 1px dotted black;">
-    <p>Post new answer for fragment</p>
+  <div>
+    <p>Answer for fragment</p>
     <v-textarea
       v-model="content"
       v-validate="'required'"
@@ -9,7 +9,7 @@
       label="Answer"
       :error-messages="String(veeErrors.collect('content')).split(',').join('<br/>')"
     ></v-textarea>
-    <v-btn @click="post">Post new answer</v-btn>
+    <v-btn @click="post" dark color="primary">Submit</v-btn>
   </div>
 </template>
 
