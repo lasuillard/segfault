@@ -1,38 +1,7 @@
-<!--template>
-    <v-container>
-      <h2>Editor</h2>
-      <div style="margin-top: 50px; margin-bottom: 50px;">
-      <editor v-model="editorText" />
-      </div>
-      <h2>Preview</h2>
-      <div style="margin-top: 50px; outline: 2px solid grey; padding: 10px">
-        <viewer :value="editorText" />
-      </div>
+<!-- 19.10.14 20:29분 재커밋, 깃 머지 충돌때문에 다시 올림 -->
 
-  </v-container>
-</template>
-<script>
 
-import { Editor, Viewer } from '@toast-ui/vue-editor'
-import 'tui-editor/dist/tui-editor.css';
-import 'tui-editor/dist/tui-editor-contents.css';
-import 'codemirror/lib/codemirror.css';
-
-export default {
-
-    components: {
-      'editor': Editor,
-      'viewer': Viewer
-    },
-    data() {
-        return {
-          editorText: "Enter Here",
-        };
-    },
-};
-</script-->
 <template>
-<<<<<<< HEAD
   <v-card light flex-column>
 <!-- 뷰어 부분 -->
 <v-card-title text>Making Fragment</v-card-title>
@@ -86,7 +55,6 @@ export default {
       required
       v-model="form.content"
     ></v-textarea> -->
-=======
   <div>
     <h2>Activity</h2>
     Profile: {{ profile }}
@@ -153,4 +121,3 @@ export default {
   }
 }
 </script>
->>>>>>> 1d76bf84b4186142ed108d44756f4a4d08bca995
