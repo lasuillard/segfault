@@ -30,7 +30,7 @@
   
             <v-list-item-content>
               <v-list-item-title v-html="room.name"></v-list-item-title>
-              <!--v-list-item-subtitle v-html="item.subtitle"></v-list-item-subtitle-->
+              <!--v-list-item-subtitle v-html="item.subtitle"> 여기에 내용 </v-list-item-subtitle-->
             </v-list-item-content>
             <v-btn @click="leave(room.pk)" color="pink">Leave</v-btn>
           </v-list-item>
