@@ -7,7 +7,7 @@ export const LOG         = 'LOG'
 export const ADD_HANDLER = 'ADD_HANDLER'
 
 // !! HARD CODED URL !!
-export const URL_WEBSOCKET_NOTIFICATION = 'ws://localhost:8000/ws/notification/'
+export const URL_WEBSOCKET_NOTIFICATION = process.env.NODE_ENV === 'production' ? 'ws://capstone-project-segfault.herokuapp.com/ws/notification/' : 'ws://localhost:8000/ws/notification/'
 
 
 export const state = () => ({

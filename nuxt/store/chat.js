@@ -9,7 +9,7 @@ export const LOG         = 'LOG'
 export const ADD_HANDLER = 'ADD_HANDLER'
 
 // !! HARD CODED URL !!
-export const BASE_URL_WEBSOCKET_CHAT = 'ws://localhost:8000/ws/chat'
+export const BASE_URL_WEBSOCKET_CHAT = process.env.NODE_ENV === 'production' ? 'ws://capstone-project-segfault.herokuapp.com/ws/chat' : 'ws://localhost:8000/ws/chat'
 
 
 export const state = () => ({
