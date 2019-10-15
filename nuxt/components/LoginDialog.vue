@@ -88,17 +88,17 @@ export default {
       {
         provider: 'naver',
         displayName: 'Naver',
-        image: '/Log in with NAVER_Icon_Green.png',
+        image: '/static/Log in with NAVER_Icon_Green.png',
       },
       {
         provider: 'kakao',
         displayName: 'Kakao',
-        image: '/kakaolink_btn_small.png'
+        image: '/static/kakaolink_btn_small.png'
       },
       {
         provider: 'google',
         displayName: 'Google',
-        image: '/g-logo.png'
+        image: '/static/g-logo.png'
       }
     ]
   }),

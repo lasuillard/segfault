@@ -5,13 +5,13 @@ DEBUG = False
 
 URL_FRONT = '/'
 
-ALLOWED_HOSTS += ['https://capstone-project-segfault.herokuapp.com/', ]
+ALLOWED_HOSTS += ['https://capstone-project-segfault.herokuapp.com/', 'localhost']
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 CORS_ALLOW_CREDENTIALS = True
 CORS_ORIGIN_ALLOW_ALL = False
-CORS_ORIGIN_WHITELIST = ['localhost:3000', ]
+CORS_ORIGIN_WHITELIST = []
 
 # Channel for Web Socket
 CHANNEL_LAYERS = {

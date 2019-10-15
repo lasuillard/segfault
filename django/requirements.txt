@@ -78,6 +78,6 @@ txaio==18.8.1
 uritemplate==3.0.0
 urllib3==1.25.3
 wcwidth==0.1.7
-whitenoise==4.1.4
+whitenoise==3.2.2
 zipp==0.6.0
 zope.interface==4.6.0

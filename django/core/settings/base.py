@@ -158,12 +158,11 @@ SITE_ID = 1
 
 ROOT_URLCONF = 'core.urls'
 
+TEMPLATE_DIR = os.path.join(BASE_DIR, 'dist')
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [
-            os.path.join(BASE_DIR, 'templates'),
-        ],
+        'DIRS': [TEMPLATE_DIR, ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -208,9 +207,10 @@ USE_L10N = True
 USE_TZ = True
 
 # Static and Media Files
-STATIC_ROOT = os.path.normpath(os.path.join(BASE_DIR, 'staticfiles'))
+STATIC_ROOT = 'staticfiles'  # os.path.normpath(os.path.join(BASE_DIR, 'staticfiles'))
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
+    TEMPLATE_DIR,
     os.path.join(BASE_DIR, 'static'),
 ]
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
