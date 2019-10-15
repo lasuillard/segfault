@@ -11,7 +11,7 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 CORS_ALLOW_CREDENTIALS = True
 CORS_ORIGIN_ALLOW_ALL = False
-CORS_ORIGIN_WHITELIST = []
+CORS_ORIGIN_WHITELIST = ['localhost:3000', ]
 
 # Channel for Web Socket
 CHANNEL_LAYERS = {

@@ -9,11 +9,17 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
 
 export default {
   layout: 'empty',
-  created () { 
-    this.$store.dispatch('user/finishSocialLogin', { ...this.$route.query })
+  methods: {
+    ...mapActions({
+      _callback: 'user/finishSocialLogin'
+    })
+  },
+  created () {
+    this._callback({ ...this.$route.query })
     .then(ok => {
       this.$router.replace({ name: 'index' })
     })

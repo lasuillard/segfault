@@ -3,7 +3,7 @@
     <v-row>
       <v-col cols="12" md="9" order="2" order-md="1">
         <v-sheet 
-          v-for="item in sortedItems"
+          v-for="item in items"
           :key="item.pk"
           class="pa-3 px-4 my-4"
           elevation="1"
@@ -41,47 +41,34 @@
 
       </v-col>
     </v-row>
+    <v-row>
+      <v-btn @click="load">Load more</v-btn>
+    </v-row>
   </v-container>
 </template>
 
 <script>
 
 export default {
-  created () {
-    window.onscroll = () => {
-      let bottomOfWindow = document.documentElement.scrollTop + window.innerHeight === document.documentElement.offsetHeight
-      if (!this.endOfData && bottomOfWindow) {
-        this.loadContents()
-      }
-    }
-    this.loadContents()
-  },
   data: () => ({
-    limit: 10,
-    offset: 0,
+    rawData: null,
     items: [],
-    endOfData: false,
   }),
   computed: {
-    sortedItems () {
-      return this.items.sort((a, b) => {
-        return new Date(b.date_created) - new Date(a.date_created) 
-      })
+    isEnd: function () {
+      return this.rawData && this.rawData.next == null
     }
   },
-
   methods: {
-    async loadContents () {
-      let response = await this.$axios.$get(`/api/v1/fragment`, { 
-        params: { 
-          limit: this.limit,
-          offset: this.offset
-        }
-      })
-      let fragments = response.results
-      this.items.push(...fragments)
-      this.offset += this.limit
-      this.endOfData = (fragments.length == 0)
+    async load () {
+      if (this.rawData && this.rawData.hasOwnProperty('next')) {
+        this.rawData = await this.$axios.$get(this.rawData.next)
+      } 
+      else {
+        this.rawData = await this.$axios.$get('/api/v1/fragment')
+      }
+      let fragments = this.rawData.results
+      this.items = this.items.concat(fragments)
     },
     getTimeDeltaStr(date) {
       var milliseconds = Date.now() - new Date(date)
@@ -101,5 +88,8 @@ export default {
       return `${days} days ago`
     }
   },
+  created () {
+    this.load()
+  }
 }
 </script>
