@@ -150,6 +150,18 @@ export default {
     /*
     ** You can extend webpack config here
     */
+    optimization: {
+      splitChunks: {
+        chunks: 'async',
+      }
+    },
+    splitChunks: {
+      layouts: false,
+      pages: false,
+      vendor: false,
+      commons: false,
+      runtime: false
+    },
     extend(config, ctx) {
     }
   },

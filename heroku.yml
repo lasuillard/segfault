@@ -8,3 +8,7 @@ run:
     image: web
     command: 
       - python manage.py runworker notification chat -v2
+release:
+  image: web
+  command:
+    - python manage.py collectstatic --noinput
