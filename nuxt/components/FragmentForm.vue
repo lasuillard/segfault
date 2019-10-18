@@ -8,14 +8,11 @@
       label="Title"
       :error-messages="String(veeErrors.collect('title')).split(',').join('<br/>')"
     ></v-text-field>
-    <v-textarea
-      v-model="content"
-      v-validate=""
-      data-vv-name="content"
-      data-vv-as="content"
-      label="Content"
-      :error-messages="String(veeErrors.collect('content')).split(',').join('<br/>')"
-    ></v-textarea>
+
+      <v-divider></v-divider>
+    <editor v-model="content"/>
+      <v-divider></v-divider>
+
     <v-combobox
       v-model="tags"
       v-validate=""
@@ -38,7 +35,7 @@
         </v-chip>
       </template>
     </v-combobox>
-    <v-btn @click="post">Post new fragment</v-btn>
+    <v-btn outlined color="primary" @click="post">DONE</v-btn>
   </div>
 </template>
 
@@ -46,7 +43,16 @@
 import { mapGetters } from 'vuex'
 const BASE_URL_FRAGMENT = '/api/v1/fragment'
 
+import { Editor, Viewer } from '@toast-ui/vue-editor'
+import 'tui-editor/dist/tui-editor.css';
+import 'tui-editor/dist/tui-editor-contents.css';
+import 'codemirror/lib/codemirror.css';
+
 export default {
+  components: {
+    'editor': Editor,
+    'viewer': Viewer
+  },
   data: () => ({
     title: '',
     content: '',
