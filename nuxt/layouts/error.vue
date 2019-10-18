@@ -7,11 +7,12 @@
         </v-card-title>
         <v-card-text>
           <h2 class="subtitle-1">{{ error.message }}</h2>
+          <h2 class="subtitle-1">URL을 확인 해 주세요!</h2>
         </v-card-text>
         <v-card-actions>
           <v-layout fill-height align-end justify-end>
           <v-btn :to="{ name: 'index' }" exact replace large text>
-            Return to homepage
+            메인페이지로 돌아가기
           </v-btn>
           </v-layout>
         </v-card-actions>

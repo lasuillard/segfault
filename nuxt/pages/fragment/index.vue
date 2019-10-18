@@ -44,6 +44,20 @@
     <v-row>
       <v-btn @click="load">Load more</v-btn>
     </v-row>
+
+    <v-btn
+       class="mx-2"
+       color="primary"
+       dark
+       absolute
+       bottom
+       right
+       fab
+       large
+      >
+       <v-icon>mdi-pencil</v-icon>
+   </v-btn>
+
   </v-container>
 </template>
 
