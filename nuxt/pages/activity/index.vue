@@ -3,7 +3,6 @@
       <!--h1>Activity</h1>
       Profile: {{ profile }}
       <hr/-->
-<<<<<<< HEAD
 
       <!--notification-window></notification-window-->
 
@@ -16,34 +15,13 @@
 
       My Recent Fragments: {{ recentFragments }}
 
-=======
-
-      <!--notification-window></notification-window-->
-
-      <hr/>
-
-      <h2>Post new fragment</h2>
-      <fragment-form @created="load"></fragment-form>
-      <br/>
-      <hr/>
-
-      My Recent Fragments: {{ recentFragments }}
-
->>>>>>> 91863e021dd1ec8061c9f9b2645b05647c261578
       <hr/>
 
       Related Fragments (Tagged with my latest fragment's tags for now):
       {{ relatedFragments }}
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-</style>
-=======
-=======
->>>>>>> 91863e021dd1ec8061c9f9b2645b05647c261578
-    </div>  
+  </div>  
 </template>
->>>>>>> 91863e021dd1ec8061c9f9b2645b05647c261578
 
 <script>
 import NotificationWindow from '~/components/NotificationWindow.vue'
