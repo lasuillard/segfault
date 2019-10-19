@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div style="border: 1px solid black;" class="ma-3">
+    <div style="border: 5px solid green;" class="ma-3">
       <template v-if="isLoaded">
         Answer/{{ answer.pk }}/rawData: {{ JSON.stringify(rawData) }}<br/>
         Comments:<br/>

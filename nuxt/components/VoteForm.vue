@@ -1,5 +1,5 @@
 <template>
-  <div style="border: 1px dotted black;">
+  <div style="border: 3px solid blue;">
     <p>Vote for votable object</p>
     <v-btn @click="post('upvote')">Upvote</v-btn>
     <v-btn @click="post('downvote')">Downvote</v-btn>

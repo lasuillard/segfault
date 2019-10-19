@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2>Fragment/{{ $route.params.id }}</h2>
+    <h2>Fragment#{{ $route.params.id }}</h2>
     <hr/>
     <template v-if="isLoaded">
       <div>Title: {{ rawData.title }}</div>

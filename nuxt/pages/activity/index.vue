@@ -2,11 +2,9 @@
   <div>
       <!--h1>Activity</h1>
       Profile: {{ profile }}
-      <hr/-->
+      <hr-->
 
       <!--notification-window></notification-window-->
-
-      <hr/>
 
       <h2>Post new fragment</h2>
       <fragment-form @created="load"></fragment-form>
