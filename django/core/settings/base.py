@@ -124,7 +124,6 @@ REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',
         'rest_framework.renderers.BrowsableAPIRenderer'
-        #  'api.renderers.BrowsableAPIRendererWithoutForms'
     ],
     'DEFAULT_PAGINATION_CLASS': 'api.pagination.TinyLimitOffsetPagination',
     'PAGE_SIZE': 10,
@@ -163,7 +162,6 @@ TEMPLATES = [
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
             os.path.join(BASE_DIR, 'templates'),
-            os.path.join(BASE_DIR, 'app')  # for nuxt app
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -209,62 +207,12 @@ USE_L10N = True
 USE_TZ = True
 
 # Static and Media Files
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # os.path.normpath(os.path.join(BASE_DIR, 'staticfiles'))
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
-    os.path.join(BASE_DIR, 'app')  # app to be collected
 ]
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
-
-# Logging
-"""
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'formatters': {
-        'verbose': {
-            'format': '%(asctime)s %(levelname)-8s %(name).%(module): %(message)s',
-        },
-        'simple': {
-            'format': '%(asctime)s %(levelname)-8s %(name).%(module): %(message)s',
-            'datefmt': '%Y-%m-%d %H:%M:%S'
-        },
-    },
-    'filters': {
-        'debug': {
-            '()': 'django.utils.log.RequireDebugTrue'
-        },
-    },
-    'handlers': {
-        'console': {
-            'level': 'INFO',
-            'filters': ['debug'],
-            'class': 'logging.StreamHandler',
-            'formatter': 'simple'
-        },
-        'applog': {
-            'level': 'DEBUG',
-            'class': 'logging.handlers.RotatingFileHandler',
-            'filename': f'log/app.log',
-            'formatter': 'verbose',
-            'maxBytes': 1024*1024*10,  # 10MB
-            'backupCount': 10,
-        },
-    },
-    'loggers': {
-        '': {
-            'level': 'DEBUG',
-            'handlers': ['applog'],
-        },
-        'django.request': {
-            'level': 'INFO',
-            'handlers': ['console'],
-            'propagate': False,
-        }
-    },
-}
-"""

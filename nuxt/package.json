@@ -1,13 +1,13 @@
 {
-  "name": "SegFault-front",
+  "name": "segfault-front",
   "version": "1.0.0",
   "description": "SPA for SegFault REST server",
   "author": "Lanesto",
   "private": true,
   "scripts": {
     "test": "jest",
-    "dev": "nuxt",
-    "build": "nuxt build",
+    "dev": "cross-env NODE_ENV=dev nuxt",
+    "build": "cross-env NODE_ENV=production nuxt build",
     "start": "HOST=0.0.0.0 PORT=3030 nuxt start",
     "generate": "nuxt generate"
   },
@@ -17,6 +17,7 @@
     "@nuxtjs/proxy": "^1.3.3",
     "@nuxtjs/pwa": "^3.0.0-beta.19",
     "@nuxtjs/vuetify": "^1.1.2",
+    "@toast-ui/vue-editor": "^1.1.1",
     "firebase": "^7.0.0",
     "nuxt": "^2.0.0",
     "vee-validate": "^2.2.14"
@@ -25,6 +26,7 @@
     "@vue/test-utils": "^1.0.0-beta.27",
     "babel-core": "7.0.0-bridge.0",
     "babel-jest": "^24.1.0",
+    "cross-env": "^6.0.3",
     "jest": "^24.1.0",
     "nodemon": "^1.18.9",
     "stylus": "^0.54.5",

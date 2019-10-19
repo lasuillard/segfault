@@ -55,15 +55,18 @@ export default {
   ** Axios module configuration
   ** See https://axios.nuxtjs.org/options
   */
-  axios: {
-    baseURL: 'http://localhost:8000/'
+  axios: { // default API access
+    baseURL: process.env.NODE_ENV === 'production' ? 'https://capstone-project-segfault.herokuapp.com' : 'http://localhost:8000'
   },
   /*
   ** Proxy
   */
   proxy: {
-    '/static': {
-      target: 'http://localhost:8000',
+    '/static': { // static file service
+      target: process.env.NODE_ENV === 'production' ? 'https://capstone-project-segfault.herokuapp.com' : 'http://localhost:8000',
+    },
+    '/media': { // media file service
+      target: process.env.NODE_ENV === 'production' ? 'https://capstone-project-segfault.herokuapp.com' : 'http://localhost:8000',
     },
   },
   /*
@@ -168,9 +171,9 @@ export default {
   /*
   ** Rewrite 
   */
-  router: {
-    base: process.env.NODE_ENV === 'production' ? '/static' : '/'
-  }
+  // router: {
+  //   base: process.env.NODE_ENV === 'production' ? '/static' : '/'
+  // }
 }
 
 module.exports = {
