@@ -75,9 +75,7 @@
 
     <!-- Content -->
     <v-content v-bind="theme">
-      <v-container>
         <nuxt />
-      </v-container>
     </v-content>
     
   </v-app>
@@ -114,7 +112,7 @@ export default {
           link: { name: 'fragment' }
         },
         {
-          title: 'Live Chat',
+          title: 'Live Chat (in preview)',
           icon: 'mdi-forum',
           link: { name: 'chat' }
         },
