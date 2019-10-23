@@ -13,12 +13,43 @@
       </div>
   </div>
   <div class="container" style="max-width: 70%; min-height: 105vh !important;">
-    rawData: {{ rawData }}
-    <v-btn @click="load">Load More</v-btn>
+    <!--v-btn @click="load">Load More</v-btn-->
     <template v-if="isLoaded">
-      <div>
-        Rooms:<br/>
-        <template v-for="room in availableRooms">
+        <v-sheet v-for="room in availableRooms" 
+        :key="room.pk" 
+        class="pa-3 px-4 my-4"
+        elevation="1">
+         <v-row>
+            <v-col cols="3" md="2" align-self="center">
+              <div class="mb-2 body-1 text-center">
+                {{ room.pk }}
+              </div>
+              <v-divider />
+
+            </v-col>
+            <v-col cols="9" md="10">
+              <v-row class="mb-2" no-gutters>
+                <v-col>
+                  <div class="title" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ room.name }}</div>
+                  <div class="subtitle-1">Participant : {{ (room.user) }}</div>
+                  <div calss="subtitle-1"> {{getTimeDeltaStr(room.date_created)}} </div>
+                  <div class="caption">Last change : {{ room.date_modified }}</div>
+                </v-col>
+                  <v-col lg="2">
+                    <div style="margin-bottom: 10px">
+                       <v-btn @click="join(room.pk)" outlined color="blue darken-1">Enter</v-btn> 
+                    </div>
+                    <div>
+                       <v-btn @click="leave(room.pk)" outlined color="red lighten-1">Leave </v-btn>  
+                    </div>
+                  </v-col>
+              </v-row>
+            </v-col>
+          </v-row>
+        </v-sheet>
+
+
+        <!--template v-for="room in availableRooms">
           <div :key="room.pk">
             {{ room.name }}
             <template v-if="!isRoomJoined(room.pk)">
@@ -28,17 +59,18 @@
               <v-btn @click="leave(room.pk)">Leave this room</v-btn>
             </template>
           </div>
-        </template>
-      </div>
+        </template-->
     </template>
-    <div>
-      <chat-window 
-        v-for="room in rooms"
-        :key="room"
-        :room="parseInt(room)"
-      ></chat-window>
-    </div>
   </div>
+
+  <div>
+    <chat-window 
+    v-for="room in rooms"
+    :key="room"
+    :room="parseInt(room)"
+    ></chat-window>
+   </div>
+
   <footer id="footer" class="page-footer dk">
       <div class="footer-copyright dk">
           <div class="container" style="max-width: 70%; color: rgba(255,255,255,0.8);">
@@ -57,6 +89,7 @@ import { mapGetters, mapMutations, mapActions } from 'vuex'
 import { ADD_HANDLER } from '~/store/chat'
 
 const BASE_URL_ROOM = '/api/v1/room'
+const BASE_URL_AVATAR = '/api/v1/avatar'
 
 export default {
   components: {
@@ -66,13 +99,16 @@ export default {
     rawData: null,
     availableRooms: [],
     endOfContent: false,
+    userList: [],
   }),
   async asyncData ({ $axios }) {
+    var uList = await $axios.$get(`${BASE_URL_AVATAR}`)    
     return $axios.$get(`${BASE_URL_ROOM}`)
     .then(response => {
       return {
         rawData: response,
-        availableRooms: response.results
+        availableRooms: response.results,
+        userList: uList.results, 
       }
     })
   },
@@ -111,6 +147,23 @@ export default {
       else {
         alert('You should login to use chat service.')
       }
+    },
+    getTimeDeltaStr(date) {
+      var milliseconds = Date.now() - new Date(date)
+      var seconds = Math.round(milliseconds / 1000)
+      var minutes = Math.round(seconds / 60)
+      if (minutes == 0)
+        return `${seconds} seconds ago`
+      
+      var hours = Math.round(minutes / 60)
+      if (hours == 0)
+        return `${minutes} minutes ago`
+
+      var days = Math.round(hours / 24)
+      if (days == 0)
+        return `${hours} hours ago`
+
+      return `${days} days ago`
     },
   }
 }
