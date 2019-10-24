@@ -2,7 +2,7 @@
   <div>
     <template v-if="isLoaded">
       <div style="border: 1px solid red;" class="ma-3">
-        Comment/{{ comment.pk }}/rawData: {{ JSON.stringify(rawData) }}
+        <!--Comment/{{ comment.pk }}/rawData: {{ JSON.stringify(rawData) }}-->
 
         UerprofImg : {{comment.avatar.profile_image}} User :  {{comment.avatar.display_name}} , Comment : {{comment.content}}
       </div>

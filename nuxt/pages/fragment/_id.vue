@@ -10,6 +10,13 @@
       <div>WrittenBy: {{ rawData.avatar }}</div>
       <div>Created / Modificated At: {{ rawData.date_created }} / {{ rawData.date_modified }}</div>
       <div>Tags: {{ rawData.tags.map(v => v.name) }}</div>
+      <div>
+        <div>
+          Votes:<br/>
+          <vote :votes="rawData.votes"></vote>
+        </div>
+        <vote-form :target="rawData.pk"></vote-form>
+      </div>
       <hr/>
       <div>
         <div v-if="rawData.comments.length > 0">
@@ -41,13 +48,6 @@
         </div>
         <div v-else>There is no answers nothing yet</div>
         <answer-form :target="rawData.pk" @created="refresh"></answer-form>
-      </div>
-      <div>
-        <div>
-          Votes:<br/>
-          <vote :votes="rawData.votes"></vote>
-        </div>
-        <vote-form :target="rawData.pk"></vote-form>
       </div>
       <v-btn v-if="isOwned" @click="del">Delete this fragment</v-btn>
     </template>

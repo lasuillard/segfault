@@ -2,8 +2,14 @@
   <div>
     <div style="border: 5px solid green;" class="ma-3">
       <template v-if="isLoaded">
-        Answer/{{ answer.pk }}/rawData: {{ JSON.stringify(rawData) }}<br/>
-        Comments:<br/>
+        <!--Answer/{{ answer.pk }}/rawData: {{ JSON.stringify(rawData) }}<br/-->
+        <div style="border: 2px solid gray;" class="ma-3">
+          avatar : {{answer.avatar.profile_image}} User ; {{answer.avatar.display_name}}
+        <v-divider/>
+        <viewer :value="answer.content"> </viewer><br/>
+        </div>
+        Comments about this answer:<br/>
+        
         <comment
           v-for="comment in rawData.comments"
           :key="comment.pk"
@@ -27,6 +33,12 @@ import CommentForm from '~/components/CommentForm.vue'
 import Vote from '~/components/Vote.vue'
 import VoteForm from '~/components/VoteForm.vue'
 
+import { Editor, Viewer } from '@toast-ui/vue-editor'
+import 'tui-editor/dist/tui-editor.css';
+import 'tui-editor/dist/tui-editor-contents.css';
+import 'codemirror/lib/codemirror.css';
+
+
 const BASE_URL_ANSWER = '/api/v1/answer'
 
 export default {
@@ -34,7 +46,9 @@ export default {
     'comment': Comment,
     'comment-form': CommentForm,
     'vote': Vote,
-    'vote-form': VoteForm
+    'vote-form': VoteForm,
+    'editor': Editor,
+    'viewer': Viewer
   },
   props: {
     target: { // parent fragment id this answer resides in
