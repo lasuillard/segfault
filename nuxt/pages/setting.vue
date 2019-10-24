@@ -4,7 +4,7 @@
       <div class="row sub-banner">
           <div class="container" style="max-width: 70%;">
               <div class="col-sm12 col-md6 acinfo">
-                  <hh class="userinfo"><b>Setting</b></hh>
+                  <hh class="userinfo"><b>Settings</b></hh>
                   <p class="userinfo subinfo" style="font-size: 16px;">Set everything to suit you</p>
               </div>
               <div class="col-sm12 col-md6 sbinfo">
@@ -18,7 +18,7 @@
         <v-subheader>Visual Configurations</v-subheader>
         <v-list-item>
           <v-list-item-content>
-            <v-list-item-title>Theme</v-list-item-title>
+            <v-list-item-title>Theme (in preview)</v-list-item-title>
             <v-radio-group 
               class="px-2"
               v-model="localChanges.theme"

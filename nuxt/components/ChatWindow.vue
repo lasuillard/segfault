@@ -1,9 +1,19 @@
+<!--메시지 파싱 구현하십시오-->
 <template>
   <v-card>
-      {{ messages }}
-      <v-divider/>
-     <v-text-field v-model="input" label="Enter Message" single-line outlined></v-text-field>
-     <v-btn @click="send" outlined color="primary">Send</v-btn>
+    <div class="container" style="max-width: 90%;">
+      <p>{{ messages }}</p>
+      <v-text-field
+        v-model="message"
+        :append-outer-icon="'mdi-send'"
+        clear-icon="mdi-close-circle"
+        clearable
+        label="Message"
+        type="text"
+        @click:append-outer="send"
+        @click:clear="clearMessage"
+      ></v-text-field>
+    </div>
   </v-card>
 </template>
 
@@ -41,6 +51,9 @@ export default {
         roomId: this.room,
         message: this.input
       })
+    },
+    clearMessage () {
+      this.message = ''
     },
   }
 }

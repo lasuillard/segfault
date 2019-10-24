@@ -29,7 +29,7 @@
             </v-col>
             <v-col cols="9" md="10">
               <v-row class="mb-2" no-gutters>
-                <v-col>
+                <v-col cols="10">
                   <div class="title" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ room.name }}</div>
                   <div class="subtitle-1">Participant : {{ (room.user) }}</div>
                   <div calss="subtitle-1"> {{getTimeDeltaStr(room.date_created)}} </div>
@@ -45,13 +45,13 @@
     </template>
 
     <template> <!-- Dialog form -->
-     <v-dialog  v-model="dialog" max-width="700px" scrollable>
+     <v-dialog  v-model="dialog" width="500" heigh="800">
       <v-col>
-        <v-toolbar color="primary">
-          <v-toolbar-title >Room : {{roomIdTemp}} / {{roomInfo}}</v-toolbar-title>
+        <v-toolbar>
+          <v-toolbar-title >{{roomInfo}}</v-toolbar-title>
           <v-spacer></v-spacer>
           <v-btn @click="leave(roomIdTemp)+dialogFalse()" icon dark>
-            <v-icon>mdi-close</v-icon>
+            <v-icon style="color:black">mdi-close</v-icon>
           </v-btn>
         </v-toolbar>
         <chat-window :room="roomIdTemp" :roomname="roomInfo">

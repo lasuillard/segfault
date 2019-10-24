@@ -5,8 +5,13 @@
       <v-divider></v-divider>
     <editor v-model="content"/>
       <v-divider></v-divider>
-
-    <v-btn @click="post" dark color="primary">Submit</v-btn>
+    <v-row
+      align="center"
+      justify="end"
+      style="margin-top: 15px; margin-right:5px; margin-bottom: 15px"
+    >
+      <v-btn @click="post" dark color="primary">Submit</v-btn>
+    </v-row>
   </div>
 </template>
 

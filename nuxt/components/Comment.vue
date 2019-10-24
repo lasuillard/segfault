@@ -1,12 +1,46 @@
 <template>
   <div>
     <template v-if="isLoaded">
-      <div style="border: 1px solid red;" class="ma-3">
-        <!--Comment/{{ comment.pk }}/rawData: {{ JSON.stringify(rawData) }}-->
-
-        UerprofImg : {{comment.avatar.profile_image}} User :  {{comment.avatar.display_name}} , Comment : {{comment.content}}
-      </div>
-      <v-btn v-if="isOwned" @click="del">Delete this comment</v-btn>
+      <v-card
+        class="mx-auto"
+        color="#F2F2F2"
+        style="margin-bottom: 20px;"
+      >
+        <v-card-title>
+            <v-list-item-avatar>
+              <v-img
+                class="elevation-6"
+                :src="comment.avatar.profile_image"
+              ></v-img>
+            </v-list-item-avatar>
+    
+            <v-list-item-content>
+              <v-list-item-title>
+                <a style="font-family: Segoe UI Semibold,Segoe UI,SegoeUI; font-size: 16px; color: #0067b8;">{{comment.avatar.display_name}}</a>
+                <span style="float: right;">
+                  <p style="display: inline; color: #5e5e5e; font-family: Segoe UI,SegoeUI,Helvetica,Arial,sans-serif; font-size: 16px;">Created on {{ comment.date_created }}</p>
+                </span>  
+              </v-list-item-title>
+            </v-list-item-content>
+        </v-card-title>
+    
+        <v-card-text style="font-size: 15px; font-family: Segoe UI,SegoeUI,Helvetica Neue,Helvetica,Arial,sans-serif; color: #000;">
+          {{comment.content}}
+        </v-card-text>
+    
+        <v-card-actions>
+          <v-list-item class="grow">
+            <v-row
+              align="center"
+              justify="end"
+            >
+              <a v-if="isOwned" @click="del">
+                <v-icon>delete_forever</v-icon>
+              </a>
+            </v-row>
+          </v-list-item>
+        </v-card-actions>
+      </v-card>
     </template>
   </div>
 </template>

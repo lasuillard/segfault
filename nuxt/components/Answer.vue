@@ -1,29 +1,61 @@
 <template>
   <div>
-    <div style="border: 5px solid green;" class="ma-3">
-      <template v-if="isLoaded">
-        <!--Answer/{{ answer.pk }}/rawData: {{ JSON.stringify(rawData) }}<br/-->
-        <div style="border: 2px solid gray;" class="ma-3">
-          avatar : {{answer.avatar.profile_image}} User ; {{answer.avatar.display_name}}
-        <v-divider/>
-        <viewer :value="answer.content"> </viewer><br/>
+    <template v-if="isLoaded">
+      <v-card
+        class="mx-auto"
+        color="#FFFFFF"
+        style="margin-bottom: 20px;"
+      >
+        <v-card-title>
+            <v-list-item-avatar>
+              <v-img
+                class="elevation-6"
+                :src="answer.avatar.profile_image"
+              ></v-img>
+            </v-list-item-avatar>
+    
+            <v-list-item-content>
+              <v-list-item-title>
+                <a style="font-family: Segoe UI Semibold,Segoe UI,SegoeUI; font-size: 16px; color: #0067b8;">{{answer.avatar.display_name}}</a>
+                <span style="float: right;">
+                  <p style="display: inline; color: #5e5e5e; font-family: Segoe UI,SegoeUI,Helvetica,Arial,sans-serif; font-size: 16px;">Created on {{ answer.date_created }}</p>
+                </span>  
+              </v-list-item-title>
+            </v-list-item-content>
+        </v-card-title>
+    
+        <v-card-text style="font-size: 15px; font-family: Segoe UI,SegoeUI,Helvetica Neue,Helvetica,Arial,sans-serif; color: #000;">
+          {{answer.content}}
+        </v-card-text>
+    
+        <v-card-actions>
+          <v-list-item class="grow">
+            <v-row
+              align="center"
+              justify="end"
+            >
+              <a v-if="isOwned" @click="del" style="margin-top: 20px; color: #900020">Delete this answer</a>
+            </v-row>
+          </v-list-item>
+        </v-card-actions>
+        <div class="container" style="max-width: 95%; padding-bottom: 30px">
+          <p style="font-weight: 600; line-height: 24px; font-family: Segoe UI,SegoeUI,Helvetica,Arial,sans-serif;">Comments</p>
+          
+          <comment
+            v-for="comment in rawData.comments"
+            :key="comment.pk"
+            :target="answer.pk"
+            :comment="comment"
+            @update="load"
+            @delete="load"
+          ></comment>
+          <comment-form :target="rawData.pk" @created="load"></comment-form>
         </div>
-        Comments about this answer:<br/>
-        
-        <comment
-          v-for="comment in rawData.comments"
-          :key="comment.pk"
-          :target="answer.pk"
-          :comment="comment"
-          @update="load"
-          @delete="load"
-        ></comment>
-        <comment-form :target="rawData.pk" @created="load"></comment-form>
-        <vote :votes="rawData.votes"></vote>
-        <vote-form :target="rawData.pk" @created="load"></vote-form>
-        <v-btn v-if="isOwned" @click="del">Delete this answer</v-btn>
-      </template>
-    </div>
+        <!-- <vote :votes="rawData.votes"></vote>
+        <vote-form :target="rawData.pk" @created="load"></vote-form> -->
+      </v-card>
+      <!--Answer/{{ answer.pk }}/rawData: {{ JSON.stringify(rawData) }}<br/-->
+    </template>
   </div>
 </template>
 

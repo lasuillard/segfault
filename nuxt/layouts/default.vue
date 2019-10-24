@@ -103,7 +103,7 @@ export default {
         },
         {
           title: 'Activity',
-          icon: 'mdi-account',
+          icon: 'post_add',
           link: { name: 'activity' }
         },
         { 
@@ -117,7 +117,7 @@ export default {
           link: { name: 'chat' }
         },
         {
-          title: 'Setting',
+          title: 'Settings',
           icon: 'mdi-settings',
           link: { name: 'setting' }
         }

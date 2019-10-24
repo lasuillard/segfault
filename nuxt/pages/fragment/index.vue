@@ -43,7 +43,7 @@
               </v-row>
               <v-row no-gutters>
                 <v-col align-self="start">
-                  <div class="caption">{{ item.count_answer }} Answers, {{ item.count_vote }} Votes, {{ item.count_comment }} Comments</div>
+                  <div class="caption">{{ item.count_answer }} Answers, {{ item.count_comment }} Comments</div>
                 </v-col>
               </v-row>
             </v-col>
@@ -55,7 +55,7 @@
       </v-col>
     </v-row>
     <v-row style="margin-bottom: 40px;">
-      <v-btn @click="load">Load more</v-btn>
+      <!-- <v-btn @click="load">Load more</v-btn> -->
     </v-row>
 
     <v-btn
@@ -67,7 +67,7 @@
        right
        fab
        large
-       style="bottom: 0; position: absolute; margin: 0 0 16px 16px;"
+       style="bottom: 0px; position: absolute; margin: 0 0 16px 16px;"
        :to="links.link"
       >
        <v-icon>mdi-pencil</v-icon>

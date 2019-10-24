@@ -1,6 +1,5 @@
 <template>
-  <div style="border: 1px dotted black;">
-    <p>Post new comment for commentable object</p>
+  <div>
     <v-textarea
       v-model="content"
       v-validate="'required'"
@@ -9,7 +8,12 @@
       label="Comment"
       :error-messages="String(veeErrors.collect('content')).split(',').join('<br/>')"
     ></v-textarea>
-    <v-btn @click="post">Post new comment</v-btn>
+    <v-row
+        align="center"
+        justify="end"
+      >
+        <v-btn @click="post" color="primary">Post</v-btn>
+      </v-row>
   </div>
 </template>
 

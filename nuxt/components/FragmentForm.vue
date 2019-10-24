@@ -35,7 +35,12 @@
         </v-chip>
       </template>
     </v-combobox>
-    <v-btn outlined color="primary" @click="post">DONE</v-btn>
+    <v-row
+      align="center"
+      justify="end"
+    >
+      <v-btn outlined color="primary" @click="post">DONE</v-btn>
+    </v-row>
   </div>
 </template>
 
