@@ -11,7 +11,7 @@
       <div>Created / Modificated At: {{ rawData.date_created }} / {{ rawData.date_modified }}</div>
       <div>Tags: {{ rawData.tags.map(v => v.name) }}</div>
       <hr/>
-      <div>
+      <div v-if="parseInt(rawData.comments) > 0">
         Comments:<br/>
         <comment
           v-for="comment in rawData.comments"
@@ -23,9 +23,10 @@
         ></comment>
         <comment-form :target="rawData.pk" @created="refresh"></comment-form>
       </div>
+      <div v-else>There are no comment yet</div>
       <hr/>
       <div>
-        <div>
+        <div v-if="parseInt(rawData.answers) > 0">
           Answers:<br/>
           <answer
             v-for="answer in rawData.answers"
@@ -36,6 +37,7 @@
             @delete="refresh"
           ></answer>
         </div>
+        <div>There are no answer yet</div>
         <answer-form :target="rawData.pk" @created="refresh"></answer-form>
       </div>
       <div>
