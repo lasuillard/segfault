@@ -68,6 +68,7 @@
        fab
        large
        style="bottom: 0; position: absolute; margin: 0 0 16px 16px;"
+       :to="links.link"
       >
        <v-icon>mdi-pencil</v-icon>
    </v-btn>
@@ -90,6 +91,9 @@ export default {
   data: () => ({
     rawData: null,
     items: [],
+    links: {
+      link: {name: "activity"}
+    }
   }),
   computed: {
     isEnd: function () {
