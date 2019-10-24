@@ -35,41 +35,39 @@
                   <div calss="subtitle-1"> {{getTimeDeltaStr(room.date_created)}} </div>
                   <div class="caption">Last change : {{ room.date_modified }}</div>
                 </v-col>
-                  <v-col lg="2">
-                    <div style="margin-bottom: 10px">
-                       <v-btn @click="join(room.pk)" outlined color="blue darken-1">Enter</v-btn> 
-                    </div>
-                    <div>
-                       <v-btn @click="leave(room.pk)" outlined color="red lighten-1">Leave </v-btn>  
-                    </div>
+                  <v-col lg="2" align-self="center">
+                          <v-btn @click="join(room.pk) + dialogTrue(room.pk,room.name)"  outlined color="blue darken-1">Enter</v-btn>
                   </v-col>
               </v-row>
             </v-col>
-          </v-row>
+          </v-row> 
         </v-sheet>
-
-
-        <!--template v-for="room in availableRooms">
-          <div :key="room.pk">
-            {{ room.name }}
-            <template v-if="!isRoomJoined(room.pk)">
-              <v-btn @click="join(room.pk)">Join this room</v-btn>
-            </template>
-            <template v-else>
-              <v-btn @click="leave(room.pk)">Leave this room</v-btn>
-            </template>
-          </div>
-        </template-->
     </template>
-  </div>
 
-  <div>
-    <chat-window 
+    <template> <!-- Dialog form -->
+     <v-dialog  v-model="dialog" max-width="700px" scrollable>
+      <v-col>
+        <v-toolbar color="primary">
+          <v-toolbar-title >Room : {{roomIdTemp}} / {{roomInfo}}</v-toolbar-title>
+          <v-spacer></v-spacer>
+          <v-btn @click="leave(roomIdTemp)+dialogFalse()" icon dark>
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </v-toolbar>
+        <chat-window :room="roomIdTemp" :roomname="roomInfo">
+        </chat-window>
+      </v-col>
+     </v-dialog>
+   </template>
+    <!--chat-window 
     v-for="room in rooms"
     :key="room"
     :room="parseInt(room)"
-    ></chat-window>
+    ></chat-window-->
+
    </div>
+
+
 
   <footer id="footer" class="page-footer dk">
       <div class="footer-copyright dk">
@@ -99,16 +97,16 @@ export default {
     rawData: null,
     availableRooms: [],
     endOfContent: false,
-    userList: [],
+      dialog: false, //for dialog activation
+      roomIdTemp: null, //v-sheet 외부에서 룸 정보 받기 위함
+      roomInfo: null,
   }),
-  async asyncData ({ $axios }) {
-    var uList = await $axios.$get(`${BASE_URL_AVATAR}`)    
+  async asyncData ({ $axios }) { 
     return $axios.$get(`${BASE_URL_ROOM}`)
     .then(response => {
       return {
         rawData: response,
         availableRooms: response.results,
-        userList: uList.results, 
       }
     })
   },
@@ -164,6 +162,15 @@ export default {
         return `${hours} hours ago`
 
       return `${days} days ago`
+    },
+    //Under 2 fuction for dialog form
+    dialogTrue(roomId,roomname) {
+      this.dialog = true
+      this.roomIdTemp = roomId
+      this.roomInfo = roomname
+    },
+    dialogFalse() {
+      this.dialog = false
     },
   }
 }

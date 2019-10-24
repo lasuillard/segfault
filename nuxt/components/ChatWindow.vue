@@ -1,10 +1,10 @@
 <template>
-  <div>
-    Room {{ room }}<br/>
-    {{ messages }}
-    <v-text-field v-model="input"></v-text-field>
-    <v-btn @click="send">Send</v-btn>
-  </div>
+  <v-card>
+      {{ messages }}
+      <v-divider/>
+     <v-text-field v-model="input" label="Enter Message" single-line outlined></v-text-field>
+     <v-btn @click="send" outlined color="primary">Send</v-btn>
+  </v-card>
 </template>
 
 <script>
@@ -14,6 +14,10 @@ export default {
   props: {
     room: {
       type: Number,
+      required: true
+    },
+    roomname: {
+      type: String,
       required: true
     }
   },
@@ -30,14 +34,14 @@ export default {
   },
   methods: {
     ...mapActions({
-      _send: 'chat/sendMessage'
+      _send: 'chat/sendMessage',
     }),
     send (message) {
       this._send({
         roomId: this.room,
         message: this.input
       })
-    }
+    },
   }
 }
 </script>
