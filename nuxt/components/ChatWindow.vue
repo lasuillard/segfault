@@ -1,8 +1,9 @@
-<!--메시지 파싱 구현하십시오-->
 <template>
   <v-card>
     <div class="container" style="max-width: 90%;">
-      <p>{{ messages }}</p>
+      <v-card class="scroll" height="500">
+        {{ messages }}
+      </v-card>
       <v-text-field
         v-model="message"
         :append-outer-icon="'mdi-send'"
@@ -49,7 +50,7 @@ export default {
     send (message) {
       this._send({
         roomId: this.room,
-        message: this.input
+        message: this.message
       })
     },
     clearMessage () {
@@ -58,3 +59,8 @@ export default {
   }
 }
 </script>
+<style>
+  .scroll {
+    overflow-y: auto;
+  }
+</style>

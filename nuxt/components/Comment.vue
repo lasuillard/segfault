@@ -18,7 +18,7 @@
               <v-list-item-title>
                 <a style="font-family: Segoe UI Semibold,Segoe UI,SegoeUI; font-size: 16px; color: #0067b8;">{{comment.avatar.display_name}}</a>
                 <span style="float: right;">
-                  <p style="display: inline; color: #5e5e5e; font-family: Segoe UI,SegoeUI,Helvetica,Arial,sans-serif; font-size: 16px;">Created on {{ comment.date_created }}</p>
+                  <p style="display: inline; color: #5e5e5e; font-family: Segoe UI,SegoeUI,Helvetica,Arial,sans-serif; font-size: 16px;">Created on {{ createdTime }}</p>
                 </span>  
               </v-list-item-title>
             </v-list-item-content>
@@ -46,6 +46,7 @@
 </template>
 
 <script>
+import moment from 'moment'
 
 const BASE_URL_COMMENT = '/api/v1/comment'
 
@@ -72,7 +73,15 @@ export default {
     isOwned: function () {
       let profile = this.$store.getters['user/getProfile']
       return profile.avatar.hasOwnProperty('pk') && profile.avatar.pk == this.rawData.avatar.pk
-    }
+    },
+    createdTime: function() {
+      let createdDate = new moment(this.comment.date_created)
+      return createdDate.format('LLL')
+    },
+    modifiedTime: function() {
+      let modifiedDate = new moment(this.comment.date_modified)
+      return modifiedDate.format('LLL')
+    },
   },
   methods: {
     async load () {

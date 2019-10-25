@@ -45,7 +45,7 @@
     </template>
 
     <template> <!-- Dialog form -->
-     <v-dialog  v-model="dialog" width="500" heigh="800">
+     <v-dialog  v-model="dialog" width="500" style="max-height: 80vh;">
       <v-col>
         <v-toolbar>
           <v-toolbar-title >{{roomInfo}}</v-toolbar-title>

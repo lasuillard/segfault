@@ -18,7 +18,7 @@
               <v-list-item-title>
                 <a style="font-family: Segoe UI Semibold,Segoe UI,SegoeUI; font-size: 16px; color: #0067b8;">{{answer.avatar.display_name}}</a>
                 <span style="float: right;">
-                  <p style="display: inline; color: #5e5e5e; font-family: Segoe UI,SegoeUI,Helvetica,Arial,sans-serif; font-size: 16px;">Created on {{ answer.date_created }}</p>
+                  <p style="display: inline; color: #5e5e5e; font-family: Segoe UI,SegoeUI,Helvetica,Arial,sans-serif; font-size: 16px;">Created on {{ createdTime }}</p>
                 </span>  
               </v-list-item-title>
             </v-list-item-content>
@@ -69,6 +69,7 @@ import { Editor, Viewer } from '@toast-ui/vue-editor'
 import 'tui-editor/dist/tui-editor.css';
 import 'tui-editor/dist/tui-editor-contents.css';
 import 'codemirror/lib/codemirror.css';
+import moment from 'moment'
 
 
 const BASE_URL_ANSWER = '/api/v1/answer'
@@ -104,7 +105,15 @@ export default {
     isOwned: function () {
       let profile = this.$store.getters['user/getProfile']
       return profile.avatar.hasOwnProperty('pk') && profile.avatar.pk == this.rawData.avatar.pk
-    }
+    },
+    createdTime: function() {
+      let createdDate = new moment(this.answer.date_created)
+      return createdDate.format('LLL')
+    },
+    modifiedTime: function() {
+      let modifiedDate = new moment(this.answer.date_modified)
+      return modifiedDate.format('LLL')
+    },
   },
   methods: {
     async load () {

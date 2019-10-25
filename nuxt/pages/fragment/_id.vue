@@ -23,7 +23,7 @@
               <div style="padding-top: 12.5px;">
                 <a style="font-family: Segoe UI Semibold,Segoe UI,SegoeUI; font-size: 16px; color: #0067b8;">{{ rawData.avatar.display_name }}</a>
                 <span style="float: right;">
-                  <p style="display: inline; color: #5e5e5e; font-family: Segoe UI,SegoeUI,Helvetica,Arial,sans-serif; font-size: 16px;">Created on {{ rawData.date_created }}</p>
+                  <p style="display: inline; color: #5e5e5e; font-family: Segoe UI,SegoeUI,Helvetica,Arial,sans-serif; font-size: 16px;">Created on {{ createdTime }}</p>
                 </span>
               </div>
             </div>
@@ -60,7 +60,7 @@
           <h2 style="font-size: 20px; line-height: 24px; margin-top: 30px;">Article Info</h2>
           <hr class="separator-line" style="margin-top: 12px;">
           <span class="infoTop">
-            Modificated At {{ rawData.date_modified }}
+            Modificated At {{ modifiedTime }}
           </span>
           <span class="infoMiddle">
             Status: {{ rawData.status == 'CLOSED' ? rawData.date_closed : 'OPEN' }}
@@ -114,6 +114,7 @@ import Comment from '~/components/Comment.vue'
 import CommentForm from '~/components/CommentForm.vue'
 import Vote from '~/components/Vote.vue'
 import VoteForm from '~/components/VoteForm.vue'
+import moment from 'moment'
 
 const BASE_URL_FRAGMENT = '/api/v1/fragment'
 
@@ -149,6 +150,14 @@ export default {
       for(i=0; i<test.length; i++) {
       this.tagArray.push(test[i])
       }
+    },
+    createdTime: function() {
+      let createdDate = new moment(this.rawData.date_created)
+      return createdDate.format('LLL')
+    },
+    modifiedTime: function() {
+      let modifiedDate = new moment(this.rawData.date_modified)
+      return modifiedDate.format('LLL')
     },
   },
   methods: {
