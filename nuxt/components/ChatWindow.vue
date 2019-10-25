@@ -5,7 +5,7 @@
         {{ messages }}
       </v-card>
       <v-text-field
-        v-model="message"
+        v-model="input"
         :append-outer-icon="'mdi-send'"
         clear-icon="mdi-close-circle"
         clearable
@@ -52,9 +52,10 @@ export default {
         roomId: this.room,
         message: this.message
       })
+      this.input='' //전송 후 입력 폼 초기화
     },
     clearMessage () {
-      this.message = ''
+      this.input = '' //입력 폼 초기화
     },
   }
 }
