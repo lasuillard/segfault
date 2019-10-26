@@ -36,10 +36,10 @@ workbox.precaching.precacheAndRoute([
 
 // Register route handlers for runtimeCaching
 workbox.routing.registerRoute(new RegExp('/*'), new workbox.strategies.NetworkFirst ({}), 'GET')
-workbox.routing.registerRoute(new RegExp('/static/_nuxt/'), new workbox.strategies.CacheFirst ({}), 'GET')
+workbox.routing.registerRoute(new RegExp('/static/'), new workbox.strategies.CacheFirst ({}), 'GET')
 
 // Register router handler for offlinePage
-workbox.routing.registerRoute(new RegExp('/static/'), ({event}) => {
+workbox.routing.registerRoute(new RegExp('/'), ({event}) => {
   return new workbox.strategies.NetworkFirst().handle({event})
     .catch(() => caches.match('offline.html'))
 })
