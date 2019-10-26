@@ -47,10 +47,10 @@ export default {
     ...mapActions({
       _send: 'chat/sendMessage',
     }),
-    send (message) {
+    send () {
       this._send({
         roomId: this.room,
-        message: this.message
+        message: this.input
       })
       this.input='' //전송 후 입력 폼 초기화
     },

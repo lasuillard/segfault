@@ -31,7 +31,6 @@
               <v-row class="mb-2" no-gutters>
                 <v-col cols="10">
                   <div class="title" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ room.name }}</div>
-                  <div class="subtitle-1">Participant : {{ (room.user) }}</div>
                   <div calss="subtitle-1"> {{getTimeDeltaStr(room.date_created)}} </div>
                   <div class="caption">Last change : {{ room.date_modified }}</div>
                 </v-col>
